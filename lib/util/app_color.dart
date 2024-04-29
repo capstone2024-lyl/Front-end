@@ -1,7 +1,18 @@
-import 'dart:ui';
+import "dart:ui";
 
 enum AppColor {
-  backgroundColor(Color(0xffFAFAFA));
+  cardColor(
+    Color(0xffFBF5EA),
+  ),
+  buttonColor(
+    Color(0xffFFBB38),
+  ),
+  notSelectedColor(
+    Color(0xff979797),
+  ),
+  backgroundColor(
+    Color(0xffFAFAFA),
+  );
 
   final Color color;
 
