@@ -279,11 +279,11 @@ class _HomePageState extends State<HomePage> {
               //TODO ~단계 남았어요, 4 -여태 진행한 검사 개수 구현하기, 사용자 이름도 받아야함
 
               Transform.translate(
-                offset: Offset(0, -70),
+                offset: const Offset(0, -70),
                 child: Text(
                   '영재님만의 카드가 완성되기까지 \n앞으로 네 단계 남았어요 !',
                   style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
+                    textStyle: const TextStyle(
                       fontSize: 22,
                     ),
                   ),
@@ -292,18 +292,21 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Transform.translate(
-                offset: Offset(0, -40),
+                offset: const Offset(0, -40),
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffFFBB38),
-                      foregroundColor: Color(0xffFFFFFF),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 50.0, vertical: 15.0)),
+                    backgroundColor: const Color(0xffFFBB38),
+                    foregroundColor: const Color(0xffFFFFFF),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 50.0,
+                      vertical: 15.0,
+                    ),
+                  ),
                   child: Text(
                     '나에 대해 분석하러 가기 !',
                     style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         fontSize: 20,
                       ),
                     ),

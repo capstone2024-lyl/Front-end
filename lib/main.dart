@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,67 +26,77 @@ class MyApp extends StatelessWidget {
       ),
       //home: HomePage(),
       //TODO 이미지 분석 실현 가능성 테스트 페이지 구현, 추후 삭제 예정
-      home: ImageLablePage(),
+      home: ImageAnalyzerPage(),
     );
   }
 }
 
-class ImageLablePage extends StatefulWidget {
-  const ImageLablePage({super.key});
+class ImageAnalyzerPage extends StatefulWidget {
+  const ImageAnalyzerPage({super.key});
 
   @override
-  State<ImageLablePage> createState() => _ImageLablePageState();
+  State<ImageAnalyzerPage> createState() => _ImageAnalyzerPageState();
 }
 
-class _ImageLablePageState extends State<ImageLablePage> {
-  final ImagePicker _picker = ImagePicker();
-  final ImageLabeler _imageLabeler = GoogleMlKit.vision.imageLabeler();
-  List<ImageLabel> _labels = [];
-  XFile? _imageFile;
-
-  Future<void> pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      final inputImage = InputImage.fromFilePath(image.path);
-      final List<ImageLabel> labels =
-          await _imageLabeler.processImage(inputImage);
-      setState(() {
-        _imageFile = image;
-        _labels = labels;
-      });
-    }
-  }
+class _ImageAnalyzerPageState extends State<ImageAnalyzerPage> {
+  final ImageLabeler imageLabeler = GoogleMlKit.vision.imageLabeler();
+  List<String> _label = [];
 
   @override
   void dispose() {
-    _imageLabeler.close();
+    imageLabeler.close();
     super.dispose();
+  }
+
+  Future<void> pickAndAnalyzeImages() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: true,
+      withReadStream: true,
+    );
+
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      int analyzeLimit = 100;
+      analyzeImages(files.take(analyzeLimit).toList());
+    } else {
+      print('No files selected.');
+    }
+  }
+
+  Future<void> analyzeImages(List<File> images) async {
+    List<String> labels = [];
+
+    for (File image in images) {
+      final inputImage = InputImage.fromFile(image);
+      final List<ImageLabel> imageLabels =
+          await imageLabeler.processImage(inputImage);
+
+      for (ImageLabel label in imageLabels) {
+        labels.add('${label.label} (${label.confidence.toStringAsFixed(2)})');
+      }
+    }
+
+    setState(() {
+      _label = labels;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Image Labeling Example'),
-      ),
       body: Column(
-        children: [
-          Center(
-            child: ElevatedButton(
-              onPressed: pickImage,
-              child: Text('Pick Image'),
-            ),
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: pickAndAnalyzeImages,
+            child: Text('SelectImage'),
           ),
-          if (_imageFile != null) Image.file(File(_imageFile!.path)),
           Expanded(
             child: ListView.builder(
-              itemCount: _labels.length,
+              itemCount: _label.length,
               itemBuilder: (context, index) {
-                final ImageLabel label = _labels[index];
                 return ListTile(
-                  title: Text(label.label),
-                  subtitle:
-                      Text('${(label.confidence * 100).toStringAsFixed(2)}%'),
+                  title: Text(_label[index]),
                 );
               },
             ),
