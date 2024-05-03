@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           Column(
             children: [
               const SizedBox(
-                height: 100,
+                height: 60,
               ),
               Center(
                 child: SizedBox(
@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Transform.translate(
-                offset: const Offset(0, -40),
+                offset: const Offset(0, -50),
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
