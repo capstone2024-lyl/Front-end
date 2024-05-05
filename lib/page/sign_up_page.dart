@@ -282,7 +282,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         controller: _passwordController,
                         obscureText: _passwordIsObscured,
                         decoration: InputDecoration(
-                          hintText: '8~16자 이내 영문, 숫자, 특수 문자 사용 가능',
+                          hintText: '8~16자 이내 영문, 숫자, 특수 문자를 모두 사용',
                           border: OutlineInputBorder(),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -303,7 +303,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           }
                           if (!FormatRule.PASSWORD_FORMAT.regex
                               .hasMatch(value)) {
-                            return '비밀번호는 8~16자의 문자, 숫자, 기호를 사용해야 합니다';
+                            return '비밀번호는 8~16자의 문자, 숫자, 기호를 모두 사용해야 합니다';
                           }
                           return null;
                         },
