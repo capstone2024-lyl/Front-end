@@ -31,7 +31,6 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _passwordIsObscured = true;
 
   String _idError = '';
-  String _errorMessage = '';
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -52,11 +51,11 @@ class _SignUpPageState extends State<SignUpPage> {
   //생일 선택 메서드
   void _presentDatePicker() {
     showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1900),
-        lastDate: DateTime.now(),
-        ).then((pickedDate) {
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
       if (pickedDate == null) {
         return;
       }
@@ -73,7 +72,6 @@ class _SignUpPageState extends State<SignUpPage> {
     FocusScope.of(context).unfocus();
     //서버에 중복 확인 요청 해야됨
     //_idError ='아이디가 중복됩니다.';
-    print('$_idController');
     if (_idController.text.isEmpty) {
       setState(() {
         _idError = '아이디를 입력해주세요';
@@ -95,8 +93,8 @@ class _SignUpPageState extends State<SignUpPage> {
       });
       //TODO 데이터를 서버로 전송하는 로직 구현해야 함
 
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context)=> SignInPage()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => SignInPage()));
     }
   }
 
@@ -233,7 +231,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             decoration: InputDecoration(
                               hintText: '6~12자 이내 영문, 숫자 사용 가능',
                               errorText: _idError.isEmpty ? null : _idError,
-                              border: OutlineInputBorder(),
+                              border: const OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -331,7 +329,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         controller: _confirmPasswordController,
                         obscureText: _passwordIsObscured,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordIsObscured
@@ -369,7 +367,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       width: 400,
                       child: TextFormField(
                         controller: _nameController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
