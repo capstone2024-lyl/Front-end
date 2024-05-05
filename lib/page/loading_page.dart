@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 class LoadingPage extends StatelessWidget {
 
-  //TODO 앱 권한 요청 받기
 
   const LoadingPage({super.key});
 

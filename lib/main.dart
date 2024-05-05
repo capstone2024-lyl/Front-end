@@ -20,6 +20,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  //TODO 앱 시작 시 권한 요청 받기
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
