@@ -9,7 +9,8 @@ enum FormatRule {
       case FormatRule.ID_FORMAT:
           return RegExp(r'^[a-zA-Z0-9]{6,12}$');
       case FormatRule.PASSWORD_FORMAT:
-          return RegExp(r'^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$');
+          return RegExp(r'^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,15}$');
     }
   }
+
 }
