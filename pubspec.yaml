@@ -46,6 +46,7 @@ dependencies:
   flutter_native_splash: ^2.4.0
   intl: 0.18.1
   flutter_localization: ^0.2.0
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
