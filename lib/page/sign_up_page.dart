@@ -159,8 +159,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Stack(
+                alignment: Alignment.center,
                 children: [
                   Container(
                     width: 150,
@@ -188,20 +188,18 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                           ),
                   ),
-                  Transform.translate(
-                    offset: const Offset(-10, 50),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
                     child: IconButton(
                       onPressed: pickImage,
                       style: IconButton.styleFrom(
-                        side: const BorderSide(
-                          color: Colors.black26,
-                        ),
+                        side: BorderSide(color: Colors.black26),
+                        backgroundColor: Colors.white
                       ),
-                      icon: const Icon(
-                        Icons.camera_alt_outlined,
-                      ),
+                      icon: Icon(Icons.camera_alt_outlined),
                     ),
-                  ),
+                  )
                 ],
               ),
               const Align(
