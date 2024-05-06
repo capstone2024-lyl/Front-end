@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled1/page/analyze_menu_page.dart';
 
 import '../util/app_color.dart';
@@ -233,7 +232,7 @@ class _HomePageState extends State<HomePage> {
             offset: const Offset(0, -30),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const AnalyzeMenuPage()),
@@ -247,12 +246,10 @@ class _HomePageState extends State<HomePage> {
                   vertical: 15.0,
                 ),
               ),
-              child: Text(
+              child: const Text(
                 '나에 대해 분석하러 가기 !',
-                style: GoogleFonts.roboto(
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                  ),
+                style: TextStyle(
+                  fontSize: 20
                 ),
               ),
             ),
