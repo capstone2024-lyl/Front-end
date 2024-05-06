@@ -1,14 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:untitled1/page/home_page.dart';
-import 'package:untitled1/page/loading_page.dart';
-import 'package:untitled1/util/app_color.dart';
-import 'package:untitled1/page/sign_in_page.dart';
+import 'package:untitled1/page/navigate_page.dart';
+
 
 
 void main() {
@@ -41,8 +35,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Pretendard',
         useMaterial3: true,
       ),
-      //home: HomePage(),
-      home: SignInPage(),
+      home: NavigatePage(),
+      //home: SignInPage(),
       //home: LoadingPage(),
     );
   }
