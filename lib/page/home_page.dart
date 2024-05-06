@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:untitled1/page/analyze_menu_page.dart';
 
 import '../util/app_color.dart';
 
@@ -20,15 +21,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 60,
           ),
-          Center(
+          const Center(
             child: SizedBox(
               child: Text(
                 '프로필 요약',
-                style: GoogleFonts.roboto(
-                  textStyle: const TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
+                style: TextStyle(fontSize: 24),
               ),
             ),
           ),
@@ -56,13 +53,9 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: 60,
                   ),
-                  Text(
+                  const Text(
                     '이영재',
-                    style: GoogleFonts.roboto(
-                      textStyle: const TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
+                    style: TextStyle(fontSize: 20),
                   ),
                   const Center(
                     child: Divider(
@@ -86,10 +79,10 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   '생일 :',
-                                  style: GoogleFonts.roboto(
-                                      textStyle: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 )
                               ],
                             ),
@@ -106,11 +99,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   'MBTI : ',
-                                  style: GoogleFonts.roboto(
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 )
                               ],
@@ -128,11 +119,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   '가장 많이 사용하는 어플 : ',
-                                  style: GoogleFonts.roboto(
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 )
                               ],
@@ -152,10 +141,10 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   '좋아하는 영상 카테고리 : ',
-                                  style: GoogleFonts.roboto(
-                                      textStyle: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 )
                               ],
                             ),
@@ -172,11 +161,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   '사진 취향 : ',
-                                  style: GoogleFonts.roboto(
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
@@ -194,11 +181,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   '칭호 : ',
-                                  style: GoogleFonts.roboto(
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
@@ -233,24 +218,27 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           //TODO ~단계 남았어요, 4 -여태 진행한 검사 개수 구현하기, 사용자 이름도 받아야함
-
           Transform.translate(
             offset: const Offset(0, -70),
             child: Text(
               '영재님만의 카드가 완성되기까지 \n앞으로 네 단계 남았어요 !',
-              style: GoogleFonts.roboto(
-                textStyle: const TextStyle(
-                  fontSize: 22,
-                ),
+              style: TextStyle(
+                fontSize: 22
               ),
               textAlign: TextAlign.center,
             ),
           ),
 
           Transform.translate(
-            offset: const Offset(0, -50),
+            offset: const Offset(0, -30),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AnalyzeMenuPage()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.buttonColor.colors,
                 foregroundColor: const Color(0xffFFFFFF),
