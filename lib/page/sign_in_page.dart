@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled1/page/navigate_page.dart';
 import 'package:untitled1/page/sign_up_page.dart';
 import 'package:untitled1/util/app_color.dart';
 
@@ -16,6 +17,17 @@ class _SignInPageState extends State<SignInPage> {
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    //TODO 로그인 로직 구현하기
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +113,12 @@ class _SignInPageState extends State<SignInPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const NavigatePage()));
+                  },
                   child: const Text(
                     '로그인',
                     style: TextStyle(fontSize: 24, color: Colors.white),
@@ -136,8 +153,10 @@ class _SignInPageState extends State<SignInPage> {
                   TextButton(
                     //TODO 회원가입 page로 이동
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SignUpPage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignUpPage()));
                     },
                     child: const Text(
                       '회원가입',
