@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import 'package:untitled1/page/analyze_menu_page.dart';
 import 'package:untitled1/page/home_page.dart';
 import 'package:untitled1/util/app_color.dart';
-import 'dart:core';
+
 
 class NavigatePage extends StatefulWidget {
   const NavigatePage({super.key});
@@ -74,11 +74,7 @@ class _NavigatePageState extends State<NavigatePage> {
         index: currentPageIndex,
         children: [
           const HomePage(),
-          Container(
-            width: 100,
-            height: 100,
-            color: Colors.red,
-          ),
+          const AnalyzeMenuPage(),
           Container(
             width: 100,
             height: 100,
