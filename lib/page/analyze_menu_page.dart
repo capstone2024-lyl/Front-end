@@ -10,7 +10,9 @@ import 'package:untitled1/util/app_color.dart';
 import 'package:untitled1/util/progress_painter.dart';
 
 class AnalyzeMenuPage extends StatefulWidget {
-  const AnalyzeMenuPage({super.key});
+  final VoidCallback onNavigateToProfile;
+
+  const AnalyzeMenuPage({super.key, required this.onNavigateToProfile});
 
   @override
   State<AnalyzeMenuPage> createState() => _AnalyzeMenuPageState();
@@ -115,7 +117,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                   width: 180,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: widget.onNavigateToProfile,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: AppColor.buttonColor.colors,

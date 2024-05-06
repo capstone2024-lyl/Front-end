@@ -5,7 +5,9 @@ import 'package:untitled1/page/analyze_menu_page.dart';
 import '../util/app_color.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final VoidCallback onNavigateToAnalysis;
+
+  const HomePage({super.key, required this.onNavigateToAnalysis});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -231,13 +233,7 @@ class _HomePageState extends State<HomePage> {
           Transform.translate(
             offset: const Offset(0, -30),
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AnalyzeMenuPage()),
-                );
-              },
+              onPressed: widget.onNavigateToAnalysis,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.buttonColor.colors,
                 foregroundColor: const Color(0xffFFFFFF),
