@@ -4,7 +4,9 @@ enum AppColor {
   cardColor,
   buttonColor,
   notSelectedColor,
-  backgroundColor;
+  backgroundColor,
+  progressWidgetBackground,
+  testProgressIndicatorBorder;
 
 
   Color get colors {
@@ -17,6 +19,10 @@ enum AppColor {
         return const Color(0xff979797);
       case backgroundColor:
         return const Color(0xffFAFAFA);
+      case progressWidgetBackground:
+        return const Color(0xffDBDBDB);
+      case testProgressIndicatorBorder:
+        return const Color(0xffC7C6C5);
     }
   }
 }
