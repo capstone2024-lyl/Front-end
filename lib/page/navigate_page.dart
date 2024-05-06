@@ -23,15 +23,15 @@ class _NavigatePageState extends State<NavigatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.backgroundColor.getColor(),
+      backgroundColor: AppColor.backgroundColor.colors,
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
           });
         },
-        backgroundColor: AppColor.backgroundColor.getColor(),
-        indicatorColor: AppColor.buttonColor.getColor(),
+        backgroundColor: AppColor.backgroundColor.colors,
+        indicatorColor: AppColor.buttonColor.colors,
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(

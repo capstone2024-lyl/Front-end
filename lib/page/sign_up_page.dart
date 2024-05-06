@@ -250,7 +250,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor:
-                                    AppColor.buttonColor.getColor(),
+                                    AppColor.buttonColor.colors,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                 )),
@@ -417,7 +417,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: AppColor.buttonColor.getColor(),
+                            backgroundColor: AppColor.buttonColor.colors,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             )),

@@ -108,7 +108,7 @@ class _SignInPageState extends State<SignInPage> {
                 height: 60,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.buttonColor.getColor(),
+                    backgroundColor: AppColor.buttonColor.colors,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

@@ -1,24 +1,22 @@
 import "dart:ui";
 
 enum AppColor {
-  cardColor(
-    Color(0xffFBF5EA),
-  ),
-  buttonColor(
-    Color(0xffFFBB38),
-  ),
-  notSelectedColor(
-    Color(0xff979797),
-  ),
-  backgroundColor(
-    Color(0xffFAFAFA),
-  );
+  cardColor,
+  buttonColor,
+  notSelectedColor,
+  backgroundColor;
 
-  final Color color;
 
-  const AppColor(this.color);
-
-  Color getColor() {
-    return color;
+  Color get colors {
+    switch(this) {
+      case cardColor:
+        return const Color(0xffFBF5EA);
+      case buttonColor:
+        return const Color(0xffFFBB38);
+      case notSelectedColor:
+        return const Color(0xff979797);
+      case backgroundColor:
+        return const Color(0xffFAFAFA);
+    }
   }
 }

@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
               width: 380,
               height: 330,
               decoration: BoxDecoration(
-                color: AppColor.cardColor.getColor(),
+                color: AppColor.cardColor.colors,
                 borderRadius: BorderRadius.circular(30.0),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
@@ -252,7 +252,7 @@ class _HomePageState extends State<HomePage> {
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xffFFBB38),
+                backgroundColor: AppColor.buttonColor.colors,
                 foregroundColor: const Color(0xffFFFFFF),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 50.0,
