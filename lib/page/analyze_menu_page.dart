@@ -58,7 +58,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
     return Column(
       children: <Widget>[
         const SizedBox(
-          height: 60,
+          height: 30,
         ),
         Stack(
           alignment: Alignment.centerLeft,

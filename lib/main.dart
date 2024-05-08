@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:untitled1/page/navigate_page.dart';
-import 'package:untitled1/page/sign_in_page.dart';
+
+
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Pretendard',
         useMaterial3: true,
       ),
-      home: SignInPage(),
+      home: NavigatePage(),
+      //home: SignInPage(),
       //home: LoadingPage(),
     );
   }
