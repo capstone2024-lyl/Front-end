@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:untitled1/page/navigate_page.dart';
 import 'package:untitled1/page/sign_up_page.dart';
 import 'package:untitled1/util/app_color.dart';
@@ -29,8 +30,30 @@ class _SignInPageState extends State<SignInPage> {
     //TODO 로그인 로직 구현하기
   }
 
+  Future<bool>  requestGalleryPermission() async {
+    var status = await Permission.photos.status;
+
+    if(status.isGranted) {
+      print('승인되었습니다');
+      return true;
+    }
+
+    if(status.isPermanentlyDenied) {
+      openAppSettings();
+      return false;
+    }
+
+    if(await Permission.photos.request().isGranted) {
+      print('승인되었습니다.');
+      return true;
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    requestGalleryPermission();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
