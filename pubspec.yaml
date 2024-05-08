@@ -48,6 +48,7 @@ dependencies:
   flutter_localization: ^0.2.0
   http: ^1.2.1
   go_router: ^14.0.2
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -62,11 +63,12 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/loading_image.png
+
+flutter_icons:
   android: true
   ios: true
+  image_path: "assets/images/loading_img.png"
+
 
 
 # The following section is specific to Flutter packages.
@@ -98,12 +100,6 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: DoHyeon
-      fonts:
-        - asset: assets/fonts/DoHyeon-Regular.ttf
-    - family: Jua
-      fonts:
-        - asset: assets/fonts/Jua-Regular.ttf
     - family: Pretendard
       fonts:
         - asset: assets/fonts/Pretendard-Black.otf
