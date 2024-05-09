@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:untitled1/page/sign_in_page.dart';
 import 'package:untitled1/util/app_color.dart';
 import 'package:untitled1/util/format_rule.dart';
@@ -99,6 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   //프로필 사진 적용 로직
   Future<void> pickImage() async {
+    requestGalleryPermissions();
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
@@ -436,4 +438,34 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+
+  //갤러리 접근 권한 요청
+  Future<bool> requestGalleryPermissions() async {
+    // 사진 접근 권한 상태 확인
+    var status = await Permission.photos.status;
+
+    // 이미 권한이 허용된 경우
+    if (status.isGranted) {
+      print("Permission is already granted.");
+      return true;
+    }
+
+    // 권한이 영구적으로 거부된 경우
+    if (status.isPermanentlyDenied) {
+      // 사용자에게 설정 메뉴로 이동하여 권한을 허용하도록 요청
+      openAppSettings();
+      return false;
+    }
+
+    // 권한 요청
+    if (await Permission.photos.request().isGranted) {
+      // 권한이 허용된 경우
+      print("Permission is granted.");
+      return true;
+    }
+
+    // 사용자가 권한 요청을 거부한 경우
+    return false;
+  }
+
 }
