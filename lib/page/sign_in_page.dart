@@ -114,10 +114,12 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const NavigatePage()));
+                            builder: (context) => const NavigatePage()),
+                        (Route<dynamic> route) => false,
+                    );
                   },
                   child: const Text(
                     '로그인',
