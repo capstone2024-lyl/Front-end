@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:untitled1/page/application_analyze_intro_page.dart';
 import 'package:untitled1/page/chat_analyze_intro_page.dart';
 import 'package:untitled1/page/photo_analyze_intro_page.dart';
 import 'package:untitled1/page/youtube_analyze_intro_page.dart';
+
 import 'package:untitled1/util/app_color.dart';
 import 'package:untitled1/util/progress_painter.dart';
 
@@ -33,7 +33,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
       body: Column(
         children: <Widget>[
           const SizedBox(
-            height: 30,
+            height: 50,
           ),
           _showTestProgress(),
           const SizedBox(
@@ -56,8 +56,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _baseCardwidget(_buildChatAnalyzeCard()),
-                    _baseCardwidget(_buildAppAnalyzeCard()),
+                    _baseCardWidget(_buildChatAnalyzeCard()),
+                    _baseCardWidget(_buildAppAnalyzeCard()),
                   ],
                 ),
                 const SizedBox(
@@ -66,8 +66,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _baseCardwidget(_buildYoutubeAnalyzeCard()),
-                    _baseCardwidget(_buildPhotoAnalyzeCarD()),
+                    _baseCardWidget(_buildYoutubeAnalyzeCard()),
+                    _baseCardWidget(_buildPhotoAnalyzeCarD()),
                   ],
                 ),
               ],
@@ -77,7 +77,6 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
       ),
     );
   }
-
 
   Widget _showTestProgress() {
     return Stack(
@@ -215,7 +214,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
     }
   }
 
-  Widget _baseCardwidget(Widget childWidget) {
+  Widget _baseCardWidget(Widget childWidget) {
     return Container(
       width: 170,
       height: 170,
@@ -242,8 +241,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
       child: InkWell(
         onTap: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ChatAnalyzeIntroPage())
-          );
+              MaterialPageRoute(builder: (context) => ChatAnalyzeIntroPage()));
         },
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -311,8 +309,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                const ApplicationAnalyzeIntroPage()),
+                builder: (context) => const ApplicationAnalyzeIntroPage()),
           );
         },
         splashColor: Colors.transparent,
@@ -334,8 +331,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(
-                    _isApplicationAnalyzed),
+                _testCompletionIndicator(_isApplicationAnalyzed),
               ],
             ),
             const Text(
@@ -392,8 +388,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                const YoutubeAnalyzeIntroPage()),
+                builder: (context) => const YoutubeAnalyzeIntroPage()),
           );
         },
         splashColor: Colors.transparent,
@@ -462,8 +457,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                const PhotoAnalyzeIntroPage()),
+                builder: (context) => const PhotoAnalyzeIntroPage()),
           );
         },
         splashColor: Colors.transparent,
@@ -474,8 +468,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               height: 15,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment
-                  .spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
@@ -497,8 +490,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                 padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
                 child: Text(
                   '사진 취향 분석',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -522,5 +514,4 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
       ),
     );
   }
-
 }
