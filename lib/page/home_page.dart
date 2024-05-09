@@ -65,6 +65,9 @@ class _HomePageState extends State<HomePage> {
                       endIndent: 35,
                     ),
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     children: [
                       Padding(
@@ -223,29 +226,31 @@ class _HomePageState extends State<HomePage> {
             offset: const Offset(0, -70),
             child: Text(
               '영재님만의 카드가 완성되기까지 \n앞으로 네 단계 남았어요 !',
-              style: TextStyle(
-                fontSize: 22
-              ),
+              style: TextStyle(fontSize: 22),
               textAlign: TextAlign.center,
             ),
           ),
 
           Transform.translate(
             offset: const Offset(0, -30),
-            child: ElevatedButton(
-              onPressed: widget.onNavigateToAnalysis,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.buttonColor.colors,
-                foregroundColor: const Color(0xffFFFFFF),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 50.0,
-                  vertical: 15.0,
+            child: SizedBox(
+              width: 380,
+              height: 60,
+              child: ElevatedButton(
+                onPressed: widget.onNavigateToAnalysis,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.buttonColor.colors,
+                  foregroundColor: const Color(0xffFFFFFF),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50.0,
+                    vertical: 15.0,
+                  ),
                 ),
-              ),
-              child: const Text(
-                '나에 대해 분석하러 가기 !',
-                style: TextStyle(
-                  fontSize: 20
+                child: const Text(
+                  '나에 대해 분석하러 가기 !',
+                  style: TextStyle(
+                    fontSize: 26,
+                  ),
                 ),
               ),
             ),
