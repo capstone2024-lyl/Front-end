@@ -249,7 +249,7 @@ class _HomePageState extends State<HomePage> {
                 child: const Text(
                   '나에 대해 분석하러 가기 !',
                   style: TextStyle(
-                    fontSize: 26,
+                    fontSize: 22,
                   ),
                 ),
               ),
