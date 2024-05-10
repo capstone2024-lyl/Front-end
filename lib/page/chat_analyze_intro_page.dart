@@ -44,17 +44,17 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
             child: Text(
               '채팅 내역은 분석에만 사용되고 바로 삭제돼요 !',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           const SizedBox(
-            height: 60,
+            height: 20,
           ),
           Container(
             width: 380,
-            height: 450,
+            height: 500,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
@@ -170,15 +170,20 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
   }
 
   Widget _buildStepText(int index) {
+    String text;
     switch(index) {
       case 0:
-        return const Text('채팅내역을 업로드하고 싶은 채팅방에서 우측 상단의 햄버거 옵션을 선택하세요');
+        text = '채팅내역을 업로드하고 싶은 채팅방에서 우측 상단의 햄버거 옵션을 선택하세요';
       case 1:
-        return const Text('화면 우측 하단에 있는 톱니바퀴를 선택하세요.');
+        text = '화면 우측 하단에 있는 톱니바퀴를 선택하세요.';
       case 2:
-        return const Text('채팅방 설정 메뉴 중 대화 내용 내보내기를 선택하세요.');
+        text = '채팅방 설정 메뉴 중 대화 내용 내보내기를 선택하세요.';
       default:
-        return const Text('대화 내용 내보내기 메뉴 중 모든 메세지 내부저장소에 저장을 선택하세요.');
+        text = '대화 내용 내보내기 메뉴 중 모든 메세지 내부저장소에 저장을 선택하세요.';
     }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(text, textAlign: TextAlign.center,),
+    );
   }
 }
