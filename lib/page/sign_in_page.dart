@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:http/http.dart' as http;
+
 import 'package:untitled1/page/navigate_page.dart';
 import 'package:untitled1/page/sign_up_page.dart';
 import 'package:untitled1/util/app_color.dart';
@@ -25,8 +30,39 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    //TODO 로그인 로직 구현하기
+  Future<String> _loginRequest(String userId, String password) async {
+    final response = await http.post(
+      Uri.parse('http://13.209.182.60:8080/api/v1/user/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'loginId': userId,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var token = jsonDecode(response.body)['accessToken'];
+      return token;
+    } else {
+      throw Exception('Failed to login');
+    }
+  }
+
+  Future<void> _login() async{
+    try {
+      String token = await _loginRequest(_idController.text, _passwordController.text);
+      print('로그인 성공');
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const NavigatePage()),
+            (Route<dynamic> route) => false,
+      );
+    } catch(e) {
+      print('로그인 실패 : $e');
+    }
   }
 
   @override
@@ -93,6 +129,7 @@ class _SignInPageState extends State<SignInPage> {
                 height: 60,
                 child: TextField(
                   controller: _passwordController,
+                  obscureText: true,
                   decoration: InputDecoration(
                       labelText: '비밀번호',
                       hintText: '비밀번호를 입력하세요',
@@ -113,14 +150,7 @@ class _SignInPageState extends State<SignInPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const NavigatePage()),
-                        (Route<dynamic> route) => false,
-                    );
-                  },
+                  onPressed: _login,
                   child: const Text(
                     '로그인',
                     style: TextStyle(fontSize: 24, color: Colors.white),
