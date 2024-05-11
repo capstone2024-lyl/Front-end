@@ -1,5 +1,7 @@
 import "dart:ui";
 
+import "package:flutter/material.dart";
+
 enum AppColor {
   cardColor,
   buttonColor,
@@ -10,7 +12,14 @@ enum AppColor {
   eiIndicatorColor,
   snIndicatorColor,
   tfIndicatorColor,
-  jpIndicatorColor;
+  jpIndicatorColor,
+  profileCardPurple,
+  profileCardBlack,
+  profileCardYellow,
+  profileCardBlue,
+  profileCardRed,
+  profileCardGreen,
+  ;
 
 
   Color get colors {
@@ -35,6 +44,18 @@ enum AppColor {
         return const Color(0xff64ECFF);
       case jpIndicatorColor:
         return const Color(0xffFF8BD1);
+      case profileCardPurple:
+        return const Color(0xff7140FF);
+      case profileCardBlack:
+        return Colors.black;
+      case profileCardYellow:
+        return const Color(0xffF0A40F);
+      case profileCardBlue:
+        return const Color(0xff20ACE9);
+      case profileCardRed:
+        return const Color(0xffDC0E33);
+      case profileCardGreen:
+        return const Color(0xff2D9314);
 
     }
   }
