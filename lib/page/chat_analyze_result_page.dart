@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:untitled1/page/my_profile_page.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeResultPage extends StatefulWidget {
@@ -16,6 +15,20 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
   double sn = 27;
   double tf = 82;
   double jp = 55;
+  String mbti = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _updateMbti();
+  }
+
+  void _updateMbti() {
+    ei > 50 ? mbti += 'E' : mbti += 'I';
+    sn > 50 ? mbti += 'S' : mbti += 'N';
+    tf > 50 ? mbti += 'T' : mbti += 'F';
+    jp > 50 ? mbti += 'J' : mbti += 'P';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +46,11 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                 )),
           ),
           const SizedBox(
-            height: 30,
+            height: 10,
           ),
           Container(
             width: 380,
-            height: 450,
+            height: 600,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -57,11 +70,14 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
                   child: Text(
                     '영재님이 업로드한 채팅을 통해 \nMBTI를 분석했어요',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 _buildIndicator(
@@ -84,7 +100,42 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                 const SizedBox(
                   height: 10,
                 ),
+                Text(
+                  '영재님의 MBTI는 ${mbti}입니다.',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Image.asset(
+                  'assets/images/enfj.jpg',
+                  width: 290,
+                  height: 290,
+                ),
               ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: 380,
+            height: 60,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => MyProfilePage()),
+                        (route) => false);
+              },
+
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: AppColor.buttonColor.colors,
+              ),
+              child: const Text(
+                '내 카드 확인하기',
+                style: TextStyle(
+                  fontSize: 24,
+                ),
+              ),
             ),
           ),
         ],
@@ -92,8 +143,8 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
     );
   }
 
-  Widget _buildIndicator(
-      String leftLabel, String rightLabel, double percent, Color color) {
+  Widget _buildIndicator(String leftLabel, String rightLabel, double percent,
+      Color color) {
     double? width = 230;
     double? height = 30;
     return SingleChildScrollView(
@@ -101,17 +152,17 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 10.0),
+            padding: const EdgeInsets.only(left: 8.0),
             child: Text(
               leftLabel,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: (percent >=50) ? FontWeight.bold : null ,
+                fontSize: 14,
+                fontWeight: (percent >= 50) ? FontWeight.bold : null,
               ),
             ),
           ),
           const SizedBox(
-            width: 5,
+            width: 3,
           ),
           SizedBox(
             width: width,
@@ -128,74 +179,74 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                 ),
                 percent >= 50
                     ? Positioned(
-                        left: 0,
-                        child: Container(
-                          width: width * percent / 100,
-                          height: height,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: color,
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${percent.toStringAsFixed(0)}%',
-                            ),
-                          ),
-                        ),
-                      )
-                    : Positioned(
-                        right: 0,
-                        child: Container(
-                          width: width * percent / 100,
-                          height: height,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: color,
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${percent.toStringAsFixed(0)}%',
-                            ),
-                          ),
-                        ),
+                  left: 0,
+                  child: Container(
+                    width: width * percent / 100,
+                    height: height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: color,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${percent.toStringAsFixed(0)}%',
                       ),
+                    ),
+                  ),
+                )
+                    : Positioned(
+                  right: 0,
+                  child: Container(
+                    width: width * percent / 100,
+                    height: height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: color,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${percent.toStringAsFixed(0)}%',
+                      ),
+                    ),
+                  ),
+                ),
                 percent < 50
                     ? Positioned(
-                        left: 0,
-                        child: SizedBox(
-                          width: width - width * percent / 100,
-                          height: height,
-                          child: Center(
-                            child: Text(
-                              '${(100 - percent).toStringAsFixed(0)}%',
-                            ),
-                          ),
-                        ),
-                      )
-                    : Positioned(
-                        right: 0,
-                        child: SizedBox(
-                          width: width - width * percent / 100,
-                          height: height,
-                          child: Center(
-                            child: Text(
-                              '${(100 - percent).toStringAsFixed(0)}%',
-                            ),
-                          ),
-                        ),
+                  left: 0,
+                  child: SizedBox(
+                    width: width - width * percent / 100,
+                    height: height,
+                    child: Center(
+                      child: Text(
+                        '${(100 - percent).toStringAsFixed(0)}%',
                       ),
+                    ),
+                  ),
+                )
+                    : Positioned(
+                  right: 0,
+                  child: SizedBox(
+                    width: width - width * percent / 100,
+                    height: height,
+                    child: Center(
+                      child: Text(
+                        '${(100 - percent).toStringAsFixed(0)}%',
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(
-            width: 5,
+            width: 3,
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 10.0),
+            padding: const EdgeInsets.only(right: 8.0),
             child: Text(
               rightLabel,
-              style:  TextStyle(
-                fontSize: 16,
+              style: TextStyle(
+                fontSize: 14,
                 fontWeight: (percent < 50) ? FontWeight.bold : null,
               ),
             ),
