@@ -1,12 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+
 import 'package:intl/intl.dart';
+
 import 'package:permission_handler/permission_handler.dart';
+
 import 'package:untitled1/page/sign_in_page.dart';
 import 'package:untitled1/util/app_color.dart';
 import 'package:untitled1/util/format_rule.dart';
@@ -94,7 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
       //TODO 데이터를 서버로 전송하는 로직 구현해야 함
 
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => SignInPage()));
+          context, MaterialPageRoute(builder: (context) => const SignInPage()));
     }
   }
 
@@ -283,7 +285,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         obscureText: _passwordIsObscured,
                         decoration: InputDecoration(
                           hintText: '8~16자 이내 영문, 숫자, 특수 문자를 모두 사용',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordIsObscured
@@ -396,7 +398,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               hintText: _birthdayText.isEmpty
                                   ? '월 일 선택'
                                   : _birthdayText,
-                              border: OutlineInputBorder(),
+                              border: const OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (_birthday == null) {
@@ -462,7 +464,7 @@ class _SignUpPageState extends State<SignUpPage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('권한 필요'),
-          content: const Text('사진을 업로드ㅌ하려면 갤러리 접근 권한이 필요합니다.'),
+          content: const Text('사진을 업로드하려면 갤러리 접근 권한이 필요합니다.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
