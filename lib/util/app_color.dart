@@ -6,7 +6,11 @@ enum AppColor {
   notSelectedColor,
   backgroundColor,
   progressWidgetBackground,
-  testProgressIndicatorBorder;
+  testProgressIndicatorBorder,
+  eiIndicatorColor,
+  snIndicatorColor,
+  tfIndicatorColor,
+  jpIndicatorColor;
 
 
   Color get colors {
@@ -23,6 +27,15 @@ enum AppColor {
         return const Color(0xffDBDBDB);
       case testProgressIndicatorBorder:
         return const Color(0xffC7C6C5);
+      case eiIndicatorColor:
+        return const Color(0xffFD4F18);
+      case snIndicatorColor:
+        return const Color(0xff9FFF01);
+      case tfIndicatorColor:
+        return const Color(0xff64ECFF);
+      case jpIndicatorColor:
+        return const Color(0xffFF8BD1);
+
     }
   }
 }
