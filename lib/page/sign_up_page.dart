@@ -99,8 +99,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   //프로필 사진 적용 로직
-  Future<void> pickImage() async {
-    requestGalleryPermissions();
+  Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
@@ -193,12 +192,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     right: 0,
                     bottom: 0,
                     child: IconButton(
-                      onPressed: pickImage,
+                      onPressed: _requestGalleryPermissionsAndPickPhoto,
                       style: IconButton.styleFrom(
-                        side: BorderSide(color: Colors.black26),
-                        backgroundColor: Colors.white
+                          side: const BorderSide(color: Colors.black26),
+                          backgroundColor: Colors.white),
+                      icon: const Icon(
+                        Icons.camera_alt_outlined,
                       ),
-                      icon: Icon(Icons.camera_alt_outlined),
                     ),
                   )
                 ],
@@ -250,8 +250,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             onPressed: _checkUsernameAvailability,
                             style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor:
-                                    AppColor.buttonColor.colors,
+                                backgroundColor: AppColor.buttonColor.colors,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                 )),
@@ -440,32 +439,42 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   //갤러리 접근 권한 요청
-  Future<bool> requestGalleryPermissions() async {
+  Future<void> _requestGalleryPermissionsAndPickPhoto() async {
     // 사진 접근 권한 상태 확인
     var status = await Permission.photos.status;
-
     // 이미 권한이 허용된 경우
-    if (status.isGranted) {
-      print("Permission is already granted.");
-      return true;
+    if (!status.isGranted) {
+      status = await Permission.photos.request();
     }
 
     // 권한이 영구적으로 거부된 경우
     if (status.isPermanentlyDenied) {
       // 사용자에게 설정 메뉴로 이동하여 권한을 허용하도록 요청
       openAppSettings();
-      return false;
     }
 
     // 권한 요청
-    if (await Permission.photos.request().isGranted) {
+    if (status.isGranted) {
       // 권한이 허용된 경우
-      print("Permission is granted.");
-      return true;
+      _pickImage();
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('권한 필요'),
+          content: const Text('사진을 업로드ㅌ하려면 갤러리 접근 권한이 필요합니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                '확인',
+              ),
+            )
+          ],
+        ),
+      );
     }
 
     // 사용자가 권한 요청을 거부한 경우
-    return false;
   }
-
 }
