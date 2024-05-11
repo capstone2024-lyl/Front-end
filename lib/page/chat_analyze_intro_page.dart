@@ -18,6 +18,8 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  String? _fileName;
+
   @override
   void initState() {
     super.initState();
