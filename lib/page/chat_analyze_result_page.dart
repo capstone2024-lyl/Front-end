@@ -10,6 +10,7 @@ class ChatAnalyzeResultPage extends StatefulWidget {
 }
 
 class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
+  //TODO 로딩 화면 구현
   //TODO 각 MBTI 성향 별 수치 API 연동하기
   double ei = 64;
   double sn = 27;
