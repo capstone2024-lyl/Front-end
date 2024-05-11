@@ -1,5 +1,10 @@
+import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:untitled1/page/chat_analyze_result_page.dart';
+
 import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeIntroPage extends StatefulWidget {
@@ -19,17 +24,81 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
     _pageController.addListener(_updatePage);
   }
 
+  @override
+  void dispose() {
+    _pageController.removeListener(_updatePage);
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _updatePage() {
     setState(() {
       _currentPage = _pageController.page!.round();
     });
   }
 
-  @override
-  void dispose() {
-    _pageController.removeListener(_updatePage);
-    _pageController.dispose();
-    super.dispose();
+  Future<void> _requestPermissionAndPickFile() async {
+    var statusImage = await Permission.photos.status;
+    var statusVideo = await Permission.videos.status;
+    var statusAudio = await Permission.audio.status;
+    if (!statusImage.isGranted) {
+      statusImage = await Permission.photos.request();
+    }
+
+    if (!statusVideo.isGranted) {
+      statusVideo = await Permission.videos.request();
+    }
+
+    if (!statusAudio.isGranted) {
+      statusAudio = await Permission.audio.request();
+    }
+
+    if (statusImage.isGranted &&
+        statusVideo.isGranted &&
+        statusAudio.isGranted) {
+      _pickTextFile();
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('권한 필요'),
+          content: const Text('채팅 내역을 업로드하려면 저장소 접근 권한이 필요합니다.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                openAppSettings();
+              },
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Future<void> _pickTextFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['txt'],
+      allowMultiple: false,
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      setState(() {
+        _fileName = file.name;
+      });
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => ChatAnalyzeResultPage()));
+    } else {
+      print('No file selected');
+    }
+  }
+
+  //TODO 텍스트 파일 업로드
+  Future<void> _uploadFile(PlatformFile file) async {
+    //텍스트 파일 업로드 api 필요
   }
 
   @override
@@ -38,13 +107,13 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
       body: Column(
         children: <Widget>[
           const SizedBox(
-            height: 60,
+            height: 50,
           ),
           const Center(
             child: Text(
-              '채팅 내역은 분석에만 사용되고 바로 삭제돼요 !',
+              '채팅을 통한 MBTI 분석하기',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -121,7 +190,7 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
                   height: 10,
                 ),
                 Text(
-                  'Step ${_currentPage+1}',
+                  'Step ${_currentPage + 1}',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -132,13 +201,22 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
             ),
           ),
           const SizedBox(
-            height: 60,
+            height: 30,
+          ),
+          const Text(
+            '채팅 내역은 분석에만 사용되고 바로 삭제돼요!',
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          const SizedBox(
+            height: 30,
           ),
           SizedBox(
             width: 380,
             height: 60,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: _requestPermissionAndPickFile,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.buttonColor.colors,
                 foregroundColor: Colors.white,
@@ -150,7 +228,7 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -171,7 +249,7 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
 
   Widget _buildStepText(int index) {
     String text;
-    switch(index) {
+    switch (index) {
       case 0:
         text = '채팅내역을 업로드하고 싶은 채팅방에서 우측 상단의 햄버거 옵션을 선택하세요';
       case 1:
@@ -183,7 +261,10 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
     }
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text(text, textAlign: TextAlign.center,),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }
