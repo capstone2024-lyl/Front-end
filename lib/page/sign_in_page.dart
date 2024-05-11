@@ -50,9 +50,11 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  Future<void> _login() async{
+  Future<void> _login() async {
+    FocusScope.of(context).unfocus();
     try {
-      String token = await _loginRequest(_idController.text, _passwordController.text);
+      String token = await _loginRequest(
+          _idController.text, _passwordController.text);
       print('로그인 성공');
       Navigator.pushAndRemoveUntil(
         context,
@@ -60,8 +62,12 @@ class _SignInPageState extends State<SignInPage> {
             builder: (context) => const NavigatePage()),
             (Route<dynamic> route) => false,
       );
-    } catch(e) {
-      print('로그인 실패 : $e');
+    } catch (e) {
+      //로그인 실패시
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('존재하지 않는 계정입니다.'),
+          duration: Duration(seconds: 2),),
+      );
     }
   }
 
@@ -73,7 +79,6 @@ class _SignInPageState extends State<SignInPage> {
       },
       child: Scaffold(
         body: SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
           child: Column(
             children: <Widget>[
               const SizedBox(
