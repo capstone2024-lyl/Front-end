@@ -47,6 +47,8 @@ dependencies:
   flutter_localization: ^0.2.0
   http: ^1.2.1
   flutter_launcher_icons: ^0.13.1
+  app_usage: ^3.0.1
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:
