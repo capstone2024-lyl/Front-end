@@ -49,6 +49,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   app_usage: ^3.0.1
   package_info_plus: ^8.0.0
+  html: ^0.15.4
 
 dev_dependencies:
   flutter_test:
