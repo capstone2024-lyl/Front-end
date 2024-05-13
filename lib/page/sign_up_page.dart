@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import 'package:http/http.dart' as http;
+
 import 'package:image_cropper/image_cropper.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 import 'package:intl/intl.dart';
@@ -22,10 +26,6 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   CroppedFile? _croppedFile;
-
-  //TODO 입력한 정보들을 서버로 넘기는 작업 필요
-  //TODO User 클래스로 묶기
-  //TODO 서버로 보낼 정보: 프로필 사진, 아이디, 비밀번호, 이름, 생일
 
   bool _isSubmitting = false;
   final _formKey = GlobalKey<FormState>();
@@ -68,35 +68,82 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  //TODO 서버에 중복되는 아이디가 있는지 확인
+  Future<bool> _checkIdDuplicated() async {
+    final url = Uri.parse(
+        'http://13.209.182.60:8080/api/v1/user/login/is-duplicated?loginId=${_idController.text}');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      if (response.body == 'can use') {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      throw Exception('Failed to check login ID');
+    }
+  }
 
   void _checkUsernameAvailability() async {
     FocusScope.of(context).unfocus();
-    //서버에 중복 확인 요청 해야됨
-    //_idError ='아이디가 중복됩니다.';
     if (_idController.text.isEmpty) {
       setState(() {
         _idError = '아이디를 입력해주세요';
       });
+      return;
     } else if (!FormatRule.ID_FORMAT.regex.hasMatch(_idController.text)) {
       setState(() {
         _idError = '아이디는 6~12자의 영문, 숫자만 사용 가능합니다';
       });
+      return;
+    }
+    bool result = await _checkIdDuplicated();
+    if (!result) {
+      setState(() {
+        _idError = '';
+        _idIsAvailable = true;
+      });
     } else {
-      _idError = '';
-      _idIsAvailable = true;
+      setState(() {
+        _idError = '아이디가 중복됩니다.';
+      });
+    }
+  }
+
+  Future<bool> _requestSignUp() async {
+    final url = Uri.parse('http://13.209.182.60:8080/api/v1/user/sign-up');
+
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': ' application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'loginId': _idController.text,
+        'password': _passwordController.text,
+        'passwordCheck': _confirmPasswordController.text,
+        'name': _nameController.text,
+        'birthday': DateFormat('yyyy-MM-dd').format(_birthday!),
+      }),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Failed to Submit');
     }
   }
 
   void _submitForm() async {
-    if (_formKey.currentState!.validate() && _idIsAvailable) {
+    bool result = await _requestSignUp();
+    if (_formKey.currentState!.validate() && _idIsAvailable && result) {
       setState(() {
         _isSubmitting = true;
       });
-      //TODO 데이터를 서버로 전송하는 로직 구현해야 함
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const SignInPage()));
+      if (mounted) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const SignInPage()));
+      }
     }
   }
 
@@ -248,8 +295,26 @@ class _SignUpPageState extends State<SignUpPage> {
                           width: 110,
                           height: 60,
                           child: ElevatedButton(
-                            //TODO 중복확인 로직 구현
-                            onPressed: _checkUsernameAvailability,
+                            onPressed: () async {
+                              _checkUsernameAvailability();
+                              if (_idIsAvailable) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('알림'),
+                                    content: const Text('사용 가능한 아이디입니다.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('확인'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: AppColor.buttonColor.colors,
