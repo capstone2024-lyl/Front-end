@@ -50,6 +50,7 @@ dependencies:
   app_usage: ^3.0.1
   package_info_plus: ^8.0.0
   html: ^0.15.4
+  installed_apps: ^1.5.0
 
 dev_dependencies:
   flutter_test:
