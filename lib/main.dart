@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:untitled1/page/application_analyze_intro_page.dart';
 import 'package:untitled1/page/application_analyze_result_page.dart';
 import 'package:untitled1/page/navigate_page.dart';
 import 'package:untitled1/page/sign_in_page.dart';
@@ -38,8 +39,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: NavigatePage(),
-      //home: SignInPage(),
-      home: ApplicationAnalyzeResultPage(),
+      home: SignInPage(),
+      //home: ApplicationAnalyzeIntroPage(),
     );
   }
 }
