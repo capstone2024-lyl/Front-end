@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -18,10 +17,10 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  //TODO 로그인 로직 구현 + 각 버튼 별 메소드 구현
-
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  bool _isPasswordObsecured = true;
 
   @override
   void dispose() {
@@ -53,21 +52,25 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> _login() async {
     FocusScope.of(context).unfocus();
     try {
-      String token = await _loginRequest(
-          _idController.text, _passwordController.text);
-      print('로그인 성공');
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const NavigatePage()),
-            (Route<dynamic> route) => false,
-      );
+      String token =
+          await _loginRequest(_idController.text, _passwordController.text);
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const NavigatePage()),
+          (Route<dynamic> route) => false,
+        );
+      }
     } catch (e) {
       //로그인 실패시
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('존재하지 않는 계정입니다.'),
-          duration: Duration(seconds: 2),),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('존재하지 않는 계정입니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
@@ -129,15 +132,31 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(
                 height: 10,
               ),
-              Container(
+              SizedBox(
                 width: 380,
                 height: 60,
                 child: TextField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: _isPasswordObsecured,
                   decoration: InputDecoration(
                       labelText: '비밀번호',
                       hintText: '비밀번호를 입력하세요',
+                      suffixIcon: IconButton(
+                        icon: _isPasswordObsecured
+                            ? const Icon(
+                                Icons.visibility_off_outlined,
+                                size: 15,
+                              )
+                            : const Icon(
+                                Icons.visibility_outlined,
+                                size: 15,
+                              ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordObsecured = !_isPasswordObsecured;
+                          });
+                        },
+                      ),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0))),
                 ),
