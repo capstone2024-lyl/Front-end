@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:untitled1/page/sign_in_page.dart';
+import 'package:untitled1/services/api_service.dart';
 import 'package:untitled1/util/app_color.dart';
 import 'package:untitled1/util/format_rule.dart';
 
@@ -25,6 +26,8 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final ApiService _apiService = ApiService();
+  
   CroppedFile? _croppedFile;
 
   bool _isSubmitting = false;
@@ -67,23 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
       });
     });
   }
-
-  Future<bool> _checkIdDuplicated() async {
-    final url = Uri.parse(
-        'http://13.209.182.60:8080/api/v1/user/login/is-duplicated?loginId=${_idController.text}');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      if (response.body == 'can use') {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      throw Exception('Failed to check login ID');
-    }
-  }
-
+  
   void _checkUsernameAvailability() async {
     FocusScope.of(context).unfocus();
     if (_idController.text.isEmpty) {
@@ -97,7 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
       });
       return;
     }
-    bool result = await _checkIdDuplicated();
+    bool result = await _apiService.checkIdDuplicated(_idController.text);
     if (!result) {
       setState(() {
         _idError = '';
@@ -525,21 +512,23 @@ class _SignUpPageState extends State<SignUpPage> {
       // 권한이 허용된 경우
       _pickImage();
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('권한 필요'),
-          content: const Text('사진을 업로드하려면 갤러리 접근 권한이 필요합니다.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                '확인',
-              ),
-            )
-          ],
-        ),
-      );
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('권한 필요'),
+            content: const Text('사진을 업로드하려면 갤러리 접근 권한이 필요합니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text(
+                  '확인',
+                ),
+              )
+            ],
+          ),
+        );
+      }
     }
 
     // 사용자가 권한 요청을 거부한 경우

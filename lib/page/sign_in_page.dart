@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:untitled1/page/navigate_page.dart';
 import 'package:untitled1/page/sign_up_page.dart';
+import 'package:untitled1/services/api_service.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class SignInPage extends StatefulWidget {
@@ -19,8 +20,9 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
-  bool _isPasswordObsecured = true;
+  bool _isPasswordObscured = true;
 
   @override
   void dispose() {
@@ -29,31 +31,12 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
-  Future<String> _loginRequest(String userId, String password) async {
-    final response = await http.post(
-      Uri.parse('http://13.209.182.60:8080/api/v1/user/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(<String, String>{
-        'loginId': userId,
-        'password': password,
-      }),
-    );
 
-    if (response.statusCode == 200) {
-      var token = jsonDecode(response.body)['accessToken'];
-      return token;
-    } else {
-      throw Exception('Failed to login');
-    }
-  }
 
   Future<void> _login() async {
     FocusScope.of(context).unfocus();
     try {
-      String token =
-          await _loginRequest(_idController.text, _passwordController.text);
+          await _apiService.login(_idController.text, _passwordController.text);
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
@@ -137,12 +120,12 @@ class _SignInPageState extends State<SignInPage> {
                 height: 60,
                 child: TextField(
                   controller: _passwordController,
-                  obscureText: _isPasswordObsecured,
+                  obscureText: _isPasswordObscured,
                   decoration: InputDecoration(
                       labelText: '비밀번호',
                       hintText: '비밀번호를 입력하세요',
                       suffixIcon: IconButton(
-                        icon: _isPasswordObsecured
+                        icon: _isPasswordObscured
                             ? const Icon(
                                 Icons.visibility_off_outlined,
                                 size: 15,
@@ -153,7 +136,7 @@ class _SignInPageState extends State<SignInPage> {
                               ),
                         onPressed: () {
                           setState(() {
-                            _isPasswordObsecured = !_isPasswordObsecured;
+                            _isPasswordObscured = !_isPasswordObscured;
                           });
                         },
                       ),
@@ -212,7 +195,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SignUpPage()));
+                              builder: (context) => const SignUpPage()));
                     },
                     child: const Text(
                       '회원가입',
@@ -250,14 +233,15 @@ class _SignInPageState extends State<SignInPage> {
                   //TODO 구글 로그인 구현
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      side: const BorderSide(
-                        color: Colors.black38,
-                        width: 1,
-                      )),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    side: const BorderSide(
+                      color: Colors.black38,
+                      width: 1,
+                    ),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
