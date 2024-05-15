@@ -60,22 +60,24 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
         statusAudio.isGranted) {
       _pickTextFile();
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('권한 필요'),
-          content: const Text('채팅 내역을 업로드하려면 저장소 접근 권한이 필요합니다.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                openAppSettings();
-              },
-              child: const Text('확인'),
-            ),
-          ],
-        ),
-      );
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('권한 필요'),
+            content: const Text('채팅 내역을 업로드하려면 저장소 접근 권한이 필요합니다.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  openAppSettings();
+                },
+                child: const Text('확인'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -91,8 +93,10 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
       setState(() {
         _fileName = file.name;
       });
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => ChatAnalyzeResultPage()));
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const ChatAnalyzeResultPage()));
+      }
     } else {
       print('No file selected');
     }

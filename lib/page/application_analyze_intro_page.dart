@@ -1,15 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app_usage/app_usage.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
-import 'package:untitled1/util/app_color.dart';
 
 class ApplicationAnalyzeIntroPage extends StatefulWidget {
   const ApplicationAnalyzeIntroPage({super.key});
