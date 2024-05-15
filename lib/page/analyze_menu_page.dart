@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled1/models/user_info.dart';
 
 import 'package:untitled1/page/application_analyze_intro_page.dart';
 import 'package:untitled1/page/chat_analyze_intro_page.dart';
 import 'package:untitled1/page/photo_analyze_intro_page.dart';
 import 'package:untitled1/page/youtube_analyze_intro_page.dart';
+import 'package:untitled1/providers/user_info_provider.dart';
 
 import 'package:untitled1/util/app_color.dart';
 import 'package:untitled1/util/progress_painter.dart';
@@ -30,55 +33,67 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 50,
-          ),
-          _showTestProgress(),
-          const SizedBox(
-            height: 150,
-          ),
-          const Text(
-            '나를 알아보는 4가지 분석',
-            style: TextStyle(
-              fontSize: 24,
-            ),
-          ),
-          const Divider(
-            indent: 30,
-            endIndent: 30,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: Column(
+      body: Consumer<UserInfoProvider>(
+        builder: (context, userInfoProvider, child) {
+          if (userInfoProvider.userInfo == null) {
+            userInfoProvider.loadUserInfo();
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            final userInfo = userInfoProvider.userInfo!;
+            return Column(
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _baseCardWidget(_buildChatAnalyzeCard()),
-                    _baseCardWidget(_buildAppAnalyzeCard()),
-                  ],
-                ),
                 const SizedBox(
-                  height: 20,
+                  height: 50,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _baseCardWidget(_buildYoutubeAnalyzeCard()),
-                    _baseCardWidget(_buildPhotoAnalyzeCarD()),
-                  ],
+                _showTestProgress(userInfo),
+                const SizedBox(
+                  height: 150,
                 ),
+                const Text(
+                  '나를 알아보는 4가지 분석',
+                  style: TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                const Divider(
+                  indent: 30,
+                  endIndent: 30,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _baseCardWidget(_buildChatAnalyzeCard()),
+                          _baseCardWidget(_buildAppAnalyzeCard()),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _baseCardWidget(_buildYoutubeAnalyzeCard()),
+                          _baseCardWidget(_buildPhotoAnalyzeCarD()),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               ],
-            ),
-          )
-        ],
+            );
+          }
+        },
       ),
     );
   }
 
-  Widget _showTestProgress() {
+  Widget _showTestProgress(UserInfo? userInfo) {
     return Stack(
       alignment: Alignment.centerLeft,
       children: [
@@ -123,8 +138,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           ),
         ),
         Positioned(
-          left: 65,
-          top: 65,
+          left: 72,
+          top: 64,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -148,7 +163,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           top: 30,
           child: Text(
             //TODO 서버에서 user 정보 가져오기
-            '영재님의 카드 완성까지 \n   네 단계 남았습니다!',
+            '${userInfo!.name.substring(1,3)}님의 카드 완성까지 \n   네 단계 남았습니다!',
             style: TextStyle(
               fontSize: 18,
             ),
