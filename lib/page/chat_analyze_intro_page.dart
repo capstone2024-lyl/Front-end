@@ -1,20 +1,27 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:untitled1/page/chat_analyze_result_page.dart';
+import 'package:untitled1/services/api_service.dart';
 
 import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeIntroPage extends StatefulWidget {
-  const ChatAnalyzeIntroPage({super.key});
+  final VoidCallback onNavigateToProfile;
+  const ChatAnalyzeIntroPage({super.key, required this.onNavigateToProfile});
 
   @override
   State<ChatAnalyzeIntroPage> createState() => _ChatAnalyzeIntroPageState();
 }
 
 class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
+
+  final ApiService _apiService = ApiService();
+
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -87,18 +94,18 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
       allowedExtensions: ['txt'],
       allowMultiple: false,
     );
-
     if (result != null) {
-      PlatformFile file = result.files.first;
-      setState(() {
-        _fileName = file.name;
-      });
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const ChatAnalyzeResultPage()));
+      PlatformFile platformFile = result.files.first;
+      File file = File(platformFile.path!);
+      String path = file.path;
+      bool requestResult =
+          await _apiService.uploadChattingFile('\\storage\\emulated\\0\\Download\\KakaoTalk', file);
+      if (requestResult) {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => ChatAnalyzeResultPage(onNavigateToProfile: widget.onNavigateToProfile,)));
+        }
       }
-    } else {
-      print('No file selected');
     }
   }
 

@@ -3,7 +3,8 @@ import 'package:untitled1/page/my_profile_page.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeResultPage extends StatefulWidget {
-  const ChatAnalyzeResultPage({super.key});
+  final VoidCallback onNavigateToProfile;
+  const ChatAnalyzeResultPage({super.key, required this.onNavigateToProfile});
 
   @override
   State<ChatAnalyzeResultPage> createState() => _ChatAnalyzeResultPageState();
@@ -12,7 +13,7 @@ class ChatAnalyzeResultPage extends StatefulWidget {
 class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
   //TODO 로딩 화면 구현
   //TODO 각 MBTI 성향 별 수치 API 연동하기
-  double ei = 64;
+  double ei = 10;
   double sn = 27;
   double tf = 82;
   double jp = 55;
@@ -102,7 +103,7 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                   height: 10,
                 ),
                 Text(
-                  '영재님의 MBTI는 ${mbti}입니다.',
+                  '영재님의 MBTI는 $mbti입니다.',
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                 ),
@@ -122,9 +123,8 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
             height: 60,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => MyProfilePage()),
-                        (route) => false);
+                Navigator.of(context).pop();
+                widget.onNavigateToProfile();
               },
 
               style: ElevatedButton.styleFrom(
@@ -181,7 +181,7 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                 percent >= 50
                     ? Positioned(
                   left: 0,
-                  child: Container(
+                        child: Container(
                     width: width * percent / 100,
                     height: height,
                     decoration: BoxDecoration(
@@ -198,7 +198,7 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                     : Positioned(
                   right: 0,
                   child: Container(
-                    width: width * percent / 100,
+                    width: width * (100-percent) / 100,
                     height: height,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
@@ -206,7 +206,7 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                     ),
                     child: Center(
                       child: Text(
-                        '${percent.toStringAsFixed(0)}%',
+                          '${(100 - percent).toStringAsFixed(0)}%',
                       ),
                     ),
                   ),
@@ -215,11 +215,11 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                     ? Positioned(
                   left: 0,
                   child: SizedBox(
-                    width: width - width * percent / 100,
+                    width: width * percent / 100,
                     height: height,
                     child: Center(
                       child: Text(
-                        '${(100 - percent).toStringAsFixed(0)}%',
+                        '${percent.toStringAsFixed(0)}%',
                       ),
                     ),
                   ),
