@@ -68,7 +68,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _baseCardWidget(_buildChatAnalyzeCard()),
+                          _baseCardWidget(_buildChatAnalyzeCard(userInfo)),
                           _baseCardWidget(_buildAppAnalyzeCard()),
                         ],
                       ),
@@ -164,7 +164,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           child: Text(
             //TODO 서버에서 user 정보 가져오기
             '${userInfo!.name.substring(1,3)}님의 카드 완성까지 \n   네 단계 남았습니다!',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
             ),
           ),
@@ -248,7 +248,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
     );
   }
 
-  Widget _buildChatAnalyzeCard() {
+  Widget _buildChatAnalyzeCard(UserInfo userInfo) {
     return Material(
       color: AppColor.cardColor.colors, // Material 색상 설정
       borderRadius: BorderRadius.circular(20), // 둥근 모서리 설정
@@ -256,7 +256,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
       child: InkWell(
         onTap: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ChatAnalyzeIntroPage()));
+              MaterialPageRoute(builder: (context) => ChatAnalyzeIntroPage(onNavigateToProfile: widget.onNavigateToProfile,)));
         },
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -297,13 +297,13 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               endIndent: 10,
             ),
             //TODO 서버에서 mbti 검사 결과 가져오기
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 20.0),
+                padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  '현재 MBTI : ???',
-                  style: TextStyle(fontSize: 14),
+                  '현재 MBTI : ${userInfo.mbti ?? '???'}',
+                  style: const TextStyle(fontSize: 14,),
                 ),
               ),
             )
@@ -313,7 +313,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
     );
   }
 
-  Widget _buildAppAnalyzeCard() {
+  Widget _buildAppAnalyzeCard(UserInfo userInfo) {
     return Material(
       color: AppColor.cardColor.colors, // Material 색상 설정
       borderRadius: BorderRadius.circular(20), // 둥근 모서리 설정
@@ -358,14 +358,15 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               endIndent: 10,
             ),
             //TODO 서버에서 결과 정보 받아오기
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 22.0),
+                padding: const EdgeInsets.only(left: 22.0),
                 child: Column(
                   children: [
                     Text(
-                      '1위: ???',
+                      '1위: ${''
+                      }',
                       style: TextStyle(
                         fontSize: 14,
                       ),
