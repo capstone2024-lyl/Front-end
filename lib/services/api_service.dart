@@ -73,7 +73,9 @@ class ApiService {
     }
 
     List<int> fileBytes = await file.readAsBytes();
-    String fileName = file.path.split('/').last;
+    String fileName = file.path
+        .split('/')
+        .last;
     final httpFile = http.MultipartFile.fromBytes(
       'file',
       fileBytes,
@@ -93,6 +95,65 @@ class ApiService {
     } else {
       print('failed to upload');
       return false;
+    }
+  }
+
+  Future<void> sendAppUsageData(List<dynamic> data) async {
+    final token = await _storageService.getToken();
+    final url = Uri.parse('$_baseUrl/app/appUsage');
+
+    if (token == null) {
+      throw Exception('No token Found');
+    }
+
+    try {
+      final jsonString = jsonEncode(data);
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: utf8.encode(jsonString),
+      );
+      if (response.statusCode == 200) {
+        print('success');
+      } else {
+        print('failed');
+      }
+    } catch (e) {
+      print('[Error] : 앱 사용시간 api 오류');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAppUsageTopTen() async {
+    final token = await _storageService.getToken();
+    final url = Uri.parse('$_baseUrl/app/findTop10');
+
+    if (token == null) {
+      throw Exception('No token Found');
+    }
+    try {
+      final response = await http.get(url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
+        List<Map<String, dynamic>> appUsageData = List<
+            Map<String, dynamic>>.from(jsonData);
+        print(appUsageData);
+        return appUsageData;
+      } else {
+        print('failed ${response.statusCode}');
+        print(token.toString());
+        return [];
+      }
+    } catch (e) {
+      print('[error] 앱 사용 정보를 가져오는데 에러가 발생함');
+      return [];
     }
   }
 }
