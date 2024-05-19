@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
-import 'package:intl/intl.dart';
+
 
 class UserInfo {
   String name;
@@ -9,7 +8,7 @@ class UserInfo {
   String? mbti;
   List<Map<String, dynamic>> appList;
   List<String> nickname;
-  String? mostUsedApp;
+  List<Map<String, dynamic>> mostUsedApp = [];
 
   //TODO 사진 데이터
   UserInfo({
@@ -18,7 +17,6 @@ class UserInfo {
     required this.mbti,
     required this.appList,
     required this.nickname,
-    required this.mostUsedApp,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
@@ -30,16 +28,9 @@ class UserInfo {
           .map((app) => {
                 'appPackageName': app['appPackageName'].toString(),
                 'usageTime': app['usageTime'] as int,
-              })
-          .toList(),
+              }).toList(),
       nickname:
           json['nickname'] != null ? List<String>.from(json['nickname']) : [],
-      mostUsedApp: (json['apps'] as List<dynamic>)
-          .map((app) => {
-        'appPackageName': app['appPackageName'].toString(),
-        'usageTime': app['usageTime'] as int,
-      })
-          .toList()[0]['appPackageName'].toString(),
     );
   }
 
@@ -55,17 +46,24 @@ class UserInfo {
     }
   }
 
-  Future<void> updateMostUsedApp() async {
+  Future<void> initMostUsedApp() async {
+    mostUsedApp.clear();
     if (appList.isNotEmpty) {
-      final appPackageName = appList[0]['appPackageName'].toString();
-      mostUsedApp = await _getAppName(appPackageName);
+      for (var appPackageName in appList) {
+        final appInfo = await _getAppInfo(appPackageName['appPackageName']);
+        mostUsedApp.add({
+          'appName' : appInfo.name,
+          'usageTime' : appPackageName['usageTime'],
+          'appIcon' : appInfo.icon,
+        });
+      }
     } else {
-      mostUsedApp = null;
+      return;
     }
   }
 
-  Future<String> _getAppName(String packageName) async {
+  Future<AppInfo> _getAppInfo(String packageName) async {
     AppInfo app = await InstalledApps.getAppInfo(packageName);
-    return app.name;
+    return app;
   }
 }

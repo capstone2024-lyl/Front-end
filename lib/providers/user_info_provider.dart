@@ -11,16 +11,16 @@ class UserInfoProvider  with ChangeNotifier {
   Future<void> loadUserInfo() async {
     try {
       _userInfo = await _apiService.fetchUserInfo();
-      updateMostUsedApp();
+      await _userInfo!.initMostUsedApp();
+      notifyListeners();
     } catch (e) {
       print('Failed to load user info: $e');
     }
   }
 
-  Future<void> updateMostUsedApp() async {
-    if(_userInfo != null) {
-      await _userInfo!.updateMostUsedApp();
-      notifyListeners();
-    }
+  Future<void> upDataUserAppUsageData(List<Map<String,dynamic>> appUsageData) async {
+    _userInfo!.appList = appUsageData;
+    await _userInfo!.initMostUsedApp();
+    notifyListeners();
   }
 }
