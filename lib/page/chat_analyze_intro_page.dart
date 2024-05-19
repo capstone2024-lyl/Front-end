@@ -109,11 +109,6 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
     }
   }
 
-  //TODO 텍스트 파일 업로드
-  Future<void> _uploadFile(PlatformFile file) async {
-    //텍스트 파일 업로드 api 필요
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
