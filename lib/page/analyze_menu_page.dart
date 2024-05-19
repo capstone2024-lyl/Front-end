@@ -69,7 +69,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           _baseCardWidget(_buildChatAnalyzeCard(userInfo)),
-                          _baseCardWidget(_buildAppAnalyzeCard()),
+                          _baseCardWidget(_buildAppAnalyzeCard(userInfo)),
                         ],
                       ),
                       const SizedBox(
@@ -78,8 +78,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _baseCardWidget(_buildYoutubeAnalyzeCard()),
-                          _baseCardWidget(_buildPhotoAnalyzeCarD()),
+                          _baseCardWidget(_buildYoutubeAnalyzeCard(userInfo)),
+                          _baseCardWidget(_buildPhotoAnalyzeCarD(userInfo)),
                         ],
                       ),
                     ],
@@ -162,8 +162,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           right: 55,
           top: 30,
           child: Text(
-            //TODO 서버에서 user 정보 가져오기
-            '${userInfo!.name.substring(1,3)}님의 카드 완성까지 \n   네 단계 남았습니다!',
+            //TODO 서버에서 user 검사 진행 정보 가져오기
+            '${userInfo!.name.substring(1, 3)}님의 카드 완성까지 \n   네 단계 남았습니다!',
             style: const TextStyle(
               fontSize: 18,
             ),
@@ -255,8 +255,12 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
       clipBehavior: Clip.antiAlias, // 클리핑 행동 설정
       child: InkWell(
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ChatAnalyzeIntroPage(onNavigateToProfile: widget.onNavigateToProfile,)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatAnalyzeIntroPage(
+                        onNavigateToProfile: widget.onNavigateToProfile,
+                      )));
         },
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -296,14 +300,15 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               indent: 10,
               endIndent: 10,
             ),
-            //TODO 서버에서 mbti 검사 결과 가져오기
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
                   '현재 MBTI : ${userInfo.mbti ?? '???'}',
-                  style: const TextStyle(fontSize: 14,),
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
                 ),
               ),
             )
@@ -322,10 +327,11 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
         onTap: () {
           // 탭 이벤트 처리
           Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ApplicationAnalyzeIntroPage()),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ApplicationAnalyzeIntroPage(
+                        onNavigateToProfile: widget.onNavigateToProfile,
+                      )));
         },
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -363,24 +369,33 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 22.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      '1위: ${''
-                      }',
-                      style: TextStyle(
-                        fontSize: 14,
+                    SizedBox(
+                      width: 120,
+                      child: Text(
+                        '1위: ${userInfo.mostUsedApp.isNotEmpty ? userInfo.mostUsedApp[0]['appName'] : '???'}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                    Text(
-                      '2위: ???',
-                      style: TextStyle(
-                        fontSize: 14,
+                    SizedBox(
+                      width: 120,
+                      child: Text(
+                        '2위: ${userInfo.mostUsedApp.length >= 2 ? userInfo.mostUsedApp[1]['appName'] : '???'}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                    Text(
-                      '3위: ???',
-                      style: TextStyle(
-                        fontSize: 14,
+                    SizedBox(
+                      width: 120,
+                      child: Text(
+                        '3위: ${userInfo.mostUsedApp.length >= 3 ? userInfo.mostUsedApp[2]['appName'] : '???'}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
@@ -393,7 +408,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
     );
   }
 
-  Widget _buildYoutubeAnalyzeCard() {
+  Widget _buildYoutubeAnalyzeCard(UserInfo userInfo) {
     return Material(
       color: AppColor.cardColor.colors, // Material 색상 설정
       borderRadius: BorderRadius.circular(20), // 둥근 모서리 설정
@@ -462,7 +477,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
     );
   }
 
-  Widget _buildPhotoAnalyzeCarD() {
+  Widget _buildPhotoAnalyzeCarD(UserInfo userInfo) {
     return Material(
       color: AppColor.cardColor.colors, // Material 색상 설정
       borderRadius: BorderRadius.circular(20), // 둥근 모서리 설정
