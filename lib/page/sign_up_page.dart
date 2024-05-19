@@ -71,7 +71,7 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
   
-  void _checkUsernameAvailability() async {
+  Future<void> _checkUsernameAvailability() async {
     FocusScope.of(context).unfocus();
     if (_idController.text.isEmpty) {
       setState(() {
@@ -283,7 +283,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           height: 60,
                           child: ElevatedButton(
                             onPressed: () async {
-                              _checkUsernameAvailability();
+                              await _checkUsernameAvailability();
+                              print(_idIsAvailable);
                               if (_idIsAvailable) {
                                 showDialog(
                                   context: context,
