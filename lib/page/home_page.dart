@@ -18,13 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<UserInfoProvider>(context, listen: false).loadUserInfo();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +31,11 @@ class _HomePageState extends State<HomePage> {
             );
           } else {
             final userInfo = userInfoProvider.userInfo!;
+            if (userInfo.mostUsedApp.isEmpty && userInfo.appList.isNotEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
             return SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
               child: Column(
@@ -145,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         Text(
-                                          '가장 많이 사용하는 어플 : ${userInfo.mostUsedApp ?? ''}',
+                                          '가장 많이 사용하는 어플 : ${userInfo.mostUsedApp.isNotEmpty ? userInfo.mostUsedApp[0]['appName'] : '???'}',
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
