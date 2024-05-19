@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -31,12 +32,10 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
-
-
   Future<void> _login() async {
     FocusScope.of(context).unfocus();
     try {
-          await _apiService.login(_idController.text, _passwordController.text);
+      await _apiService.login(_idController.text, _passwordController.text);
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
@@ -231,7 +230,7 @@ class _SignInPageState extends State<SignInPage> {
                 height: 60,
                 child: ElevatedButton(
                   //TODO 구글 로그인 구현
-                  onPressed: () {},
+                  onPressed: signInWithGoogle,
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
@@ -258,10 +257,42 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
               ),
+              ElevatedButton(
+                onPressed: signOut,
+                child: const Text(
+                  '로그아웃',
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> signInWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'profile',
+      ],
+      serverClientId: '748389893868-o38se8gksu0u8ihnia6gc3e5bbu42pnr.apps.googleusercontent.com',
+    );
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+    if (googleUser != null) {
+      print(googleAuth);
+      String? idToken = googleAuth!.idToken;
+      print('name = ${googleUser.displayName}');
+      print('email= ${googleUser.email}');
+      print('id =${googleUser.id}');
+      print('OAuth2.0=${idToken}');
+      print('access token= ${googleAuth!.accessToken}');
+    }
+  }
+
+  void signOut() async {
+    await GoogleSignIn().signOut();
   }
 }
