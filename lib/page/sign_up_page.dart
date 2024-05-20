@@ -284,7 +284,6 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: ElevatedButton(
                             onPressed: () async {
                               await _checkUsernameAvailability();
-                              print(_idIsAvailable);
                               if (_idIsAvailable) {
                                 showDialog(
                                   context: context,
