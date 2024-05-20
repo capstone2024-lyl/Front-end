@@ -1,6 +1,9 @@
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:android_intent_plus/flag.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app_usage/app_usage.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -27,6 +30,7 @@ class _ApplicationAnalyzeIntroPageState
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  static const platform = MethodChannel('com.example.untitled1/usage_access');
 
   @override
   void initState() {
@@ -46,28 +50,55 @@ class _ApplicationAnalyzeIntroPageState
     });
   }
 
-  Future<void> _getUsageStats() async {
+  Future<bool> _checkUsageAccessPermission() async {
+    try {
+      final bool result = await platform.invokeMethod('checkUsageAccess');
+      return result;
+    } on PlatformException catch (e) {
+      print("Failed to get usage access permission: '${e.message}'.");
+      return false;
+    }
+  }
+
+  Future<bool> _getUsageStats() async {
     DateTime endDate = DateTime.now();
     DateTime startDate = endDate.subtract(const Duration(days: 7));
     List<AppUsageInfo> infoList =
         await AppUsage().getAppUsage(startDate, endDate);
-    List<Map<String, Object>> appList = [];
-    for (var info in infoList) {
-      if (info.usage.inMinutes == 0) {
-        continue;
-      }
-      appList.add({
-        'appPackageName': info.packageName,
-        'usageTime': info.usage.inMinutes,
-      });
-    }
-    appList.sort((a, b) {
-      int usageTimeA = a['usageTime'] as int;
-      int usageTimeB = b['usageTime'] as int;
-      return usageTimeB.compareTo(usageTimeA);
-    });
+    bool isUsageAccessPermission = await _checkUsageAccessPermission();
 
-    _apiService.sendAppUsageData(appList);
+    if (isUsageAccessPermission ) {
+      print(infoList);
+      List<Map<String, Object>> appList = [];
+      for (var info in infoList) {
+        //print(info);
+        if (info.usage.inMinutes == 0) {
+          continue;
+        }
+        appList.add({
+          'appPackageName': info.packageName,
+          'usageTime': info.usage.inMinutes,
+        });
+      }
+      appList.sort((a, b) {
+        int usageTimeA = a['usageTime'] as int;
+        int usageTimeB = b['usageTime'] as int;
+        return usageTimeB.compareTo(usageTimeA);
+      });
+      print(appList);
+      await _apiService.sendAppUsageData(appList);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> _openUsageAccessSettings() async {
+    final intent = AndroidIntent(
+      action: 'android.settings.USAGE_ACCESS_SETTINGS',
+      flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+    );
+    await intent.launch();
   }
 
   @override
@@ -192,14 +223,35 @@ class _ApplicationAnalyzeIntroPageState
                     height: 60,
                     child: ElevatedButton(
                       onPressed: () async {
-                        await _getUsageStats();
-                        if (mounted) {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => ApplicationAnalyzeResultPage(
-                              onNavigateToProfile: widget.onNavigateToProfile,
+                        if (await _checkUsageAccessPermission()) {
+                          await _getUsageStats();
+                          if (mounted) {
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                              builder: (context) =>
+                                  ApplicationAnalyzeResultPage(
+                                onNavigateToProfile: widget.onNavigateToProfile,
+                              ),
+                            ));
+                          }
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('알림'),
+                              content: const Text(
+                                  '어플 사용시간을 분석하려면 사용정보 접근을 허용해야 합니다.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    await _openUsageAccessSettings();
+                                  },
+                                  child: const Text('확인'),
+                                ),
+                              ],
                             ),
-                          ));
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
