@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:provider/provider.dart';
@@ -47,30 +46,38 @@ class _ApplicationAnalyzeResultPageState
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-                child: SpinKitWaveSpinner(
-              color: AppColor.buttonColor.colors,
-              size: 100,
-            ));
+              child: SpinKitWaveSpinner(
+                color: AppColor.buttonColor.colors,
+                size: 100,
+              ),
+            );
           } else if (snapshot.hasError) {
             return Center(
-                child: SpinKitWaveSpinner(
-              color: AppColor.buttonColor.colors,
-              size: 100,
-            ));
+              child: SpinKitWaveSpinner(
+                color: AppColor.buttonColor.colors,
+                size: 100,
+              ),
+            );
           } else {
             return Consumer<UserInfoProvider>(
               builder: (context, userInfoProvider, child) {
                 if (userInfoProvider == null) {
                   userInfoProvider.loadUserInfo();
                   return Center(
-                      child: SpinKitWaveSpinner(
-                          color: AppColor.buttonColor.colors, size: 100));
+                    child: SpinKitWaveSpinner(
+                      color: AppColor.buttonColor.colors,
+                      size: 100,
+                    ),
+                  );
                 } else {
                   if (userInfoProvider.userInfo!.mostUsedApp.isEmpty &&
                       userInfoProvider.userInfo!.appList.isNotEmpty) {
                     return Center(
-                        child: SpinKitWaveSpinner(
-                            color: AppColor.buttonColor.colors, size: 100));
+                      child: SpinKitWaveSpinner(
+                        color: AppColor.buttonColor.colors,
+                        size: 100,
+                      ),
+                    );
                   } else {
                     final userInfo = userInfoProvider.userInfo;
                     return SingleChildScrollView(
