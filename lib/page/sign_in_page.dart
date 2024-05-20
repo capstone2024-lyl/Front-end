@@ -67,7 +67,7 @@ class _SignInPageState extends State<SignInPage> {
           child: Column(
             children: <Widget>[
               const SizedBox(
-                height: 75,
+                height: 120,
               ),
               const Center(
                 child: Text(
@@ -85,6 +85,9 @@ class _SignInPageState extends State<SignInPage> {
                 'assets/images/loading_img.png',
                 width: 200,
                 height: 200,
+              ),
+              const SizedBox(
+                height: 40,
               ),
               const Padding(
                 padding: EdgeInsets.only(left: 20.0),
@@ -216,53 +219,7 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(
                 height: 30,
               ),
-              const Text(
-                'SNS 로그인',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: 380,
-                height: 60,
-                child: ElevatedButton(
-                  //TODO 구글 로그인 구현
-                  onPressed: signInWithGoogle,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    side: const BorderSide(
-                      color: Colors.black38,
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/google_icon.svg',
-                        width: 50,
-                        height: 50,
-                      ),
-                      const Text(
-                        '구글 계정으로 로그인',
-                        style: TextStyle(fontSize: 24),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: signOut,
-                child: const Text(
-                  '로그아웃',
-                ),
-              ),
+
             ],
           ),
         ),
