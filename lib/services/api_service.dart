@@ -25,7 +25,6 @@ class ApiService {
     if (response.statusCode == 200) {
       var token = jsonDecode(response.body)['accessToken'];
       await _storageService.saveToken(token);
-      print(token);
     } else {
       throw Exception('Failed to Login');
     }
