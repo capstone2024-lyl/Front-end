@@ -419,7 +419,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const YoutubeAnalyzeIntroPage()),
+                builder: (context) => YoutubeAnalyzeIntroPage(onNavigateToProfile:  widget.onNavigateToProfile)),
           );
         },
         splashColor: Colors.transparent,
