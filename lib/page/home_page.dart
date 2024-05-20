@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:intl/intl.dart';
+
 import 'package:provider/provider.dart';
 
 import 'package:untitled1/providers/user_info_provider.dart';
@@ -26,15 +28,11 @@ class _HomePageState extends State<HomePage> {
         builder: (context, userInfoProvider, child) {
           if (userInfoProvider.userInfo == null) {
             userInfoProvider.loadUserInfo();
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
           } else {
             final userInfo = userInfoProvider.userInfo!;
             if (userInfo.mostUsedApp.isEmpty && userInfo.appList.isNotEmpty) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
             }
             return SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
