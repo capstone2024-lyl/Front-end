@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import 'package:untitled1/page/my_profile_page.dart';
+import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeResultPage extends StatefulWidget {
@@ -35,111 +38,126 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 40,
-          ),
-          const Center(
-            child: Text('MBTI 분석 결과',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                )),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            width: 380,
-            height: 600,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.7),
-                  blurRadius: 3.0,
-                  spreadRadius: 0.0,
-                  offset: const Offset(0.0, 5.0),
+      body: Consumer<UserInfoProvider>(
+        builder: (context, userProviderInfo, child) {
+          if(userProviderInfo.userInfo == null) {
+            userProviderInfo.loadUserInfo();
+            return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
+          } else {
+            final userinfo = userProviderInfo.userInfo;
+            return Column(
+              children: <Widget>[
+                const SizedBox(
+                  height: 40,
                 ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-                  child: Text(
-                    '영재님이 업로드한 채팅을 통해 \nMBTI를 분석했어요',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 0),
+                    child: Text(
+                      '${userinfo!.name.substring(1)}님이 업로드한 채팅을 통해 \nMBTI를 분석했어요',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: 380,
+                  height: 580,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.7),
+                        blurRadius: 3.0,
+                        spreadRadius: 0.0,
+                        offset: const Offset(0.0, 5.0),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text('MBTI 분석 결과',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildIndicator(
+                          "외향형 (E)", "내향형 (I)", ei, AppColor.eiIndicatorColor.colors),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      _buildIndicator(
+                          "감각형 (S)", "직관형 (N)", sn, AppColor.snIndicatorColor.colors),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      _buildIndicator(
+                          "사고형 (T)", "감정형 (F)", tf, AppColor.tfIndicatorColor.colors),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      _buildIndicator(
+                          "판단형 (J)", "인식형 (P)", jp, AppColor.jpIndicatorColor.colors),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        '${userinfo!.name.substring(1)}님의 MBTI는 $mbti입니다.',
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Image.asset(
+                        'assets/images/enfj.jpg',
+                        width: 290,
+                        height: 290,
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                _buildIndicator(
-                    "외향형 (E)", "내향형 (I)", ei, AppColor.eiIndicatorColor.colors),
-                const SizedBox(
-                  height: 10,
-                ),
-                _buildIndicator(
-                    "감각형 (S)", "직관형 (N)", sn, AppColor.snIndicatorColor.colors),
-                const SizedBox(
-                  height: 10,
-                ),
-                _buildIndicator(
-                    "사고형 (T)", "감정형 (F)", tf, AppColor.tfIndicatorColor.colors),
-                const SizedBox(
-                  height: 10,
-                ),
-                _buildIndicator(
-                    "판단형 (J)", "인식형 (P)", jp, AppColor.jpIndicatorColor.colors),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  '영재님의 MBTI는 $mbti입니다.',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                Image.asset(
-                  'assets/images/enfj.jpg',
-                  width: 290,
-                  height: 290,
+                SizedBox(
+                  width: 380,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      widget.onNavigateToProfile();
+                    },
+
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: AppColor.buttonColor.colors,
+                    ),
+                    child: const Text(
+                      '내 카드 확인하기',
+                      style: TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: 380,
-            height: 60,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.onNavigateToProfile();
-              },
+            );
+          }
+        },
 
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: AppColor.buttonColor.colors,
-              ),
-              child: const Text(
-                '내 카드 확인하기',
-                style: TextStyle(
-                  fontSize: 24,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
