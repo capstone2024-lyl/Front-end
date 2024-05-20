@@ -5,12 +5,14 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/youtube/v3.dart' as youtube;
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled1/page/youtube_analyze_result_page.dart';
 
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class YoutubeAnalyzeIntroPage extends StatefulWidget {
-  const YoutubeAnalyzeIntroPage({super.key});
+  final VoidCallback onNavigateToProfile;
+  const YoutubeAnalyzeIntroPage({super.key, required this.onNavigateToProfile});
 
   @override
   State<YoutubeAnalyzeIntroPage> createState() =>
@@ -18,6 +20,28 @@ class YoutubeAnalyzeIntroPage extends StatefulWidget {
 }
 
 class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(_updatePage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_updatePage);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _updatePage() {
+    setState(() {
+      _currentPage = _pageController.page!.round();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,14 +49,15 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
         builder: (context, userInfoProvider, child) {
           if (userInfoProvider.userInfo == null) {
             return Center(
-                child: SpinKitWaveSpinner(
-                    color: AppColor.buttonColor.colors, size: 100));
+              child: SpinKitWaveSpinner(
+                  color: AppColor.buttonColor.colors, size: 100),
+            );
           } else {
             final userInfo = userInfoProvider.userInfo;
             return Column(
               children: <Widget>[
                 const SizedBox(
-                  height: 40,
+                  height: 50,
                 ),
                 const Center(
                   child: Text(
@@ -48,11 +73,11 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                 ),
                 Container(
                   width: 380,
-                  height: 500,
+                  height: 550,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     color: Colors.white,
-                    boxShadow: [
+                    boxShadow: <BoxShadow>[
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.7),
                         blurRadius: 3.0,
@@ -62,7 +87,7 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                     ],
                   ),
                   child: Column(
-                    children: [
+                    children: <Widget>[
                       const SizedBox(
                         height: 20,
                       ),
@@ -78,7 +103,7 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                         endIndent: 30,
                       ),
                       Text(
-                        '${userInfo!.name.substring(1)}님의 Youtube 시청 기록을 기반으로'
+                        '${userInfo!.name.substring(1)}님의 Youtube 구독 목록을 기반으로'
                         '\n좋아하는 영상 카테고리를 분석해요!',
                         style: const TextStyle(
                           fontSize: 18,
@@ -86,17 +111,61 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                         ),
                         textAlign: TextAlign.center,
                       ),
+                      SizedBox(
+                        width: 300,
+                        height: 300,
+                        child: PageView(
+                          controller: _pageController,
+                          children: [
+                            Image.asset('assets/images/youtube_analyze1.png'),
+                            Image.asset('assets/images/youtube_analyze2.png'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildIndicator(0),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          _buildIndicator(1),
+                          const SizedBox(),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Step ${_currentPage + 1}',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      _buildStepText(_currentPage),
                     ],
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 20,
                 ),
                 SizedBox(
                   width: 380,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: _signInWithGoogle,
+                    onPressed: () async {
+                      bool isSignIn = await _signInWithGoogle();
+                      if (isSignIn) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => YoutubeAnalyzeResultPage(
+                                onNavigateToProfile:
+                                    widget.onNavigateToProfile)));
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: AppColor.buttonColor.colors,
@@ -109,9 +178,10 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                     ),
                   ),
                 ),
+                //TODO 로그아웃 버튼 및 메서드 삭제
                 ElevatedButton(
                   onPressed: signOut,
-                  child: Text('로그아웃'),
+                  child: const Text('로그아웃'),
                 ),
               ],
             );
@@ -121,7 +191,36 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
     );
   }
 
-  Future<void> _signInWithGoogle() async {
+  Widget _buildIndicator(int index) {
+    return Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: _currentPage == index
+            ? const Color(0xff6F6F6F)
+            : const Color(0xffD9D9D9),
+      ),
+    );
+  }
+
+  Widget _buildStepText(int index) {
+    String text;
+    switch (index) {
+      case 0:
+        text = "영상 카테고리를 분석하고자하는 구글 계정을 선택해주세요";
+      default:
+        text = "구글 계정에 대한 접근을 허용해주세요";
+    }
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 16,
+      ),
+    );
+  }
+
+  Future<bool> _signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: [
         'email',
@@ -145,7 +244,9 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
       if (googleAuth?.accessToken != null) {
         await _fetchSubscriptions(googleAuth!.accessToken!);
       }
+      return true;
     }
+    return false;
   }
 
   Future<void> _fetchSubscriptions(String accessToken) async {
