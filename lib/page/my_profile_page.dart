@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled1/util/app_color.dart';
 
@@ -20,9 +21,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
   final String _favoriteVideo = '게임 Shorts';
   final String _favoritePhotoStyle = '자연 풍경';
 
-  Color _cardColor = AppColor.profileCardYellow.colors;
+  Color _cardColor = AppColor.profileCardPurple.colors;
   bool _selectColor = false;
-
 
   //TODO 칭호 리스트로 받기
   final String _achievement = '나는 자연인이다.';
@@ -45,77 +45,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
             height: 20,
           ),
           _selectColor
-              ? Container(
-                  width: 380,
-                  height: 500,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(100),
-                      topRight: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                    border: Border.all(
-                      color: Colors.white,
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.7),
-                        blurRadius: 3.0,
-                        spreadRadius: 0.0,
-                        offset: const Offset(0.0, 5.0),
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          const Center(
-                            child: Text(
-                              '카드 배경색 설정',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const Divider(
-                            indent: 60,
-                            endIndent: 60,
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                width: 20,
-                                height: 20,
-                                color: AppColor.profileCardPurple.colors,
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Positioned(
-                        top: 20,
-                        right: 10,
-                        child: IconButton(
-                          onPressed: () {
-                            _selectColor = !_selectColor;
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+              ? _buildColorEditPage()
               : Container(
                   width: 380,
                   height: 500,
@@ -419,6 +349,163 @@ class _MyProfilePageState extends State<MyProfilePage> {
       style: TextStyle(
         color: Colors.white,
         fontSize: 20,
+      ),
+    );
+  }
+
+  Widget _buildColorEditPage() {
+    return Container(
+      width: 380,
+      height: 500,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(100),
+          topRight: Radius.circular(20),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+        border: Border.all(
+          color: Colors.white,
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.7),
+            blurRadius: 3.0,
+            spreadRadius: 0.0,
+            offset: const Offset(0.0, 5.0),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              const SizedBox(
+                height: 60,
+              ),
+              const Center(
+                child: Text(
+                  '카드 배경색 설정',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const Divider(
+                indent: 60,
+                endIndent: 60,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                width: 300,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _cardColor == AppColor.profileCardPurple.colors
+                            ? _buildCurrentColorIndicator(
+                                AppColor.profileCardPurple.colors)
+                            : _buildColorSelectorWidget(
+                                AppColor.profileCardPurple.colors),
+                        _cardColor == AppColor.profileCardBlack.colors
+                            ? _buildCurrentColorIndicator(
+                                AppColor.profileCardBlack.colors)
+                            : _buildColorSelectorWidget(
+                                AppColor.profileCardBlack.colors),
+                        _cardColor == AppColor.profileCardYellow.colors
+                            ? _buildCurrentColorIndicator(
+                                AppColor.profileCardYellow.colors)
+                            : _buildColorSelectorWidget(
+                                AppColor.profileCardYellow.colors),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _cardColor == AppColor.profileCardBlue.colors
+                            ? _buildCurrentColorIndicator(
+                                AppColor.profileCardBlue.colors)
+                            : _buildColorSelectorWidget(
+                                AppColor.profileCardBlue.colors),
+                        _cardColor == AppColor.profileCardRed.colors
+                            ? _buildCurrentColorIndicator(
+                                AppColor.profileCardRed.colors)
+                            : _buildColorSelectorWidget(
+                                AppColor.profileCardRed.colors),
+                        _cardColor == AppColor.profileCardGreen.colors
+                            ? _buildCurrentColorIndicator(
+                                AppColor.profileCardGreen.colors)
+                            : _buildColorSelectorWidget(
+                                AppColor.profileCardGreen.colors),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 20,
+            right: 20,
+            child: IconButton(
+              onPressed: () {
+                _selectColor = !_selectColor;
+                setState(() {});
+              },
+              icon: const Icon(Icons.arrow_back),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrentColorIndicator(Color widgetColor) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: widgetColor,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: ClipOval(
+          child: Container(
+            width: 50,
+            height: 50,
+            color: widgetColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColorSelectorWidget(Color widgetColor) {
+    return InkWell(
+      onTap: () {
+        _cardColor = widgetColor;
+        setState(() {
+          _selectColor = !_selectColor;
+        });
+      },
+      child: ClipOval(
+        child: Container(
+          width: 50,
+          height: 50,
+          color: widgetColor,
+        ),
       ),
     );
   }
