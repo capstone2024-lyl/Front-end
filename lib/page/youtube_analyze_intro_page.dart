@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:googleapis/youtube/v3.dart' as youtube;
+
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled1/page/youtube_analyze_result_page.dart';
@@ -241,45 +240,43 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
       print('id =${googleUser.id}');
       print('OAuth2.0=${idToken}');
       print('access token= ${googleAuth!.accessToken}');
-      if (googleAuth?.accessToken != null) {
-        await _fetchSubscriptions(googleAuth!.accessToken!);
-      }
+
       return true;
     }
     return false;
   }
 
-  Future<void> _fetchSubscriptions(String accessToken) async {
-    final client = authenticatedClient(
-      Client(),
-      AccessCredentials(
-        AccessToken('Bearer', accessToken,
-            DateTime.now().add(Duration(hours: 1)).toUtc()),
-        // Ensure expiry is in UTC
-        null,
-        ['https://www.googleapis.com/auth/youtube.readonly'],
-      ),
-    );
-
-    final youtubeApi = youtube.YouTubeApi(client);
-
-    try {
-      final subscriptionsResponse = await youtubeApi.subscriptions.list(
-        ['snippet', 'contentDetails'],
-        mine: true,
-        maxResults: 50, // Fetch up to 50 subscriptions
-      );
-
-      for (var item in subscriptionsResponse.items!) {
-        print(
-            'Channel: ${item.snippet?.title}, ID: ${item.snippet?.resourceId?.channelId}');
-      }
-    } catch (e) {
-      print('Failed to fetch subscriptions: $e');
-    } finally {
-      client.close();
-    }
-  }
+  // Future<void> _fetchSubscriptions(String accessToken) async {
+  //   final client = authenticatedClient(
+  //     Client(),
+  //     AccessCredentials(
+  //       AccessToken('Bearer', accessToken,
+  //           DateTime.now().add(Duration(hours: 1)).toUtc()),
+  //       // Ensure expiry is in UTC
+  //       null,
+  //       ['https://www.googleapis.com/auth/youtube.readonly'],
+  //     ),
+  //   );
+  //
+  //   final youtubeApi = youtube.YouTubeApi(client);
+  //
+  //   try {
+  //     final subscriptionsResponse = await youtubeApi.subscriptions.list(
+  //       ['snippet', 'contentDetails'],
+  //       mine: true,
+  //       maxResults: 50, // Fetch up to 50 subscriptions
+  //     );
+  //
+  //     for (var item in subscriptionsResponse.items!) {
+  //       print(
+  //           'Channel: ${item.snippet?.title}, ID: ${item.snippet?.resourceId?.channelId}');
+  //     }
+  //   } catch (e) {
+  //     print('Failed to fetch subscriptions: $e');
+  //   } finally {
+  //     client.close();
+  //   }
+  // }
 
   void signOut() async {
     await GoogleSignIn().signOut();
