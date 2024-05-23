@@ -155,4 +155,8 @@ class ApiService {
       return [];
     }
   }
+
+  Future<void> getYoutubeAnalyzeResult () async {
+
+  }
 }
