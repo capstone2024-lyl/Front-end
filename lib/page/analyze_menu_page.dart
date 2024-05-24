@@ -23,12 +23,6 @@ class AnalyzeMenuPage extends StatefulWidget {
 
 class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
   //TODO 검사 진행도 서버에서 받기
-  double progress = 0.0; // 검사 진행도
-
-  bool _isChatAnaylzed = false;
-  bool _isApplicationAnalyzed = false;
-  bool _isYoutubeAnalyzed = false;
-  bool _isPhotoAnalyzed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +125,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           child: CustomPaint(
             size: const Size(120.0, 120.0),
             painter: ProgressPainter(
-              progress: progress,
+              progress: userInfo!.numOfCompleteAnalyze,
               color: AppColor.buttonColor.colors,
               width: 10.0,
             ),
@@ -144,7 +138,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '${progress.toInt() * 4} / 4 단계',
+                '${(userInfo.numOfCompleteAnalyze * 4).toInt()} / 4 단계',
                 style: const TextStyle(
                   fontSize: 17,
                 ),
@@ -283,7 +277,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(_isChatAnaylzed),
+                _testCompletionIndicator(userInfo.isChatAnalyzed),
               ],
             ),
             const Align(
@@ -352,7 +346,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(_isApplicationAnalyzed),
+                _testCompletionIndicator(userInfo.isAppUsageAnalyzed),
               ],
             ),
             const Text(
@@ -419,7 +413,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => YoutubeAnalyzeIntroPage(onNavigateToProfile:  widget.onNavigateToProfile)),
+                builder: (context) => YoutubeAnalyzeIntroPage(
+                    onNavigateToProfile: widget.onNavigateToProfile)),
           );
         },
         splashColor: Colors.transparent,
@@ -443,7 +438,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(_isYoutubeAnalyzed),
+                _testCompletionIndicator(userInfo.isYoutubeAnalyzed),
               ],
             ),
             const Align(
@@ -512,7 +507,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(_isPhotoAnalyzed),
+                _testCompletionIndicator(userInfo.isPhotoAnalyzed),
               ],
             ),
             const Align(
