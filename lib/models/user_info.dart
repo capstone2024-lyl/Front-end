@@ -11,6 +11,11 @@ class UserInfo {
   List<Map<String, dynamic>> mostUsedApp = [];
   List<Map<String,dynamic>> mbtiPercent= [{'energy' : 0}];
 
+  bool isChatAnalyzed = false;
+  bool isAppUsageAnalyzed = false;
+  bool isYoutubeAnalyzed = false;
+  bool isPhotoAnalyzed = false;
+
   //TODO 사진 데이터
   UserInfo({
     required this.name,
@@ -67,4 +72,23 @@ class UserInfo {
     AppInfo app = await InstalledApps.getAppInfo(packageName);
     return app;
   }
+
+  double get numOfCompleteAnalyze {
+    double cnt  = 0.0 ;
+    if(isChatAnalyzed) {
+      cnt+= 0.25;
+    }
+    if(isAppUsageAnalyzed) {
+      cnt+=0.25;
+    }
+    if(isYoutubeAnalyzed) {
+      cnt+=0.25;
+    }
+    if(isPhotoAnalyzed) {
+      cnt+=0.25;
+    }
+
+    return cnt;
+  }
+
 }

@@ -18,9 +18,14 @@ class UserInfoProvider  with ChangeNotifier {
     }
   }
 
-  Future<void> upDataUserAppUsageData(List<Map<String,dynamic>> appUsageData) async {
+  Future<void> updateUserAppUsageData(List<Map<String,dynamic>> appUsageData) async {
     _userInfo!.appList = appUsageData;
     await _userInfo!.initMostUsedApp();
+    notifyListeners();
+  }
+
+  void updateAppAnalyzeStatus(bool isDone) {
+    _userInfo!.isAppUsageAnalyzed = isDone;
     notifyListeners();
   }
 }
