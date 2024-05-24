@@ -139,21 +139,57 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> jsonData = jsonDecode(response.body);
+
+        List<dynamic> jsonData = jsonDecode(response.body)['apps'];
         List<Map<String, dynamic>> appUsageData = List<
             Map<String, dynamic>>.from(jsonData);
         print(appUsageData);
         return appUsageData;
       } else {
         print('failed ${response.statusCode}');
-        print(token.toString());
         return [];
       }
     } catch (e) {
+      print(e);
       print('[error] 앱 사용 정보를 가져오는데 에러가 발생함');
       return [];
     }
   }
+
+  Future<bool> getAppUsageIsDone() async {
+    final token = await _storageService.getToken();
+    final url = Uri.parse('$_baseUrl/app/findTop10');
+
+    if (token == null) {
+      throw Exception('No token Found');
+    }
+    try {
+      final response = await http.get(url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+
+        final isChecked = jsonDecode(response.body)['checked'] as bool;
+        return isChecked;
+      } else {
+        print('failed ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      print('[error] 앱 사용 정보를 가져오는데 에러가 발생함');
+      return false;
+    }
+  }
+
+  //TODO chatAPI 완성되면 주석 삭제
+  // Future<List<Map<String,dynamic>> getUserMbti() async {
+  //   final token = _storageService.getToken();
+  //   final url = Uri.parse('$_baseUrl/')
+  // }
 
   Future<void> getYoutubeAnalyzeResult () async {
 
