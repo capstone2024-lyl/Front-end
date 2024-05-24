@@ -9,6 +9,7 @@ class UserInfo {
   List<Map<String, dynamic>> appList;
   List<String> nickname;
   List<Map<String, dynamic>> mostUsedApp = [];
+  List<Map<String,dynamic>> mbtiPercent= [{'energy' : 0}];
 
   //TODO 사진 데이터
   UserInfo({
