@@ -1,13 +1,15 @@
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
-import 'package:flutter/material.dart';
 
 import 'package:app_usage/app_usage.dart';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:provider/provider.dart';
+
 import 'package:untitled1/page/application_analyze_result_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/services/api_service.dart';
@@ -94,7 +96,7 @@ class _ApplicationAnalyzeIntroPageState
   }
 
   Future<void> _openUsageAccessSettings() async {
-    final intent = AndroidIntent(
+    const intent = AndroidIntent(
       action: 'android.settings.USAGE_ACCESS_SETTINGS',
       flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
     );
