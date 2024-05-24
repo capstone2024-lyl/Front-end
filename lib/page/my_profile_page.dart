@@ -283,7 +283,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                     children: [
                                                       _buildListMark(),
                                                       Text(
-                                                        '${userInfo.mostUsedApp[0]['appName']}',
+                                                        '${userInfo.mostUsedApp.isEmpty ? '???' : userInfo.mostUsedApp[0]['appName']}',
                                                         style: const TextStyle(
                                                           fontSize: 15,
                                                           color: Colors.white,
