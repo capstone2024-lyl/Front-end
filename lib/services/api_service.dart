@@ -65,7 +65,7 @@ class ApiService {
     }
   }
 
-  Future<bool> uploadChattingFile(String path, File file) async {
+  Future<bool> uploadChattingFile(File file) async {
     final token = await _storageService.getToken();
     if (token == null) {
       throw Exception('No token found');
@@ -80,8 +80,7 @@ class ApiService {
       fileBytes,
       filename: fileName,
     );
-    final url = Uri.parse('$_baseUrl/chat/upload?path=$path');
-    print(path);
+    final url = Uri.parse('$_baseUrl/chat/predict-mbti');
     final request = http.MultipartRequest('POST', url)
       ..headers.addAll({'Authorization': 'Bearer $token'})
       ..files.add(httpFile);
