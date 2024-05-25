@@ -37,8 +37,7 @@ class _ApplicationAnalyzeResultPageState
     final appUsageData = await _apiService.getAppUsageTopTen();
     final appUsageAnalyzeStatus = await _apiService.getAppUsageIsDone();
     await userInfoProvider.updateUserAppUsageData(appUsageData);
-    userInfoProvider.updateAppAnalyzeStatus(appUsageAnalyzeStatus);
-
+    await userInfoProvider.updateAppAnalyzeStatus(appUsageAnalyzeStatus);
   }
 
   @override

@@ -87,7 +87,7 @@ class _ApplicationAnalyzeIntroPageState
         int usageTimeB = b['usageTime'] as int;
         return usageTimeB.compareTo(usageTimeA);
       });
-      print(appList);
+
       await _apiService.sendAppUsageData(appList);
       return true;
     } else {
