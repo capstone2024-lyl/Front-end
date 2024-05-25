@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
-import 'package:untitled1/models/user_info.dart';
 
+import 'package:provider/provider.dart';
+
+import 'package:untitled1/models/user_info.dart';
 import 'package:untitled1/page/application_analyze_intro_page.dart';
 import 'package:untitled1/page/chat_analyze_intro_page.dart';
 import 'package:untitled1/page/photo_analyze_intro_page.dart';
 import 'package:untitled1/page/youtube_analyze_intro_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
-
 import 'package:untitled1/util/app_color.dart';
 import 'package:untitled1/util/progress_painter.dart';
 
@@ -31,9 +32,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
         builder: (context, userInfoProvider, child) {
           if (userInfoProvider.userInfo == null) {
             userInfoProvider.loadUserInfo();
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
           } else {
             final userInfo = userInfoProvider.userInfo!;
             return Column(
@@ -277,7 +276,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo.isChatAnalyzed),
+                _testCompletionIndicator(userInfo!.analyzeStatus['chatAnalyzeStatus']!),
               ],
             ),
             const Align(
@@ -346,7 +345,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo.isAppUsageAnalyzed),
+                _testCompletionIndicator(userInfo.analyzeStatus['appUsageAnalyzeStatus']!),
               ],
             ),
             const Text(
@@ -438,7 +437,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo.isYoutubeAnalyzed),
+                _testCompletionIndicator(userInfo.analyzeStatus['youtubeAnalyzeStatus']!),
               ],
             ),
             const Align(
@@ -507,7 +506,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo.isPhotoAnalyzed),
+                _testCompletionIndicator(userInfo.analyzeStatus['photoAnalyzeStatus']!),
               ],
             ),
             const Align(
