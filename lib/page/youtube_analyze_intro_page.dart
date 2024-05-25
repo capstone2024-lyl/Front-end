@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled1/page/youtube_analyze_result_page.dart';
 
 import 'package:untitled1/providers/user_info_provider.dart';
+import 'package:untitled1/services/api_service.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class YoutubeAnalyzeIntroPage extends StatefulWidget {
@@ -19,6 +20,8 @@ class YoutubeAnalyzeIntroPage extends StatefulWidget {
 }
 
 class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
+  final ApiService _apiService = ApiService();
+
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -159,10 +162,12 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                     onPressed: () async {
                       bool isSignIn = await _signInWithGoogle();
                       if (isSignIn) {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        if(mounted) {
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) => YoutubeAnalyzeResultPage(
                                 onNavigateToProfile:
                                     widget.onNavigateToProfile)));
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -176,11 +181,6 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                       ),
                     ),
                   ),
-                ),
-                //TODO 로그아웃 버튼 및 메서드 삭제
-                ElevatedButton(
-                  onPressed: signOut,
-                  child: const Text('로그아웃'),
                 ),
               ],
             );
@@ -233,52 +233,11 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
     final GoogleSignInAuthentication? googleAuth =
         await googleUser?.authentication;
     if (googleUser != null) {
-      print(googleAuth);
-      String? idToken = googleAuth!.idToken;
-      print('name = ${googleUser.displayName}');
-      print('email= ${googleUser.email}');
-      print('id =${googleUser.id}');
-      print('OAuth2.0=${idToken}');
-      print('access token= ${googleAuth!.accessToken}');
-
-      return true;
+      bool isPosted = await _apiService.postYoutubeData(googleAuth!.accessToken!);
+      await GoogleSignIn().signOut();
+      return isPosted;
     }
     return false;
   }
 
-  // Future<void> _fetchSubscriptions(String accessToken) async {
-  //   final client = authenticatedClient(
-  //     Client(),
-  //     AccessCredentials(
-  //       AccessToken('Bearer', accessToken,
-  //           DateTime.now().add(Duration(hours: 1)).toUtc()),
-  //       // Ensure expiry is in UTC
-  //       null,
-  //       ['https://www.googleapis.com/auth/youtube.readonly'],
-  //     ),
-  //   );
-  //
-  //   final youtubeApi = youtube.YouTubeApi(client);
-  //
-  //   try {
-  //     final subscriptionsResponse = await youtubeApi.subscriptions.list(
-  //       ['snippet', 'contentDetails'],
-  //       mine: true,
-  //       maxResults: 50, // Fetch up to 50 subscriptions
-  //     );
-  //
-  //     for (var item in subscriptionsResponse.items!) {
-  //       print(
-  //           'Channel: ${item.snippet?.title}, ID: ${item.snippet?.resourceId?.channelId}');
-  //     }
-  //   } catch (e) {
-  //     print('Failed to fetch subscriptions: $e');
-  //   } finally {
-  //     client.close();
-  //   }
-  // }
-
-  void signOut() async {
-    await GoogleSignIn().signOut();
-  }
 }
