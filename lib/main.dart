@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'package:provider/provider.dart';
+import 'package:untitled1/page/image_lable_page_example.dart';
 
 import 'package:untitled1/page/sign_in_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         //home: NavigatePage(),
-        home: const SignInPage(),
+        //home: const SignInPage(),
+        home: ImageLabelPage(),
         //home: ApplicationAnalyzeIntroPage(),
       ),
     );
