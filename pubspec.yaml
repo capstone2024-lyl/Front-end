@@ -59,6 +59,7 @@ dependencies:
   social_share: ^2.3.1
   tflite_flutter: ^0.10.4
   image: ^4.2.0
+  flutter_native_image: ^0.0.6+1
 
 
 dev_dependencies:
