@@ -46,7 +46,6 @@ dependencies:
   intl: 0.18.1
   flutter_localization: ^0.2.0
   http: ^1.2.1
-  flutter_launcher_icons: ^0.13.1
   app_usage: ^3.0.1
   package_info_plus: ^8.0.0
   html: ^0.15.4
@@ -58,6 +57,8 @@ dependencies:
   screenshot: ^2.5.0
   share_plus: ^9.0.0
   social_share: ^2.3.1
+  tflite_flutter: ^0.10.4
+  image: ^4.2.0
 
 
 dev_dependencies:
@@ -91,6 +92,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/model/
   # To add assets to your application, add an assets section, like this:
   #assets:
   #   - assets/images/
