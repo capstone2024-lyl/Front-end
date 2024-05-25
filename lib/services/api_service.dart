@@ -72,9 +72,7 @@ class ApiService {
     }
 
     List<int> fileBytes = await file.readAsBytes();
-    String fileName = file.path
-        .split('/')
-        .last;
+    String fileName = file.path.split('/').last;
     final httpFile = http.MultipartFile.fromBytes(
       'file',
       fileBytes,
@@ -132,17 +130,17 @@ class ApiService {
       throw Exception('No token Found');
     }
     try {
-      final response = await http.get(url,
+      final response = await http.get(
+        url,
         headers: <String, String>{
           'Authorization': 'Bearer $token',
         },
       );
 
       if (response.statusCode == 200) {
-
         List<dynamic> jsonData = jsonDecode(response.body)['apps'];
-        List<Map<String, dynamic>> appUsageData = List<
-            Map<String, dynamic>>.from(jsonData);
+        List<Map<String, dynamic>> appUsageData =
+            List<Map<String, dynamic>>.from(jsonData);
         print(appUsageData);
         return appUsageData;
       } else {
@@ -164,15 +162,15 @@ class ApiService {
       throw Exception('No token Found');
     }
     try {
-      final response = await http.get(url,
+      final response = await http.get(
+        url,
         headers: <String, String>{
           'Authorization': 'Bearer $token',
         },
       );
-
       if (response.statusCode == 200) {
+        final isChecked = jsonDecode(response.body)['isChecked'] as bool;
 
-        final isChecked = jsonDecode(response.body)['checked'] as bool;
         return isChecked;
       } else {
         print('failed ${response.statusCode}');
@@ -191,7 +189,28 @@ class ApiService {
   //   final url = Uri.parse('$_baseUrl/')
   // }
 
-  Future<void> getYoutubeAnalyzeResult () async {
-
+  Future<bool> postYoutubeData(String accessToken) async {
+    final token = await _storageService.getToken();
+    final url = Uri.parse('$_baseUrl/youtube/subscriptions');
+    if (token == null) {
+      throw Exception('No token found');
+    }
+    try {
+      final response = await http.post(url, headers: <String, String>{
+        'X-Google-Token': accessToken,
+        'Authorization': 'Bearer $token',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(
+        'error: cannot post youtube data',
+      );
+      return false;
+    }
   }
 }
