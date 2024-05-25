@@ -237,7 +237,7 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
                     foregroundColor: Colors.white,
                   ),
                   child: const Text(
-                    '채탱 내역 업로드 하기',
+                    '채팅 내역 업로드 하기',
                     style: TextStyle(
                       fontSize: 26,
                     ),

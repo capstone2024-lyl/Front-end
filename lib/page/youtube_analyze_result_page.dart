@@ -37,7 +37,7 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                 ),
                 const Center(
                   child: Text(
-                    '좋아하는 카테고리 분석 결과',
+                    '좋아하는 유튜브 카테고리 분석 결과',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                 ),
                 Container(
                   width: 380,
-                  height: 500,
+                  height: 550,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: <BoxShadow>[
@@ -64,7 +64,7 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 40,
                 ),
                 SizedBox(
                   width: 380,
