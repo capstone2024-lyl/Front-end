@@ -24,8 +24,8 @@ class UserInfoProvider  with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAppAnalyzeStatus(bool isDone) {
-    _userInfo!.isAppUsageAnalyzed = isDone;
+  Future<void> updateAppAnalyzeStatus(bool isDone) async {
+    _userInfo!.analyzeStatus['appUsageAnalyzeStatus'] = isDone;
     notifyListeners();
   }
 }

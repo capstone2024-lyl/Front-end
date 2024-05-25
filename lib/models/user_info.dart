@@ -11,10 +11,8 @@ class UserInfo {
   List<Map<String, dynamic>> mostUsedApp = [];
   List<Map<String,dynamic>> mbtiPercent= [{'energy' : 0}];
 
-  bool isChatAnalyzed = false;
-  bool isAppUsageAnalyzed = false;
-  bool isYoutubeAnalyzed = false;
-  bool isPhotoAnalyzed = false;
+  Map<String, bool> analyzeStatus;
+
 
   //TODO 사진 데이터
   UserInfo({
@@ -23,20 +21,29 @@ class UserInfo {
     required this.mbti,
     required this.appList,
     required this.nickname,
+    required this.analyzeStatus,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     return UserInfo(
       name: json['name'],
       birthday: _parseDate(json['birthday']),
-      mbti: json['mbti'],
-      appList: (json['apps'] as List<dynamic>)
+      mbti: json['mbti']['mbti'],
+      appList: (json['apps']['apps'] as List<dynamic>)
           .map((app) => {
                 'appPackageName': app['appPackageName'].toString(),
                 'usageTime': app['usageTime'] as int,
               }).toList(),
       nickname:
           json['nickname'] != null ? List<String>.from(json['nickname']) : [],
+      analyzeStatus: {
+        'chatAnalyzeStatus' : json['mbti']['isChecked'],
+        'appUsageAnalyzeStatus' : json['apps']['isChecked'],
+        'youtubeAnalyzeStatus' : json['category']['isChecked'],
+        //TODO 사진 분석 결과 여부 추가
+        'photoAnalyzeStatus' : false,
+
+      }
     );
   }
 
@@ -74,17 +81,18 @@ class UserInfo {
   }
 
   double get numOfCompleteAnalyze {
+    print(analyzeStatus);
     double cnt  = 0.0 ;
-    if(isChatAnalyzed) {
+    if(analyzeStatus['chatAnalyzeStatus']!) {
       cnt+= 0.25;
     }
-    if(isAppUsageAnalyzed) {
+    if(analyzeStatus['appUsageAnalyzeStatus']!) {
       cnt+=0.25;
     }
-    if(isYoutubeAnalyzed) {
+    if(analyzeStatus['youtubeAnalyzeStatus']!) {
       cnt+=0.25;
     }
-    if(isPhotoAnalyzed) {
+    if(analyzeStatus['photoAnalyzeStatus']!) {
       cnt+=0.25;
     }
 
