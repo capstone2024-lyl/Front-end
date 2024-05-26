@@ -1,10 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
-import 'package:http/http.dart' as http;
 
 import 'package:untitled1/page/navigate_page.dart';
 import 'package:untitled1/page/sign_up_page.dart';
@@ -219,37 +213,10 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(
                 height: 30,
               ),
-
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<void> signInWithGoogle() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      scopes: [
-        'email',
-        'profile',
-      ],
-      serverClientId: '748389893868-o38se8gksu0u8ihnia6gc3e5bbu42pnr.apps.googleusercontent.com',
-    );
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-    if (googleUser != null) {
-      print(googleAuth);
-      String? idToken = googleAuth!.idToken;
-      print('name = ${googleUser.displayName}');
-      print('email= ${googleUser.email}');
-      print('id =${googleUser.id}');
-      print('OAuth2.0=${idToken}');
-      print('access token= ${googleAuth!.accessToken}');
-    }
-  }
-
-  void signOut() async {
-    await GoogleSignIn().signOut();
   }
 }

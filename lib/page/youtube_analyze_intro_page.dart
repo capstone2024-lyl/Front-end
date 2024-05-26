@@ -233,6 +233,7 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
     final GoogleSignInAuthentication? googleAuth =
         await googleUser?.authentication;
     if (googleUser != null) {
+      print(googleAuth!.accessToken);
       bool isPosted = await _apiService.postYoutubeData(googleAuth!.accessToken!);
       await GoogleSignIn().signOut();
       return isPosted;

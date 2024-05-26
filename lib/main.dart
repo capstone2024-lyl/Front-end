@@ -46,8 +46,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         //home: NavigatePage(),
-        //home: const SignInPage(),
-        home: ImageLabelPage(),
+        home: const SignInPage(),
+        //home: ImageLabelPage(),
         //home: ApplicationAnalyzeIntroPage(),
       ),
     );
