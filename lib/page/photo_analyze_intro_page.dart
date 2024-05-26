@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled1/page/image_lable_page_example.dart';
 
 class PhotoAnalyzeIntroPage extends StatefulWidget {
   const PhotoAnalyzeIntroPage({super.key});
@@ -10,12 +11,6 @@ class PhotoAnalyzeIntroPage extends StatefulWidget {
 class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(
-          '사진 취향 분석 페이지입니다.',
-        ),
-      ),
-    );
+    return ImageLabelPage();
   }
 }

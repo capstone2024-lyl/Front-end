@@ -1,12 +1,19 @@
 import 'dart:io';
 import 'dart:core';
+import 'dart:isolate';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
+import 'package:untitled1/util/app_color.dart';
+
+import 'package:flutter/services.dart' as services; // Add this line
 
 class ImageLabelPage extends StatefulWidget {
   const ImageLabelPage({super.key});
@@ -23,8 +30,9 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
   Interpreter? _interpreter;
   late Future<void> _modelLoadFuture;
   bool _isModelLoaded = false;
+  bool _isLoading = false;
 
-  final List<String> categories = [
+  static const List<String> categories = [
     '자연',
     '인물',
     '동물',
@@ -112,6 +120,9 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
     _images?.clear();
     _result = '';
 
+    setState(() {
+      _isLoading = true;
+    });
     Directory? cameraDirectory;
 
     if (Platform.isAndroid) {
@@ -148,7 +159,7 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
         print(images.length);
 
         //300장 추출
-        final selectedImages = images.take(300).toList();
+        final selectedImages = images.take(200).toList();
         stopwatch.stop();
         print('분석 시간: ${stopwatch.elapsed}');
 
@@ -157,18 +168,33 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
         });
 
         if (_isModelLoaded) {
+          print('모델 로드')
           // 시간 측정 시작
           final stopwatch = Stopwatch()..start();
 
           print(selectedImages.length);
           // 이미지 분석을 병렬로 실행
-          await Future.wait(
-              selectedImages.map((image) => classifyImage(image)));
+          for (final image in selectedImages) {
+            final compressedFile = await FlutterNativeImage.compressImage(
+              image.path,
+              quality: 90,
+              targetWidth: 224,
+              targetHeight: 224,
+            );
+
+            if (compressedFile.existsSync()) {
+              await _analyzeImageInBackground(compressedFile);
+            }
+          }
+
 
           // 시간 측정 종료
           stopwatch.stop();
           print('분석 시간: ${stopwatch.elapsed}');
           print(categoryCounts);
+          setState(() {
+            _isLoading = false;
+          });
         }
       } else {
         print('Model is not loaded yet');
@@ -178,42 +204,65 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
     }
   }
 
-  Future<void> classifyImage(File image) async {
-    final totalStopwatch = Stopwatch()..start();
-    final decodeStopwatch = Stopwatch()..start();
+  Future<void> _analyzeImageInBackground(File image) async {
+    final stopwatch = Stopwatch()..start();
+    final receivePort = ReceivePort();
+    final modelData =
+    await rootBundle.load('assets/model/model.tflite'); // 모델 데이터를 로드
+    await Isolate.spawn(_analyzeImage, [receivePort.sendPort, modelData, image.path]);
 
-    if (_interpreter == null) {
-      print('Error: Interpreter is not initialized');
-      return;
+    final sendPort = await receivePort.first as SendPort;
+    final response = ReceivePort();
+    sendPort.send(response.sendPort);
+
+    await for (final message in response) {
+      if (message is String) {
+        setState(() {
+          categoryCounts[message] = (categoryCounts[message] ?? 0) + 1;
+        });
+      } else if (message is bool && message) {
+        break;
+      }
     }
+    stopwatch.stop();
+    print('분석 시간: ${stopwatch.elapsed}');
 
-    File compressedFile = await FlutterNativeImage.compressImage(
-      image.path,
-      quality: 90,
-      targetWidth: 224,
-      targetHeight: 224,
-    );
-    decodeStopwatch.stop();
-    print('Image decoding time: ${decodeStopwatch.elapsed}');
+  }
+
+  static Future<void> _analyzeImage(List<dynamic> params) async {
+    final sendPort = params[0] as SendPort;
+    final modelData = params[1] as ByteData;
+    final imagePath = params[2] as String;
+    final port = ReceivePort();
+    sendPort.send(port.sendPort);
+
+    final Uint8List modelBytes = modelData.buffer.asUint8List();
+
+    final interpreter = Interpreter.fromBuffer(modelBytes);
+    final category = await _classifyImage(interpreter, imagePath);
+    sendPort.send(category);
+
+    sendPort.send(true); // 작업 완료 신호
+  }
+
+  static Future<String> _classifyImage(
+      Interpreter interpreter, String imagePath) async {
+    final File compressedFile = File(imagePath);
 
     if (!compressedFile.existsSync()) {
       print('Error: Could not decode image');
-      return;
+      return '';
     }
 
-    final resizeStopwatch = Stopwatch()..start();
-    img.Image imageInput = img.decodeImage(compressedFile.readAsBytesSync())!;
-    img.Image resizedImage =
-        img.copyResize(imageInput, width: 224, height: 224);
-    resizeStopwatch.stop();
-    print('Image resizing time: ${resizeStopwatch.elapsed}');
+    final img.Image imageInput =
+    img.decodeImage(compressedFile.readAsBytesSync())!;
+    final img.Image resizedImage =
+    img.copyResize(imageInput, width: 224, height: 224);
 
-    var outputShape = _interpreter!.getOutputTensor(0).shape;
-
-    final tensorStopwatch = Stopwatch()..start();
-    var input = List.generate(
+    final outputShape = interpreter.getOutputTensor(0).shape;
+    final input = List.generate(
         1,
-        (_) => List.generate(
+            (_) => List.generate(
             224, (_) => List.generate(224, (_) => List.filled(3, 0.0))));
     for (var y = 0; y < 224; y++) {
       for (var x = 0; x < 224; x++) {
@@ -224,28 +273,15 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
       }
     }
 
-    tensorStopwatch.stop();
-    print('Input tensor creation time: ${tensorStopwatch.elapsed}');
-
-    final inferenceStopwatch = Stopwatch()..start();
-    var output = List.filled(outputShape.reduce((a, b) => a * b), 0.0)
+    final output = List.filled(outputShape.reduce((a, b) => a * b), 0.0)
         .reshape(outputShape);
 
-    _interpreter!.run(input, output);
-    inferenceStopwatch.stop();
-    print('Model inference time: ${inferenceStopwatch.elapsed}');
+    interpreter.run(input, output);
 
-// 가장 높은 확률값을 가진 카테고리 판별
     double maxProb = output[0].reduce((double a, double b) => a > b ? a : b);
     int maxIndex = output[0].indexOf(maxProb);
-    String category = categories[maxIndex];
 
-    setState(() {
-      categoryCounts[category] = (categoryCounts[category] ?? 0) + 1;
-    });
-
-    totalStopwatch.stop();
-    print('Total analysis time: ${totalStopwatch.elapsed}');
+    return _ImageLabelPageState.categories[maxIndex];
   }
 
   @override
@@ -268,11 +304,15 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error loading model'));
           } else {
-            return SingleChildScrollView(
-              child: Center(
-                child: Text('하이'),
-              ),
-            );
+            return _isLoading
+                ? Center(
+                    child: SpinKitWaveSpinner(
+                    color: AppColor.buttonColor.colors,
+                    size: 200,
+                  ))
+                : Center(
+                    child: Text(_result),
+                  );
           }
         },
       ),
