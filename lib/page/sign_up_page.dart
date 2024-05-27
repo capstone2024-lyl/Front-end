@@ -27,7 +27,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final ApiService _apiService = ApiService();
-  
+
   CroppedFile? _croppedFile;
 
   bool _isSubmitting = false;
@@ -70,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
       });
     });
   }
-  
+
   Future<void> _checkUsernameAvailability() async {
     FocusScope.of(context).unfocus();
     if (_idController.text.isEmpty) {
@@ -97,31 +97,15 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  Future<bool> _requestSignUp() async {
-    final url = Uri.parse('http://13.209.182.60:8080/api/v1/user/sign-up');
-
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': ' application/json',
-      },
-      body: jsonEncode(<String, String>{
-        'loginId': _idController.text,
-        'password': _passwordController.text,
-        'passwordCheck': _confirmPasswordController.text,
-        'name': _nameController.text,
-        'birthday': DateFormat('yyyy-MM-dd').format(_birthday!),
-      }),
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Failed to Submit');
-    }
-  }
-
   void _submitForm() async {
-    bool result = await _requestSignUp();
+    bool result = await _apiService.requestSignUp(
+      id: _idController.text,
+      password: _passwordController.text,
+      confirmPassword: _confirmPasswordController.text,
+      name: _nameController.text,
+      birthday: DateFormat('yyyy-MM-dd').format(_birthday!),
+      profileImage: _croppedFile,
+    );
     if (_formKey.currentState!.validate() && _idIsAvailable && result) {
       setState(() {
         _isSubmitting = true;
