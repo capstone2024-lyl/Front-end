@@ -1,18 +1,17 @@
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 
-
 class UserInfo {
   String name;
   DateTime birthday;
-  String? mbti;
+  String mbti='';
   List<Map<String, dynamic>> appList;
   List<String> nickname;
   List<Map<String, dynamic>> mostUsedApp = [];
-  List<Map<String,dynamic>> mbtiPercent= [{'energy' : 0}];
+  Map<String, int> mbtiPercent;
   List<String> youtubeTop3Category;
   Map<String, bool> analyzeStatus;
-
+  String profileImageUrl;
 
   //TODO 사진 데이터
   UserInfo({
@@ -22,7 +21,9 @@ class UserInfo {
     required this.appList,
     required this.nickname,
     required this.analyzeStatus,
+    required this.mbtiPercent,
     required this.youtubeTop3Category,
+    required this.profileImageUrl,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
@@ -34,17 +35,26 @@ class UserInfo {
           .map((app) => {
                 'appPackageName': app['appPackageName'].toString(),
                 'usageTime': app['usageTime'] as int,
-              }).toList(),
+              })
+          .toList(),
       nickname:
           json['nicknames'] != null ? List<String>.from(json['nicknames']) : [],
       analyzeStatus: {
-        'chatAnalyzeStatus' : json['mbti']['isChecked'],
-        'appUsageAnalyzeStatus' : json['apps']['isChecked'],
-        'youtubeAnalyzeStatus' : json['category']['isChecked'],
+        'chatAnalyzeStatus': json['mbti']['isChecked'],
+        'appUsageAnalyzeStatus': json['apps']['isChecked'],
+        'youtubeAnalyzeStatus': json['category']['isChecked'],
         //TODO 사진 분석 결과 여부 추가
-        'photoAnalyzeStatus' : false,
+        'photoAnalyzeStatus': false,
       },
-      youtubeTop3Category: List<String>.from(json['category']['youtubeCategoryList']),
+      mbtiPercent: {
+        'energy': json['mbti']['energy'] as int ?? 0,
+        'recognition': json['mbti']['recognition']as int ?? 0,
+        'decision': json['mbti']['decision']as int ?? 0,
+        'lifeStyle': json['mbti']['lifeStyle']as int ?? 0,
+      },
+      youtubeTop3Category:
+          List<String>.from(json['category']['youtubeCategoryList']),
+      profileImageUrl: json['profileImageUrl'],
     );
   }
 
@@ -66,9 +76,9 @@ class UserInfo {
       for (var appPackageName in appList) {
         final appInfo = await _getAppInfo(appPackageName['appPackageName']);
         mostUsedApp.add({
-          'appName' : appInfo.name,
-          'usageTime' : appPackageName['usageTime'],
-          'appIcon' : appInfo.icon,
+          'appName': appInfo.name,
+          'usageTime': appPackageName['usageTime'],
+          'appIcon': appInfo.icon,
         });
       }
     } else {
@@ -82,22 +92,22 @@ class UserInfo {
   }
 
   double get numOfCompleteAnalyze {
-    print(analyzeStatus);
-    double cnt  = 0.0 ;
-    if(analyzeStatus['chatAnalyzeStatus']!) {
-      cnt+= 0.25;
+    double cnt = 0.0;
+    if (analyzeStatus['chatAnalyzeStatus']!) {
+      cnt += 0.25;
     }
-    if(analyzeStatus['appUsageAnalyzeStatus']!) {
-      cnt+=0.25;
+    if (analyzeStatus['appUsageAnalyzeStatus']!) {
+      cnt += 0.25;
     }
-    if(analyzeStatus['youtubeAnalyzeStatus']!) {
-      cnt+=0.25;
+    if (analyzeStatus['youtubeAnalyzeStatus']!) {
+      cnt += 0.25;
     }
-    if(analyzeStatus['photoAnalyzeStatus']!) {
-      cnt+=0.25;
+    if (analyzeStatus['photoAnalyzeStatus']!) {
+      cnt += 0.25;
     }
 
     return cnt;
   }
+
 
 }
