@@ -28,4 +28,10 @@ class UserInfoProvider  with ChangeNotifier {
     _userInfo!.analyzeStatus['appUsageAnalyzeStatus'] = isDone;
     notifyListeners();
   }
+
+  Future<void> updateYoutubeTop3Category(List<String> updateList) async {
+    _userInfo!.youtubeTop3category.clear();
+    _userInfo!.youtubeTop3category = updateList;
+    notifyListeners();
+  }
 }

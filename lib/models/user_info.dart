@@ -10,7 +10,7 @@ class UserInfo {
   List<String> nickname;
   List<Map<String, dynamic>> mostUsedApp = [];
   List<Map<String,dynamic>> mbtiPercent= [{'energy' : 0}];
-
+  List<String> youtubeTop3Category;
   Map<String, bool> analyzeStatus;
 
 
@@ -22,6 +22,7 @@ class UserInfo {
     required this.appList,
     required this.nickname,
     required this.analyzeStatus,
+    required this.youtubeTop3Category,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
@@ -35,15 +36,15 @@ class UserInfo {
                 'usageTime': app['usageTime'] as int,
               }).toList(),
       nickname:
-          json['nickname'] != null ? List<String>.from(json['nickname']) : [],
+          json['nicknames'] != null ? List<String>.from(json['nicknames']) : [],
       analyzeStatus: {
         'chatAnalyzeStatus' : json['mbti']['isChecked'],
         'appUsageAnalyzeStatus' : json['apps']['isChecked'],
         'youtubeAnalyzeStatus' : json['category']['isChecked'],
         //TODO 사진 분석 결과 여부 추가
         'photoAnalyzeStatus' : false,
-
-      }
+      },
+      youtubeTop3Category: List<String>.from(json['category']['youtubeCategoryList']),
     );
   }
 
