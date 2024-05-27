@@ -29,9 +29,20 @@ class UserInfoProvider  with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateYoutubeTop3Category(List<String> updateList) async {
+  Future<void> updateYoutubeData(Map<String, dynamic> youtubeData) async {
     _userInfo!.youtubeTop3Category.clear();
-    _userInfo!.youtubeTop3Category = updateList;
+    _userInfo!.youtubeTop3Category = List<String>.from(youtubeData['youtubeCategoryList']);
+    _userInfo!.analyzeStatus['youtubeAnalyzeStatus'] = youtubeData['isChecked'];
+    notifyListeners();
+  }
+
+  Future<void> updateUserMBTI(Map<String, dynamic> mbtiData) async {
+    _userInfo!.mbti = mbtiData['mbti'];
+    _userInfo!.mbtiPercent['energy'] = mbtiData['energy'];
+    _userInfo!.mbtiPercent['recognition'] = mbtiData['recognition'];
+    _userInfo!.mbtiPercent['decision'] = mbtiData['decision'];
+    _userInfo!.mbtiPercent['lifeStyle'] = mbtiData['lifeStyle'];
+    _userInfo!.analyzeStatus['chatAnalyzeStatus'] = mbtiData['isChecked'];
     notifyListeners();
   }
 }
