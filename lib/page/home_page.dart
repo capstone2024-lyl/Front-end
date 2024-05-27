@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
+import 'package:untitled1/models/user_info.dart';
 
 import 'package:untitled1/providers/user_info_provider.dart';
 
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   const SizedBox(
-                    height: 60,
+                    height: 80,
                   ),
                   const Center(
                     child: SizedBox(
@@ -166,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                                           width: 5,
                                         ),
                                         Text(
-                                          '좋아하는 영상 카테고리 : ${userInfo!.youtubeTop3category[0] ?? '???'}',
+                                          '좋아하는 영상 카테고리 : ${userInfo.youtubeTop3Category.isEmpty ? '???' : userInfo.youtubeTop3Category[0]}',
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -212,30 +213,41 @@ class _HomePageState extends State<HomePage> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        userInfo.nickname.isEmpty ? const Text('???') :
-                                        Row(
-                                          children: userInfo.nickname
-                                              .asMap()
-                                              .map((index, nickname) {
-                                                return MapEntry(
-                                                  index,
-                                                  Text(
-                                                    index <
-                                                            userInfo.nickname
-                                                                    .length -
-                                                                1
-                                                        ? '$nickname, '
-                                                        : nickname,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
+                                        userInfo.nickname.isEmpty
+                                            ? const Text('???')
+                                            : SizedBox(
+                                                width: 250,
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Row(
+                                                    children: userInfo.nickname
+                                                        .asMap()
+                                                        .map((index, nickname) {
+                                                          return MapEntry(
+                                                            index,
+                                                            Text(
+                                                              index <
+                                                                      userInfo.nickname
+                                                                              .length -
+                                                                          1
+                                                                  ? '$nickname, '
+                                                                  : nickname,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        })
+                                                        .values
+                                                        .toList(),
                                                   ),
-                                                );
-                                              })
-                                              .values
-                                              .toList(),
-                                        )
+                                                ),
+                                              ),
                                       ],
                                     ),
                                   ],
@@ -259,44 +271,31 @@ class _HomePageState extends State<HomePage> {
                       ),
                       padding: const EdgeInsets.all(5),
                       child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/ex2.jpg',
-                          height: 100,
+                        child: Image.network(
+                          userInfo.profileImageUrl,
                           width: 100,
+                          height: 100,
                         ),
                       ),
                     ),
                   ),
-                  Transform.translate(
-                    offset: const Offset(0, -70),
-                    child: Text(
-                      '${userInfo.name.substring(1, 3)}님만의 카드가 완성되기까지 \n앞으로 네 단계 남았어요 !',
-                      style: const TextStyle(
-                        fontSize: 22,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Transform.translate(
-                    offset: const Offset(0, -30),
-                    child: SizedBox(
-                      width: 380,
-                      height: 60,
-                      child: ElevatedButton(
-                        onPressed: widget.onNavigateToAnalysis,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.buttonColor.colors,
-                          foregroundColor: const Color(0xffFFFFFF),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 50.0,
-                            vertical: 15.0,
-                          ),
+                  SizedBox(
+                    width: 380,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: widget.onNavigateToAnalysis,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.buttonColor.colors,
+                        foregroundColor: const Color(0xffFFFFFF),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50.0,
+                          vertical: 15.0,
                         ),
-                        child: const Text(
-                          '나에 대해 분석하러 가기 !',
-                          style: TextStyle(
-                            fontSize: 28,
-                          ),
+                      ),
+                      child: const Text(
+                        '나에 대해 분석하러 가기 !',
+                        style: TextStyle(
+                          fontSize: 28,
                         ),
                       ),
                     ),
