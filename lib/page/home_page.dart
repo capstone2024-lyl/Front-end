@@ -20,7 +20,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +27,15 @@ class _HomePageState extends State<HomePage> {
         builder: (context, userInfoProvider, child) {
           if (userInfoProvider.userInfo == null) {
             userInfoProvider.loadUserInfo();
-            return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
+            return Center(
+                child: SpinKitWaveSpinner(
+                    color: AppColor.buttonColor.colors, size: 100));
           } else {
             final userInfo = userInfoProvider.userInfo!;
             if (userInfo.mostUsedApp.isEmpty && userInfo.appList.isNotEmpty) {
-              return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
+              return Center(
+                  child: SpinKitWaveSpinner(
+                      color: AppColor.buttonColor.colors, size: 100));
             }
             return SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
@@ -162,9 +165,9 @@ class _HomePageState extends State<HomePage> {
                                         const SizedBox(
                                           width: 5,
                                         ),
-                                        const Text(
-                                          '좋아하는 영상 카테고리 : ',
-                                          style: TextStyle(
+                                        Text(
+                                          '좋아하는 영상 카테고리 : ${userInfo!.youtubeTop3category[0] ?? '???'}',
+                                          style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -194,21 +197,45 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    const Row(
+                                    Row(
                                       children: <Widget>[
-                                        Text(
+                                        const Text(
                                           '️🏆 ',
                                           style: TextStyle(
                                             fontSize: 20,
                                           ),
                                         ),
-                                        Text(
+                                        const Text(
                                           '칭호 : ',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
+                                        userInfo.nickname.isEmpty ? const Text('???') :
+                                        Row(
+                                          children: userInfo.nickname
+                                              .asMap()
+                                              .map((index, nickname) {
+                                                return MapEntry(
+                                                  index,
+                                                  Text(
+                                                    index <
+                                                            userInfo.nickname
+                                                                    .length -
+                                                                1
+                                                        ? '$nickname, '
+                                                        : nickname,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                );
+                                              })
+                                              .values
+                                              .toList(),
+                                        )
                                       ],
                                     ),
                                   ],
