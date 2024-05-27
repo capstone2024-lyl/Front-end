@@ -30,8 +30,8 @@ class UserInfoProvider  with ChangeNotifier {
   }
 
   Future<void> updateYoutubeTop3Category(List<String> updateList) async {
-    _userInfo!.youtubeTop3category.clear();
-    _userInfo!.youtubeTop3category = updateList;
+    _userInfo!.youtubeTop3Category.clear();
+    _userInfo!.youtubeTop3Category = updateList;
     notifyListeners();
   }
 }
