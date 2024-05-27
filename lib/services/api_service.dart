@@ -2,7 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+
+import 'package:image_cropper/image_cropper.dart';
 import 'package:untitled1/services/storage_service.dart';
+import 'package:mime/mime.dart';
+import 'package:path/path.dart';
 
 import '../models/user_info.dart';
 
@@ -27,6 +32,59 @@ class ApiService {
       await _storageService.saveToken(token);
     } else {
       throw Exception('Failed to Login');
+    }
+  }
+
+  Future<bool> requestSignUp({
+    required String id,
+    required String password,
+    required String confirmPassword,
+    required String name,
+    required String birthday,
+    required CroppedFile? profileImage,
+  }) async {
+    final url = Uri.parse('$_baseUrl/user/sign-up');
+    var request = http.MultipartRequest('POST', url);
+
+    var jsonMap = {
+      'loginId' : id,
+      'password' : password,
+      'passwordCheck' : confirmPassword,
+      'name' :  name,
+      'birthday' : birthday,
+    };
+
+    var jsonData = jsonEncode(jsonMap);
+
+    request.fields['application/json'] = jsonData;
+
+    if(profileImage !=null) {
+      File profileImg = File(profileImage.path);
+      var profileImageStream = http.ByteStream(profileImage.openRead());
+      var profileImageLength = await profileImg.length();
+
+      var mimeTypeData = lookupMimeType(profileImg.path, headerBytes: [0xFF, 0xD8])?.split('/');
+
+      var profileImageMultipart = http.MultipartFile(
+        'profileImage',
+        profileImageStream,
+        profileImageLength,
+        filename: basename(profileImg.path),
+        contentType: MediaType(mimeTypeData![0],mimeTypeData[1]),
+      );
+      request.files.add(profileImageMultipart);
+    }
+
+    final response = await request.send();
+
+    print(response.statusCode);
+
+    if(response.statusCode==200 || response.statusCode==201) {
+      print('회원 가입 성공');
+      return true;
+    } else {
+      print('사용자 등록 실패');
+      return false;
     }
   }
 
@@ -211,6 +269,29 @@ class ApiService {
         'error: cannot post youtube data',
       );
       return false;
+    }
+  }
+
+  Future<List<String>> getYoutubeTop3Category() async {
+    final token = await _storageService.getToken();
+    if (token == null) {
+      throw Exception('No token found');
+    }
+    final url = Uri.parse('$_baseUrl/youtube/findTop3Category');
+    try {
+      final response = await http.get(url, headers: <String, String>{
+        'authorization': 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body)['youtubeCategoryList'];
+        return List<String>.from(result);
+      } else {
+        print('wrong status code : ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('cannot Get Youtube top3 category');
+      return [];
     }
   }
 }
