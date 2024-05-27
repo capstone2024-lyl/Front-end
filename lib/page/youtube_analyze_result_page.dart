@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
+import 'package:untitled1/services/api_service.dart';
 
 import '../util/app_color.dart';
 
@@ -17,6 +18,21 @@ class YoutubeAnalyzeResultPage extends StatefulWidget {
 }
 
 class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final result = await _apiService.getYoutubeTop3Category();
+    print(result);
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

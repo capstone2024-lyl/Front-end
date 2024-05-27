@@ -153,7 +153,7 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 50,
                 ),
                 SizedBox(
                   width: 380,
@@ -207,7 +207,7 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
     String text;
     switch (index) {
       case 0:
-        text = "영상 카테고리를 분석하고자하는 구글 계정을 선택해주세요";
+        text = "영상 카테고리를 분석하고자 하는 구글 계정을 선택해주세요";
       default:
         text = "구글 계정에 대한 접근을 허용해주세요";
     }
