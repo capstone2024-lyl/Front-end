@@ -46,40 +46,34 @@ class ApiService {
     final url = Uri.parse('$_baseUrl/user/sign-up');
     var request = http.MultipartRequest('POST', url);
 
-    var jsonMap = {
-      'loginId' : id,
-      'password' : password,
-      'passwordCheck' : confirmPassword,
-      'name' :  name,
-      'birthday' : birthday,
-    };
+    request.fields['loginId'] = id;
+    request.fields['password'] = password;
+    request.fields['passwordCheck'] = confirmPassword;
+    request.fields['name'] = name;
+    request.fields['birthday'] = birthday;
 
-    var jsonData = jsonEncode(jsonMap);
-
-    request.fields['application/json'] = jsonData;
-
-    if(profileImage !=null) {
+    if (profileImage != null) {
       File profileImg = File(profileImage.path);
       var profileImageStream = http.ByteStream(profileImage.openRead());
       var profileImageLength = await profileImg.length();
 
-      var mimeTypeData = lookupMimeType(profileImg.path, headerBytes: [0xFF, 0xD8])?.split('/');
+      var mimeTypeData =
+          lookupMimeType(profileImg.path, headerBytes: [0xFF, 0xD8])
+              ?.split('/');
 
       var profileImageMultipart = http.MultipartFile(
         'profileImage',
         profileImageStream,
         profileImageLength,
         filename: basename(profileImg.path),
-        contentType: MediaType(mimeTypeData![0],mimeTypeData[1]),
+        contentType: MediaType(mimeTypeData![0], mimeTypeData[1]),
       );
       request.files.add(profileImageMultipart);
     }
-
     final response = await request.send();
-
     print(response.statusCode);
 
-    if(response.statusCode==200 || response.statusCode==201) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       print('회원 가입 성공');
       return true;
     } else {
@@ -241,12 +235,6 @@ class ApiService {
     }
   }
 
-  //TODO chatAPI 완성되면 주석 삭제
-  // Future<List<Map<String,dynamic>> getUserMbti() async {
-  //   final token = _storageService.getToken();
-  //   final url = Uri.parse('$_baseUrl/')
-  // }
-
   Future<bool> postYoutubeData(String accessToken) async {
     final token = await _storageService.getToken();
     final url = Uri.parse('$_baseUrl/youtube/subscriptions');
@@ -265,14 +253,12 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print(
-        'error: cannot post youtube data',
-      );
+      print('error: cannot post youtube data: $e');
       return false;
     }
   }
 
-  Future<List<String>> getYoutubeTop3Category() async {
+  Future<Map<String, dynamic>> getYoutubeTop3Category() async {
     final token = await _storageService.getToken();
     if (token == null) {
       throw Exception('No token found');
@@ -283,15 +269,38 @@ class ApiService {
         'authorization': 'Bearer $token',
       });
       if (response.statusCode == 200) {
-        final result = jsonDecode(response.body)['youtubeCategoryList'];
-        return List<String>.from(result);
+        final result = jsonDecode(response.body);
+        return result;
       } else {
         print('wrong status code : ${response.statusCode}');
-        return [];
+        return {};
       }
     } catch (e) {
       print('cannot Get Youtube top3 category');
-      return [];
+      return {};
+    }
+  }
+
+  Future<Map<String, dynamic>> findMBTI() async {
+    final token = await _storageService.getToken();
+    if (token == null) {
+      throw Exception('No token Found');
+    }
+    final url = Uri.parse('$_baseUrl/chat/findMBTI');
+    try {
+      final response = await http.get(url, headers: <String, String>{
+        'authorization': 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        return result;
+      } else {
+        print(response.statusCode);
+        return {};
+      }
+    } catch (e) {
+      print('cannot find MBTI');
+      return {};
     }
   }
 }
