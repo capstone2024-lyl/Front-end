@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled1/page/my_profile_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
+import 'package:untitled1/services/api_service.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeResultPage extends StatefulWidget {
@@ -14,25 +15,21 @@ class ChatAnalyzeResultPage extends StatefulWidget {
 }
 
 class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
-  //TODO 로딩 화면 구현
-  //TODO 각 MBTI 성향 별 수치 API 연동하기
-  double ei = 10;
-  double sn = 27;
-  double tf = 82;
-  double jp = 55;
-  String mbti = '';
+
+  final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
-    _updateMbti();
+    _loadData();
   }
 
-  void _updateMbti() {
-    ei > 50 ? mbti += 'E' : mbti += 'I';
-    sn > 50 ? mbti += 'S' : mbti += 'N';
-    tf > 50 ? mbti += 'T' : mbti += 'F';
-    jp > 50 ? mbti += 'J' : mbti += 'P';
+  Future<void> _loadData() async {
+    final userInfoProvider =
+    Provider.of<UserInfoProvider>(context, listen: false);
+    await userInfoProvider.loadUserInfo();
+    final mbtiData = await _apiService.findMBTI();
+    await userInfoProvider.updateUserMBTI(mbtiData);
   }
 
   @override
@@ -97,27 +94,27 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                         height: 20,
                       ),
                       _buildIndicator(
-                          "외향형 (E)", "내향형 (I)", ei, AppColor.eiIndicatorColor.colors),
+                          "외향형 (E)", "내향형 (I)", userinfo!.mbtiPercent['energy']!, AppColor.eiIndicatorColor.colors),
                       const SizedBox(
                         height: 10,
                       ),
                       _buildIndicator(
-                          "감각형 (S)", "직관형 (N)", sn, AppColor.snIndicatorColor.colors),
+                          "감각형 (S)", "직관형 (N)", userinfo!.mbtiPercent['recognition']!, AppColor.snIndicatorColor.colors),
                       const SizedBox(
                         height: 10,
                       ),
                       _buildIndicator(
-                          "사고형 (T)", "감정형 (F)", tf, AppColor.tfIndicatorColor.colors),
+                          "사고형 (T)", "감정형 (F)", userinfo!.mbtiPercent['decision']!, AppColor.tfIndicatorColor.colors),
                       const SizedBox(
                         height: 10,
                       ),
                       _buildIndicator(
-                          "판단형 (J)", "인식형 (P)", jp, AppColor.jpIndicatorColor.colors),
+                          "판단형 (J)", "인식형 (P)", userinfo!.mbtiPercent['lifeStyle']!, AppColor.jpIndicatorColor.colors),
                       const SizedBox(
                         height: 10,
                       ),
                       Text(
-                        '${userinfo!.name.substring(1)}님의 MBTI는 $mbti입니다.',
+                        '${userinfo!.name.substring(1)}님의 MBTI는 ${userinfo.mbti}입니다.',
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -148,7 +145,7 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                     child: const Text(
                       '내 카드 확인하기',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 28,
                       ),
                     ),
                   ),
@@ -162,7 +159,7 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
     );
   }
 
-  Widget _buildIndicator(String leftLabel, String rightLabel, double percent,
+  Widget _buildIndicator(String leftLabel, String rightLabel, int percent,
       Color color) {
     double? width = 230;
     double? height = 30;
