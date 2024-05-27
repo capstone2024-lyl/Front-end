@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/services/api_service.dart';
+import 'package:untitled1/util/nickname.dart';
 
 import '../util/app_color.dart';
 
@@ -27,11 +28,13 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
   }
 
   Future<void> _loadData() async {
-    final result = await _apiService.getYoutubeTop3Category();
-    print(result);
+    final userInfoProvider =
+        Provider.of<UserInfoProvider>(context, listen: false);
+    await userInfoProvider.loadUserInfo();
+
+    final youtubeData = await _apiService.getYoutubeTop3Category();
+    await userInfoProvider.updateYoutubeData(youtubeData);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +81,37 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                     ],
                     color: Colors.white,
                   ),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'Chat GPT로  ${userInfo!.name.substring(1)}님의 구독 목록을 토대로\n좋아하는 영상 카테고리를 분석했어요 !',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const Divider(
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //TODO 각 카테고리 별 아이콘 띄우기
+                      if (userInfo.youtubeTop3Category.isNotEmpty)
+                        Text(
+                          '1위 : ${Nickname.nicknameTransfer(userInfo.youtubeTop3Category[0])} 카테고리',
+                          style: const TextStyle(
+                            fontSize: 28,
+                          ),
+
+                        )
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 40,
@@ -96,7 +130,9 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                     ),
                     child: const Text(
                       '내 카드 확인하기',
-                      style: TextStyle(fontSize: 24),
+                      style: TextStyle(
+                        fontSize: 28,
+                      ),
                     ),
                   ),
                 ),
