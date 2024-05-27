@@ -44,7 +44,7 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     'daily'
   ];
   final Map<String, int> categoryCounts = {
-    'name': 0,
+    'nature': 0,
     'person': 0,
     'animal': 0,
     'vehicle': 0,
