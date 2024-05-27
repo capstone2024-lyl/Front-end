@@ -14,6 +14,7 @@ import 'package:social_share/social_share.dart';
 import 'package:untitled1/models/user_info.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/util/app_color.dart';
+import 'package:untitled1/util/nickname.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key});
@@ -24,8 +25,8 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   //TODO user 정보 API 연동해서 사용자 정보 받아오기
-  final String _mbti = 'ESTJ';
-  final String _favoriteVideo = '게임 Shorts';
+  //TODO 검사 안했을 때 상세정보 관리하기
+
   final String _favoritePhotoStyle = '자연 풍경';
 
   Color _cardColor = AppColor.profileCardYellow.colors;
@@ -49,7 +50,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
   double _angle = 0;
 
   Future<void> _captureAndShareScreenshot() async {
-
     setState(() {
       _isSharing = true;
     });
@@ -69,7 +69,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
         _isSharing = false;
       });
     });
-
   }
 
   Future<void> _shareToInstagramStory(String imagePath) async {
@@ -111,12 +110,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         height: 40,
                       ),
                     ),
-                    if(!_isSharing)
-                    const Text(
-                      '내 카드',
-                      style: TextStyle(
-                          fontSize: 28, fontWeight: FontWeight.bold),
-                    ),
+                    if (!_isSharing)
+                      const Text(
+                        '내 카드',
+                        style: TextStyle(
+                            fontSize: 28, fontWeight: FontWeight.bold),
+                      ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -212,15 +211,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                           border: Border.all(
                                             color: _cardColor,
                                           ),
-                                          boxShadow: _isSharing ? null : <BoxShadow>[
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.7),
-                                              blurRadius: 3.0,
-                                              spreadRadius: 0.0,
-                                              offset: const Offset(0.0, 5.0),
-                                            ),
-                                          ],
+                                          boxShadow: _isSharing
+                                              ? null
+                                              : <BoxShadow>[
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.7),
+                                                    blurRadius: 3.0,
+                                                    spreadRadius: 0.0,
+                                                    offset:
+                                                        const Offset(0.0, 5.0),
+                                                  ),
+                                                ],
                                         ),
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.only(
@@ -262,7 +264,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                 top: 50,
                                                 left: 60,
                                                 child: Text(
-                                                  userInfo!.mbti ?? _mbti,
+                                                  userInfo!.mbti == ''
+                                                      ? '???'
+                                                      : userInfo!.mbti,
                                                   style: TextStyle(
                                                     color: _cardColor,
                                                     fontWeight: FontWeight.bold,
@@ -271,7 +275,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                 ),
                                               ),
                                               Positioned(
-                                                bottom: 90,
+                                                bottom: 110,
                                                 left: 20,
                                                 child: Column(
                                                   children: [
@@ -290,12 +294,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                           const EdgeInsets.all(
                                                               5),
                                                       child: ClipOval(
-                                                        child: Image.asset(
-                                                          'assets/images/ex2.jpg',
+                                                        child: Image.network(
+                                                          userInfo
+                                                              .profileImageUrl,
                                                           height: 120,
                                                           width: 120,
                                                         ),
                                                       ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
                                                     ),
                                                     Text(
                                                       userInfo!.name,
@@ -314,8 +322,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                 ),
                                               ),
                                               Positioned(
+                                                bottom: 40,
                                                 right: 20,
-                                                bottom: 30,
                                                 child: Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
@@ -342,6 +350,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                       ],
                                                     ),
                                                     _buildDivider(),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
                                                     Row(
                                                       children: [
                                                         _buildListMark(),
@@ -349,7 +360,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                           '${userInfo.mostUsedApp.isEmpty ? '???' : userInfo.mostUsedApp[0]['appName']}',
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 15,
+                                                            fontSize: 18,
                                                             color: Colors.white,
                                                           ),
                                                         ),
@@ -384,14 +395,20 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                       ],
                                                     ),
                                                     _buildDivider(),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
                                                     Row(
                                                       children: [
                                                         _buildListMark(),
                                                         Text(
-                                                          _favoriteVideo,
+                                                          userInfo.youtubeTop3Category
+                                                                  .isEmpty
+                                                              ? '???'
+                                                              : Nickname.nicknameTransfer(userInfo.youtubeTop3Category[0]),
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 15,
+                                                            fontSize: 18,
                                                             color: Colors.white,
                                                           ),
                                                         )
@@ -427,6 +444,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                       ],
                                                     ),
                                                     _buildDivider(),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
                                                     Row(
                                                       children: <Widget>[
                                                         _buildListMark(),
@@ -434,11 +454,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                           _favoritePhotoStyle,
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 15,
+                                                            fontSize: 18,
                                                             color: Colors.white,
                                                           ),
                                                         )
                                                       ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
                                                     ),
                                                     const Row(
                                                       children: [
@@ -451,7 +474,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                         Text(
                                                           '칭호',
                                                           style: TextStyle(
-                                                            fontSize: 16,
+                                                            fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color: Colors.white,
@@ -460,19 +483,56 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                       ],
                                                     ),
                                                     _buildDivider(),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        _buildListMark(),
-                                                        Text(
-                                                          _achievement,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    userInfo.nickname.isEmpty
+                                                        ? Row(
+                                                            children: [
+                                                              _buildListMark(),
+                                                              const Text(
+                                                                '???',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        18),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : SizedBox(
+                                                        height: 100,
+                                                          child: SingleChildScrollView(
+                                                            child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: userInfo
+                                                                    .nickname
+                                                                    .asMap()
+                                                                    .map((index,
+                                                                        nickname) {
+                                                                      return MapEntry(
+                                                                        index,
+                                                                        Text(
+                                                                          index < userInfo.nickname.length - 1
+                                                                              ? '• $nickname'
+                                                                              : '• $nickname',
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                18,
+
+                                                                            color: Colors
+                                                                                .white,
+                                                                          ),
+                                                                          textAlign: TextAlign.start,
+                                                                        ),
+                                                                      );
+                                                                    })
+                                                                    .values
+                                                                    .toList(),
+                                                              ),
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -757,7 +817,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Column(
       children: [
         Text(
-          '${userInfo!.name.substring(1)}님의 MBTI는 $_mbti입니다.',
+          '${userInfo!.name.substring(1)}님의 MBTI는 ${userInfo.mbti}입니다.',
           style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
@@ -767,7 +827,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.asset(
-              'assets/images/${_mbti.toLowerCase()}.jpg',
+              'assets/images/${userInfo.mbti.toLowerCase()}.jpg',
               width: 250,
               height: 280,
               fit: BoxFit.cover,
@@ -778,22 +838,34 @@ class _MyProfilePageState extends State<MyProfilePage> {
               height: 10,
             ),
             _buildIndicator(
-                "외향형 (E)", "내향형 (I)", ei, AppColor.eiIndicatorColor.colors),
+                "외향형 (E)",
+                "내향형 (I)",
+                userInfo.mbtiPercent['energy']!,
+                AppColor.eiIndicatorColor.colors),
             const SizedBox(
               height: 10,
             ),
             _buildIndicator(
-                "감각형 (S)", "직관형 (N)", sn, AppColor.snIndicatorColor.colors),
+                "감각형 (S)",
+                "직관형 (N)",
+                userInfo.mbtiPercent['recognition']!,
+                AppColor.snIndicatorColor.colors),
             const SizedBox(
               height: 10,
             ),
             _buildIndicator(
-                "사고형 (T)", "감정형 (F)", tf, AppColor.tfIndicatorColor.colors),
+                "사고형 (T)",
+                "감정형 (F)",
+                userInfo.mbtiPercent['decision']!,
+                AppColor.tfIndicatorColor.colors),
             const SizedBox(
               height: 10,
             ),
             _buildIndicator(
-                "판단형 (J)", "인식형 (P)", jp, AppColor.jpIndicatorColor.colors),
+                "판단형 (J)",
+                "인식형 (P)",
+                userInfo.mbtiPercent['lifeStyle']!,
+                AppColor.jpIndicatorColor.colors),
             const SizedBox(
               height: 10,
             ),
@@ -873,7 +945,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Widget _buildIndicator(
-      String leftLabel, String rightLabel, double percent, Color color) {
+      String leftLabel, String rightLabel, int percent, Color color) {
     double? width = 230;
     double? height = 30;
     return SingleChildScrollView(
