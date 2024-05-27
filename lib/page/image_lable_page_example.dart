@@ -1,19 +1,13 @@
 import 'dart:io';
 import 'dart:core';
-import 'dart:isolate';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
-import 'package:untitled1/util/app_color.dart';
-
-import 'package:flutter/services.dart' as services; // Add this line
 
 class ImageLabelPage extends StatefulWidget {
   const ImageLabelPage({super.key});
@@ -23,16 +17,13 @@ class ImageLabelPage extends StatefulWidget {
 }
 
 class _ImageLabelPageState extends State<ImageLabelPage> {
-  //자연 인물 동물 교통수단 가전제품 음식 가구 일상
-
   List<File>? _images;
   String _result = '';
   Interpreter? _interpreter;
   late Future<void> _modelLoadFuture;
   bool _isModelLoaded = false;
-  bool _isLoading = false;
 
-  static const List<String> categories = [
+  final List<String> categories = [
     '자연',
     '인물',
     '동물',
@@ -51,6 +42,28 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
     '음식': 0,
     '가구': 0,
     '일상': 0,
+  };
+  final Map<String, int> categoryCountsMlKit = {
+    '자연': 0,
+    '인물': 0,
+    '동물': 0,
+    '교통수단': 0,
+    '가전제품': 0,
+    '음식': 0,
+    '가구': 0,
+    '일상': 0,
+  };
+
+  final Map<String, String> mlKitToCustomCategory = {
+    'landscape': '자연',
+    'person': '인물',
+    'animal': '동물',
+    'vehicle': '교통수단',
+    'appliance': '가전제품',
+    'food': '음식',
+    'furniture': '가구',
+    'everyday': '일상'
+    // Add more mappings as needed
   };
 
   @override
@@ -100,7 +113,7 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: const Text('권한 필요'),
-            content: const Text('채팅 내역을 업로드하려면 저장소 접근 권한이 필요합니다.'),
+            content: const Text('갤러리를 분석하려면 저장소 접근 권한이 필요합니다.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -120,9 +133,6 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
     _images?.clear();
     _result = '';
 
-    setState(() {
-      _isLoading = true;
-    });
     Directory? cameraDirectory;
 
     if (Platform.isAndroid) {
@@ -133,7 +143,6 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
         cameraDirectory = Directory('${dcimDirectory.path}/Camera');
       }
     }
-    print(cameraDirectory);
 
     if (cameraDirectory != null && await cameraDirectory.exists()) {
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
@@ -144,123 +153,73 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
 
         final stopwatch = Stopwatch()..start();
 
-        // 시간 측정 종료
-        // 최신 순으로 정렬한 후 상위 100개의 파일을 선택
         final List<File> images = fileSystemEntities
             .where((item) =>
-                item is File &&
-                (item.path.toLowerCase().endsWith('.jpg') ||
-                    item.path.toLowerCase().endsWith('.jpeg') ||
-                    item.path.toLowerCase().endsWith('.png')))
+        item is File &&
+            (item.path.toLowerCase().endsWith('.jpg') ||
+                item.path.toLowerCase().endsWith('.jpeg') ||
+                item.path.toLowerCase().endsWith('.png')))
             .map((item) => item as File)
             .toList()
           ..sort(
-              (a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+                  (a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
         print(images.length);
 
-        //300장 추출
-        final selectedImages = images.take(200).toList();
+        final selectedImages = images.take(100).toList();
         stopwatch.stop();
-        print('분석 시간: ${stopwatch.elapsed}');
+        print('폴더 선택 시간: ${stopwatch.elapsed}');
 
         setState(() {
           _images = selectedImages;
         });
 
         if (_isModelLoaded) {
-          print('모델 로드')
-          // 시간 측정 시작
           final stopwatch = Stopwatch()..start();
-
           print(selectedImages.length);
-          // 이미지 분석을 병렬로 실행
-          for (final image in selectedImages) {
-            final compressedFile = await FlutterNativeImage.compressImage(
-              image.path,
-              quality: 90,
-              targetWidth: 224,
-              targetHeight: 224,
-            );
-
-            if (compressedFile.existsSync()) {
-              await _analyzeImageInBackground(compressedFile);
-            }
-          }
-
-
-          // 시간 측정 종료
+          await Future.wait(selectedImages.map((image) => classifyImage(image)));
           stopwatch.stop();
-          print('분석 시간: ${stopwatch.elapsed}');
+          print('이미지 분석 시간: ${stopwatch.elapsed}');
           print(categoryCounts);
-          setState(() {
-            _isLoading = false;
-          });
         }
       } else {
-        print('Model is not loaded yet');
+        print('No folder selected.');
       }
     } else {
-      print('No folder selected.');
+      print('Camera folder does not exist.');
     }
   }
 
-  Future<void> _analyzeImageInBackground(File image) async {
-    final stopwatch = Stopwatch()..start();
-    final receivePort = ReceivePort();
-    final modelData =
-    await rootBundle.load('assets/model/model.tflite'); // 모델 데이터를 로드
-    await Isolate.spawn(_analyzeImage, [receivePort.sendPort, modelData, image.path]);
+  Future<void> classifyImage(File image) async {
+    final totalStopwatch = Stopwatch()..start();
 
-    final sendPort = await receivePort.first as SendPort;
-    final response = ReceivePort();
-    sendPort.send(response.sendPort);
-
-    await for (final message in response) {
-      if (message is String) {
-        setState(() {
-          categoryCounts[message] = (categoryCounts[message] ?? 0) + 1;
-        });
-      } else if (message is bool && message) {
-        break;
-      }
+    if (_interpreter == null) {
+      print('Error: Interpreter is not initialized');
+      return;
     }
-    stopwatch.stop();
-    print('분석 시간: ${stopwatch.elapsed}');
 
-  }
-
-  static Future<void> _analyzeImage(List<dynamic> params) async {
-    final sendPort = params[0] as SendPort;
-    final modelData = params[1] as ByteData;
-    final imagePath = params[2] as String;
-    final port = ReceivePort();
-    sendPort.send(port.sendPort);
-
-    final Uint8List modelBytes = modelData.buffer.asUint8List();
-
-    final interpreter = Interpreter.fromBuffer(modelBytes);
-    final category = await _classifyImage(interpreter, imagePath);
-    sendPort.send(category);
-
-    sendPort.send(true); // 작업 완료 신호
-  }
-
-  static Future<String> _classifyImage(
-      Interpreter interpreter, String imagePath) async {
-    final File compressedFile = File(imagePath);
+    File compressedFile = await FlutterNativeImage.compressImage(
+      image.path,
+      quality: 90,
+      targetWidth: 224,
+      targetHeight: 224,
+    );
 
     if (!compressedFile.existsSync()) {
       print('Error: Could not decode image');
-      return '';
+      return;
     }
 
-    final img.Image imageInput =
-    img.decodeImage(compressedFile.readAsBytesSync())!;
-    final img.Image resizedImage =
-    img.copyResize(imageInput, width: 224, height: 224);
+    final imageBytes = await compressedFile.readAsBytes();
 
-    final outputShape = interpreter.getOutputTensor(0).shape;
-    final input = List.generate(
+    final img.Image? imageInput = img.decodeImage(imageBytes);
+    if (imageInput == null) {
+      print('Error: Could not decode image');
+      return;
+    }
+    final img.Image resizedImage = img.copyResize(imageInput, width: 224, height: 224);
+
+    final outputShape = _interpreter!.getOutputTensor(0).shape;
+    var input = List.generate(
         1,
             (_) => List.generate(
             224, (_) => List.generate(224, (_) => List.filled(3, 0.0))));
@@ -273,15 +232,43 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
       }
     }
 
-    final output = List.filled(outputShape.reduce((a, b) => a * b), 0.0)
+    var output = List.filled(outputShape.reduce((a, b) => a * b), 0.0)
         .reshape(outputShape);
 
-    interpreter.run(input, output);
+    _interpreter!.run(input, output);
 
     double maxProb = output[0].reduce((double a, double b) => a > b ? a : b);
     int maxIndex = output[0].indexOf(maxProb);
+    String category = categories[maxIndex];
 
-    return _ImageLabelPageState.categories[maxIndex];
+    setState(() {
+      categoryCounts[category] = (categoryCounts[category] ?? 0) + 1;
+    });
+
+    await classifyWithMLKit(image.path);
+
+    totalStopwatch.stop();
+    print('Total analysis time: ${totalStopwatch.elapsed}');
+
+    await compressedFile.delete();
+  }
+
+  Future<void> classifyWithMLKit(String imagePath) async {
+    final InputImage inputImage = InputImage.fromFilePath(imagePath);
+    final ImageLabelerOptions options = ImageLabelerOptions(confidenceThreshold: 0.5);
+    final ImageLabeler imageLabeler = GoogleMlKit.vision.imageLabeler(options);
+
+    final List<ImageLabel> labels = await imageLabeler.processImage(inputImage);
+    for (final label in labels) {
+      final String? customCategory = mlKitToCustomCategory[label.label];
+      if (customCategory != null) {
+        setState(() {
+          categoryCountsMlKit[customCategory] = (categoryCountsMlKit[customCategory] ?? 0) + 1;
+        });
+      }
+    }
+
+    imageLabeler.close();
   }
 
   @override
@@ -304,15 +291,11 @@ class _ImageLabelPageState extends State<ImageLabelPage> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error loading model'));
           } else {
-            return _isLoading
-                ? Center(
-                    child: SpinKitWaveSpinner(
-                    color: AppColor.buttonColor.colors,
-                    size: 200,
-                  ))
-                : Center(
-                    child: Text(_result),
-                  );
+            return const SingleChildScrollView(
+              child: Center(
+                child: Text('하이'),
+              ),
+            );
           }
         },
       ),
