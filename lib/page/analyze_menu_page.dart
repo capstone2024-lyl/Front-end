@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,6 +12,7 @@ import 'package:untitled1/page/photo_analyze_intro_page.dart';
 import 'package:untitled1/page/youtube_analyze_intro_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/util/app_color.dart';
+import 'package:untitled1/util/nickname.dart';
 import 'package:untitled1/util/progress_painter.dart';
 
 class AnalyzeMenuPage extends StatefulWidget {
@@ -23,8 +25,6 @@ class AnalyzeMenuPage extends StatefulWidget {
 }
 
 class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
-  //TODO 검사 진행도 서버에서 받기
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +32,9 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
         builder: (context, userInfoProvider, child) {
           if (userInfoProvider.userInfo == null) {
             userInfoProvider.loadUserInfo();
-            return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
+            return Center(
+                child: SpinKitWaveSpinner(
+                    color: AppColor.buttonColor.colors, size: 100));
           } else {
             final userInfo = userInfoProvider.userInfo!;
             return Column(
@@ -152,14 +154,14 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           ),
         ),
         Positioned(
-          right: 55,
+          right: 70,
           top: 30,
           child: Text(
-            //TODO 서버에서 user 검사 진행 정보 가져오기
-            '${userInfo!.name.substring(1, 3)}님의 카드 완성까지 \n   네 단계 남았습니다!',
+            _stepIndicator(userInfo.numOfCompleteAnalyze, userInfo),
             style: const TextStyle(
               fontSize: 18,
             ),
+            textAlign: TextAlign.center,
           ),
         ),
         Positioned(
@@ -276,7 +278,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo!.analyzeStatus['chatAnalyzeStatus']!),
+                _testCompletionIndicator(
+                    userInfo!.analyzeStatus['chatAnalyzeStatus']!),
               ],
             ),
             const Align(
@@ -345,7 +348,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo.analyzeStatus['appUsageAnalyzeStatus']!),
+                _testCompletionIndicator(
+                    userInfo.analyzeStatus['appUsageAnalyzeStatus']!),
               ],
             ),
             const Text(
@@ -356,7 +360,6 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               indent: 10,
               endIndent: 10,
             ),
-            //TODO 서버에서 결과 정보 받아오기
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
@@ -437,7 +440,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo.analyzeStatus['youtubeAnalyzeStatus']!),
+                _testCompletionIndicator(
+                    userInfo.analyzeStatus['youtubeAnalyzeStatus']!),
               ],
             ),
             const Align(
@@ -454,14 +458,13 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               indent: 10,
               endIndent: 10,
             ),
-            //TODO 서버에서 유투브 분석 결과 가져오기
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 20.0),
+                padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  '카테고리 : ???',
-                  style: TextStyle(fontSize: 14),
+                  '카테고리 : ${userInfo.youtubeTop3Category.isEmpty ? '???' : Nickname.nicknameTransfer(userInfo.youtubeTop3Category[0])}',
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             )
@@ -506,7 +509,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     ),
                   ),
                 ),
-                _testCompletionIndicator(userInfo.analyzeStatus['photoAnalyzeStatus']!),
+                _testCompletionIndicator(
+                    userInfo.analyzeStatus['photoAnalyzeStatus']!),
               ],
             ),
             const Align(
@@ -538,5 +542,26 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
         ),
       ),
     );
+  }
+
+  String _stepIndicator(double progress, UserInfo userInfo) {
+    int result = (progress * 4).toInt();
+    switch (result) {
+      case 0:
+        return '${userInfo!.name.substring(1)}님의 카드 완성까지\n'
+            '네 단계 남았습니다 !';
+      case 1:
+        return '${userInfo!.name.substring(1)}님의 카드 완성까지\n'
+            '세 단계 남았습니다 !';
+      case 2:
+        return '${userInfo!.name.substring(1)}님의 카드 완성까지\n'
+            '두 단계 남았습니다 !';
+      case 3:
+        return '${userInfo!.name.substring(1)}님의 카드 완성까지\n'
+            '한 단계 남았습니다 !';
+      default:
+        return '${userInfo!.name.substring(1)}님의 카드가\n'
+            '완성되었습니다!';
+    }
   }
 }
