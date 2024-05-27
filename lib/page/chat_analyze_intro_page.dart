@@ -1,14 +1,14 @@
+import 'dart:async';
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:permission_handler/permission_handler.dart';
+
 import 'package:untitled1/page/chat_analyze_result_page.dart';
 import 'package:untitled1/services/api_service.dart';
-
 import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeIntroPage extends StatefulWidget {
@@ -27,6 +27,8 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
   int _currentPage = 0;
 
   bool _isLoading = false;
+
+  List<File> _txtFiles = [];
 
   @override
   void initState() {
@@ -47,10 +49,105 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
     });
   }
 
+  Future<void> _listTxtFiles() async {
+    Directory kakaoTalkDir =
+        Directory('/storage/emulated/0/Documents/KakaoTalk/Chats');
+
+    if (await kakaoTalkDir.exists()) {
+      List<File> files = await _getTxtFiles(kakaoTalkDir);
+      files
+          .sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+      setState(() {
+        _txtFiles = files;
+      });
+    } else {
+      print('KakaoTalk directory does not exist.');
+    }
+  }
+
+  Future<List<File>> _getTxtFiles(Directory dir) async {
+    List<File> txtFiles = [];
+
+    await for (FileSystemEntity entity
+        in dir.list(recursive: true, followLinks: false)) {
+      if (entity is File) {
+        if (entity.path.endsWith('.txt')) {
+          txtFiles.add(entity);
+        }
+      }
+    }
+
+    return txtFiles;
+  }
+
+  void _showFilePickerDialog() async {
+    await _listTxtFiles();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Center(child: Text('분석할 채팅 파일을 선택해주세요!')),
+          backgroundColor: AppColor.cardColor.colors,
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 300,
+            child: _txtFiles.isEmpty
+                ? Center(
+                    child: SpinKitWaveSpinner(
+                    color: AppColor.buttonColor.colors,
+                    waveColor: Colors.white,
+                    size: 100,
+                  ))
+                : ListView.builder(
+                    itemCount: _txtFiles.length,
+                    itemBuilder: (context, index) {
+                      File file = _txtFiles[index];
+                      return ListTile(
+                        title: Text(file.path.split('/').last),
+                        subtitle: Text(file.path),
+                        onTap: () async {
+                          Navigator.of(context).pop(file.path);
+                        },
+                      );
+                    },
+                  ),
+          ),
+        );
+      },
+    ).then((selectedFilePath) {
+      print('파일 선택');
+      print(selectedFilePath);
+      if(selectedFilePath != null) {
+        _handleFileSelection(selectedFilePath);
+      }
+    });
+  }
+
+  void _handleFileSelection(String filePath) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    File file = File(filePath);
+    bool isUploaded = await _apiService.uploadChattingFile(file);
+    if (isUploaded && mounted) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => ChatAnalyzeResultPage(
+          onNavigateToProfile: widget.onNavigateToProfile,
+        ),
+      ));
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   Future<void> _requestPermissionAndPickFile() async {
     var statusImage = await Permission.photos.status;
     var statusVideo = await Permission.videos.status;
     var statusAudio = await Permission.audio.status;
+    var status = await Permission.manageExternalStorage.status;
+
     if (!statusImage.isGranted) {
       statusImage = await Permission.photos.request();
     }
@@ -63,10 +160,15 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
       statusAudio = await Permission.audio.request();
     }
 
+    if (!status.isGranted) {
+      status = await Permission.manageExternalStorage.request();
+    }
+
     if (statusImage.isGranted &&
         statusVideo.isGranted &&
-        statusAudio.isGranted) {
-      _pickTextFile();
+        statusAudio.isGranted &&
+        status.isGranted) {
+      _showFilePickerDialog();
     } else {
       if (mounted) {
         showDialog(
@@ -85,31 +187,6 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
             ],
           ),
         );
-      }
-    }
-  }
-
-  Future<void> _pickTextFile() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['txt'],
-      allowMultiple: false,
-    );
-    if (result != null) {
-      PlatformFile platformFile = result.files.first;
-      File file = File(platformFile.path!);
-      bool requestResult = await _apiService.uploadChattingFile(file);
-      if (requestResult) {
-        if (mounted) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => ChatAnalyzeResultPage(
-                    onNavigateToProfile: widget.onNavigateToProfile,
-                  )));
-        }
       }
     }
   }
