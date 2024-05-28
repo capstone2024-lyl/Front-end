@@ -329,6 +329,8 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
                 color: Colors.black54,
                 child: SpinKitWaveSpinner(
                   color: AppColor.buttonColor.colors,
+                  waveColor: Colors.white,
+                  trackColor: Colors.black26,
                   size: 150,
                 ),
               ),
