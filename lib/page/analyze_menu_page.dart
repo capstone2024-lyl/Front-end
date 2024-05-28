@@ -37,50 +37,52 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                     color: AppColor.buttonColor.colors, size: 100));
           } else {
             final userInfo = userInfoProvider.userInfo!;
-            return Column(
-              children: <Widget>[
-                const SizedBox(
-                  height: 50,
-                ),
-                _showTestProgress(userInfo),
-                const SizedBox(
-                  height: 150,
-                ),
-                const Text(
-                  '나를 알아보는 4가지 분석',
-                  style: TextStyle(
-                    fontSize: 24,
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 50,
                   ),
-                ),
-                const Divider(
-                  indent: 30,
-                  endIndent: 30,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _baseCardWidget(_buildChatAnalyzeCard(userInfo)),
-                          _baseCardWidget(_buildAppAnalyzeCard(userInfo)),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _baseCardWidget(_buildYoutubeAnalyzeCard(userInfo)),
-                          _baseCardWidget(_buildPhotoAnalyzeCarD(userInfo)),
-                        ],
-                      ),
-                    ],
+                  _showTestProgress(userInfo),
+                  const SizedBox(
+                    height: 150,
                   ),
-                )
-              ],
+                  const Text(
+                    '나를 알아보는 4가지 분석',
+                    style: TextStyle(
+                      fontSize: 24,
+                    ),
+                  ),
+                  const Divider(
+                    indent: 30,
+                    endIndent: 30,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _baseCardWidget(_buildChatAnalyzeCard(userInfo)),
+                            _baseCardWidget(_buildAppAnalyzeCard(userInfo)),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _baseCardWidget(_buildYoutubeAnalyzeCard(userInfo)),
+                            _baseCardWidget(_buildPhotoAnalyzeCarD(userInfo)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             );
           }
         },
