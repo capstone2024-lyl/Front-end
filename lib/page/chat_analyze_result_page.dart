@@ -119,7 +119,7 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Image.asset(
-                        'assets/images/enfj.jpg',
+                        'assets/images/${userinfo.mbti.toLowerCase()}.jpg',
                         width: 290,
                         height: 290,
                       ),
