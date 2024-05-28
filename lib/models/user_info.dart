@@ -4,7 +4,7 @@ import 'package:installed_apps/installed_apps.dart';
 class UserInfo {
   String name;
   DateTime birthday;
-  String mbti='';
+  String mbti;
   List<Map<String, dynamic>> appList;
   List<String> nickname;
   List<Map<String, dynamic>> mostUsedApp = [];
@@ -30,7 +30,7 @@ class UserInfo {
     return UserInfo(
       name: json['name'],
       birthday: _parseDate(json['birthday']),
-      mbti: json['mbti']['mbti'],
+      mbti: json['mbti']['mbti']==null ? '' : json['mbti']['mbti'],
       appList: (json['apps']['apps'] as List<dynamic>)
           .map((app) => {
                 'appPackageName': app['appPackageName'].toString(),
@@ -38,7 +38,7 @@ class UserInfo {
               })
           .toList(),
       nickname:
-          json['nicknames'] != null ? List<String>.from(json['nicknames']) : [],
+          json['nicknames'] != [] ? List<String>.from(json['nicknames']) : [],
       analyzeStatus: {
         'chatAnalyzeStatus': json['mbti']['isChecked'],
         'appUsageAnalyzeStatus': json['apps']['isChecked'],
@@ -47,10 +47,10 @@ class UserInfo {
         'photoAnalyzeStatus': false,
       },
       mbtiPercent: {
-        'energy': json['mbti']['energy'] as int ?? 0,
-        'recognition': json['mbti']['recognition']as int ?? 0,
-        'decision': json['mbti']['decision']as int ?? 0,
-        'lifeStyle': json['mbti']['lifeStyle']as int ?? 0,
+        'energy': json['mbti']['energy'] ?? 0,
+        'recognition': json['mbti']['recognition'] ?? 0,
+        'decision': json['mbti']['decision'] ?? 0,
+        'lifeStyle': json['mbti']['lifeStyle'] ?? 0,
       },
       youtubeTop3Category:
           List<String>.from(json['category']['youtubeCategoryList']),
@@ -108,6 +108,4 @@ class UserInfo {
 
     return cnt;
   }
-
-
 }
