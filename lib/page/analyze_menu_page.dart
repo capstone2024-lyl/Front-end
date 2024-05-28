@@ -487,7 +487,9 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const PhotoAnalyzeIntroPage()),
+                builder: (context) => PhotoAnalyzeIntroPage(
+                      onNavigateToProfile: widget.onNavigateToProfile,
+                    )),
           );
         },
         splashColor: Colors.transparent,
