@@ -117,7 +117,7 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
     ).then((selectedFilePath) {
       print('파일 선택');
       print(selectedFilePath);
-      if(selectedFilePath != null) {
+      if (selectedFilePath != null) {
         _handleFileSelection(selectedFilePath);
       }
     });
@@ -144,30 +144,17 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
 
   Future<void> _requestPermissionAndPickFile() async {
     var statusImage = await Permission.photos.status;
-    var statusVideo = await Permission.videos.status;
-    var statusAudio = await Permission.audio.status;
     var status = await Permission.manageExternalStorage.status;
 
     if (!statusImage.isGranted) {
       statusImage = await Permission.photos.request();
     }
 
-    if (!statusVideo.isGranted) {
-      statusVideo = await Permission.videos.request();
-    }
-
-    if (!statusAudio.isGranted) {
-      statusAudio = await Permission.audio.request();
-    }
-
     if (!status.isGranted) {
       status = await Permission.manageExternalStorage.request();
     }
 
-    if (statusImage.isGranted &&
-        statusVideo.isGranted &&
-        statusAudio.isGranted &&
-        status.isGranted) {
+    if (statusImage.isGranted && status.isGranted) {
       _showFilePickerDialog();
     } else {
       if (mounted) {
