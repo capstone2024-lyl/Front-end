@@ -8,30 +8,40 @@ import 'package:flutter/services.dart' as services;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 
-import 'package:file_picker/file_picker.dart';
-
 import 'package:path_provider/path_provider.dart';
 
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 import 'package:image/image.dart' as img;
+import 'package:untitled1/page/photo_analyze_result_page.dart';
 
+import 'package:untitled1/providers/user_info_provider.dart';
+import 'package:untitled1/services/api_service.dart';
 import 'package:untitled1/util/app_color.dart';
 
 class PhotoAnalyzeIntroPage extends StatefulWidget {
-  const PhotoAnalyzeIntroPage({super.key});
+  final VoidCallback onNavigateToProfile;
+
+  const PhotoAnalyzeIntroPage({super.key, required this.onNavigateToProfile});
 
   @override
   State<PhotoAnalyzeIntroPage> createState() => _PhotoAnalyzeIntroPageState();
 }
 
 class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
+  final ApiService _apiService = ApiService();
+
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
   List<File>? _images;
   late Future<void> _modelLoadFuture;
   bool _isModelLoaded = false;
   bool _isLoading = false;
+  List<FileSystemEntity> _files = [];
 
   static const List<String> categories = [
     'nature',
@@ -48,7 +58,7 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     'person': 0,
     'animal': 0,
     'vehicle': 0,
-    'home_appliance': 0,
+    'homeAppliance': 0,
     'food': 0,
     'furniture': 0,
     'daily': 0,
@@ -64,6 +74,13 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     super.initState();
     _modelLoadFuture = loadModel();
     _initializeIsolate();
+    _pageController.addListener(_updatePage);
+  }
+
+  void _updatePage() {
+    setState(() {
+      _currentPage = _pageController.page!.round();
+    });
   }
 
   Future<void> loadModel() async {
@@ -123,24 +140,14 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
 
   Future<void> _requestPermissionAndPickFile() async {
     var statusImage = await Permission.photos.status;
-    var statusVideo = await Permission.videos.status;
-    var statusAudio = await Permission.audio.status;
+
     if (!statusImage.isGranted) {
       statusImage = await Permission.photos.request();
     }
 
-    if (!statusVideo.isGranted) {
-      statusVideo = await Permission.videos.request();
-    }
-
-    if (!statusAudio.isGranted) {
-      statusAudio = await Permission.audio.request();
-    }
-
-    if (statusImage.isGranted &&
-        statusVideo.isGranted &&
-        statusAudio.isGranted) {
-      await pickFolder();
+    if (statusImage.isGranted) {
+      _showFileDialog();
+      //await pickFolder();
     } else {
       if (mounted) {
         showDialog(
@@ -163,73 +170,69 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     }
   }
 
-  Future<void> pickFolder() async {
-    _images?.clear();
-    categoryCounts.updateAll((key, value) => 0);
+  Future<List<File>> _getImages(String directoryPath) async {
+    final directory = Directory(directoryPath);
+    final List<File> images = [];
 
-    Directory? cameraDirectory;
-
-    if (Platform.isAndroid) {
-      cameraDirectory = Directory('/storage/emulated/0/DCIM/Camera');
-    } else {
-      final dcimDirectory = await getExternalStorageDirectory();
-      if (dcimDirectory != null) {
-        cameraDirectory = Directory('${dcimDirectory.path}/Camera');
+    await for (var entity in directory.list()) {
+      if (entity is File &&
+          (entity.path.toLowerCase().endsWith('.jpg') ||
+              entity.path.toLowerCase().endsWith('.jpeg') ||
+              entity.path.toLowerCase().endsWith('.png'))) {
+        images.add(entity);
       }
     }
 
-    if (cameraDirectory != null && await cameraDirectory.exists()) {
-      String? selectedDirectory = await FilePicker.platform
-          .getDirectoryPath(initialDirectory: cameraDirectory.path);
+    images.sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+    return images;
+  }
 
-      if (selectedDirectory != null) {
-        setState(() {
-          _isLoading = true;
-        });
-        final directory = Directory(selectedDirectory);
-        final List<FileSystemEntity> fileSystemEntities = directory.listSync();
+  Future<void> _pickFolder(String selectedFilePath) async {
+    _images?.clear();
+    categoryCounts.updateAll((key, value) => 0);
 
+    String? selectedDirectory = selectedFilePath;
+
+    if (selectedDirectory != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // 비동기 작업 수행
+      final List<File> images = await _getImages(selectedFilePath);
+      print(images.length);
+      final selectedImages = images.take(150).toList(); // 제한된 수의 이미지를 선택
+
+      setState(() {
+        _images = selectedImages;
+      });
+
+      if (_isModelLoaded) {
         final stopwatch = Stopwatch()..start();
-
-        final List<File> images = fileSystemEntities
-            .where((item) =>
-                item is File &&
-                (item.path.toLowerCase().endsWith('.jpg') ||
-                    item.path.toLowerCase().endsWith('.jpeg') ||
-                    item.path.toLowerCase().endsWith('.png')))
-            .map((item) => item as File)
-            .toList()
-          ..sort(
-              (a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
-        print(images.length);
-        final selectedImages = images.take(150).toList(); // 제한된 수의 이미지를 선택
+        print(selectedImages.length);
+        final ByteData modelData =
+            await services.rootBundle.load('assets/model/model.tflite');
+        for (final image in selectedImages) {
+          await _analyzeImageInBackground(image, modelData);
+        }
         stopwatch.stop();
-        print('폴더 선택 시간: ${stopwatch.elapsed}');
-
+        print('이미지 분석 시간: ${stopwatch.elapsed}');
         setState(() {
-          _images = selectedImages;
+          _isLoading = false;
         });
 
-        if (_isModelLoaded) {
-          final stopwatch = Stopwatch()..start();
-          print(selectedImages.length);
-          final ByteData modelData =
-              await services.rootBundle.load('assets/model/model.tflite');
-          for (final image in selectedImages) {
-            await _analyzeImageInBackground(image, modelData);
-          }
-          stopwatch.stop();
-          print('이미지 분석 시간: ${stopwatch.elapsed}');
-          setState(() {
-            _isLoading = false;
-          });
-          print(categoryCounts);
+        print(categoryCounts);
+        bool response = await _apiService.savePhotoResult(categoryCounts);
+        if (response && mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+                builder: (context) => PhotoAnalyzeResultPage(
+                    onNavigateToProfile: widget.onNavigateToProfile)),
+          );
         }
-      } else {
-        print('No folder selected.');
       }
     } else {
-      print('Camera folder does not exist.');
+      print('No folder selected.');
     }
   }
 
@@ -333,9 +336,52 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     return _PhotoAnalyzeIntroPageState.categories[maxIndex];
   }
 
+  Future<void> _showFileDialog() async {
+    // Request storage permission
+    final directory = Directory('/storage/emulated/0/DCIM');
+    List<FileSystemEntity> files = directory.listSync();
+    setState(() {
+      _files = files;
+    });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('사진을 분석할 파일을 선택하세요'),
+          backgroundColor: AppColor.cardColor.colors,
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 300,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _files.length,
+              itemBuilder: (BuildContext context, int index) {
+                FileSystemEntity file = _files[index];
+                return ListTile(
+                  title: Text(file.path.split('/').last),
+                  onTap: () {
+                    Navigator.of(context).pop(file.path);
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    ).then((selectedFilePath) async {
+      if (selectedFilePath != null) {
+        print('Selected file: $selectedFilePath');
+        await _pickFolder(selectedFilePath);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _isolate.kill(priority: Isolate.immediate);
+    _pageController.removeListener(_updatePage);
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -350,32 +396,218 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error loading model'));
           } else {
-            return Center(
-              child: _isLoading
-                  ? SpinKitWaveSpinner(
+            return Consumer<UserInfoProvider>(
+              builder: (context, userInfoProvider, child) {
+                if (userInfoProvider.userInfo == null) {
+                  userInfoProvider.loadUserInfo();
+                  return Center(
+                    child: SpinKitWaveSpinner(
                       color: AppColor.buttonColor.colors,
-                      size: 200,
-                      child: Center(
-                        child: Text(
-                          '분석 중',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColor.buttonColor.colors,
+                      size: 100,
+                    ),
+                  );
+                } else {
+                  final userInfo = userInfoProvider.userInfo;
+                  return _isLoading
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SpinKitWaveSpinner(
+                                color: AppColor.buttonColor.colors,
+                                size: 200,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                '분석 중...',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                    )
-                  : Text('파일을 선택해주세요.'),
+                        )
+                      : Column(
+                          children: [
+                            const SizedBox(
+                              height: 40,
+                            ),
+                            const Center(
+                              child: Text(
+                                '분석에 사용된 개인정보는 바로 폐기돼요 !',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              width: 380,
+                              height: 550,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.7),
+                                    blurRadius: 3.0,
+                                    spreadRadius: 0.0,
+                                    offset: const Offset(0.0, 5.0),
+                                  ),
+                                ],
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14.0),
+                                      child: Text(
+                                        '${userInfo!.name.substring(1)}님의 갤러리 폴더 속 사진들을 통해 최근 사진 취향을 분석해요',
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  const Divider(
+                                    indent: 20,
+                                    endIndent: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 350,
+                                    height: 300,
+                                    child: PageView(
+                                      controller: _pageController,
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/photo1.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Image.asset(
+                                          'assets/images/photo2.png',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _buildIndicator(0),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      _buildIndicator(1),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Step ${_currentPage + 1}',
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  _buildStepText(_currentPage),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            SizedBox(
+                              width: 380,
+                              height: 60,
+                              child: ElevatedButton(
+                                // onPressed: _isModelLoaded
+                                //     ? _requestPermissionAndPickFile
+                                //     : null,
+                                onPressed: _requestPermissionAndPickFile,
+                                // onPressed: () async {
+                                //   await _apiService.savePhotoResult({
+                                //     "nature": 0,
+                                //     "person": 74,
+                                //     "animal": 16,
+                                //     "vehicle": 16,
+                                //     "homeAppliance": 0,
+                                //     "food": 20,
+                                //     "furniture": 14,
+                                //     "daily": 0,
+                                //     "home_appliance": 10
+                                //   });
+                                // },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: AppColor.buttonColor.colors,
+                                ),
+                                child: const Text(
+                                  '사진 취향 분석하기',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                }
+              },
             );
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isModelLoaded ? _requestPermissionAndPickFile : null,
-        tooltip: 'Pick Folder',
-        child: const Icon(Icons.folder),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _isModelLoaded ? _requestPermissionAndPickFile : null,
+      //   tooltip: 'Pick Folder',
+      //   child: const Icon(Icons.folder),
+      // ),
+    );
+  }
+
+  Widget _buildIndicator(int index) {
+    return Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: _currentPage == index
+            ? const Color(0xff6F6F6F)
+            : const Color(0xffD9D9D9),
       ),
+    );
+  }
+
+  Widget _buildStepText(int index) {
+    String text;
+    switch (index) {
+      case 0:
+        text = '어플이 이미지 파일에 접근할 수 있도록 권한을 허용해주세요';
+      default:
+        text = '분석하고 싶은 파일을 선택하세요';
+    }
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 16),
+      textAlign: TextAlign.center,
     );
   }
 }
