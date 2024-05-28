@@ -303,4 +303,37 @@ class ApiService {
       return {};
     }
   }
+
+  Future<bool> savePhotoResult(Map<String, int> photoResult) async {
+    final token = await _storageService.getToken();
+    if (token == null) {
+      throw Exception('No token Found');
+    }
+
+    final url = Uri.parse('$_baseUrl/photo/saveResult');
+    try {
+      final jsonString = jsonEncode(photoResult);
+      print(jsonString);
+      print(utf8.encode(jsonString));
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonString,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('success');
+        return true;
+      } else {
+        print(response.statusCode);
+        print(response.body);
+        print('fail to send photoResult');
+        return false;
+      }
+    } catch (e) {
+      print('failed to savePhotoResult');
+      return false;
+    }
+  }
 }
