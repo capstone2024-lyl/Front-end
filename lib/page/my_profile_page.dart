@@ -14,7 +14,7 @@ import 'package:social_share/social_share.dart';
 import 'package:untitled1/models/user_info.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/util/app_color.dart';
-import 'package:untitled1/util/nickname.dart';
+import 'package:untitled1/util/youtube_category.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key});
@@ -405,7 +405,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                           userInfo.youtubeTop3Category
                                                                   .isEmpty
                                                               ? '???'
-                                                              : Nickname.nicknameTransfer(userInfo.youtubeTop3Category[0]),
+                                                              : YoutubeCategory.youtubeCategoryTransfer(userInfo.youtubeTop3Category[0]),
                                                           style:
                                                               const TextStyle(
                                                             fontSize: 18,

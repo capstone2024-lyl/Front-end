@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/services/api_service.dart';
-import 'package:untitled1/util/nickname.dart';
+import 'package:untitled1/util/youtube_category.dart';
 
 import '../util/app_color.dart';
 
@@ -87,7 +88,7 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                         height: 20,
                       ),
                       Text(
-                        'Chat GPT로  ${userInfo!.name.substring(1)}님의 구독 목록을 토대로\n좋아하는 영상 카테고리를 분석했어요 !',
+                        'Chat GPT로  ${userInfo!.name.substring(1)}님의 유튜브 구독 목록을 \n파악해 좋아하는 영상 카테고리를 분석했어요 !',
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -102,14 +103,62 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                         height: 20,
                       ),
                       //TODO 각 카테고리 별 아이콘 띄우기
-                      if (userInfo.youtubeTop3Category.isNotEmpty)
-                        Text(
-                          '1위 : ${Nickname.nicknameTransfer(userInfo.youtubeTop3Category[0])} 카테고리',
-                          style: const TextStyle(
-                            fontSize: 28,
-                          ),
-
-                        )
+                      SizedBox(
+                        width: 280,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '1위 : ${userInfo.youtubeTop3Category.isEmpty ? '???' : YoutubeCategory.youtubeCategoryTransfer(userInfo.youtubeTop3Category[0])} 카테고리',
+                                  style: const TextStyle(
+                                    fontSize: 28,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                if(userInfo.youtubeTop3Category.isNotEmpty)
+                                  SvgPicture.asset('assets/icons/${userInfo.youtubeTop3Category[0].toLowerCase()}_icon.svg', width: 30, height: 30,)
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  '2위 : ${userInfo.youtubeTop3Category.length < 2 ? '???' : '${YoutubeCategory.youtubeCategoryTransfer(userInfo.youtubeTop3Category[1])} 카테고리'}',
+                                  style: const TextStyle(
+                                    fontSize: 28,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                if(userInfo.youtubeTop3Category.length >=2)
+                                  SvgPicture.asset('assets/icons/${userInfo.youtubeTop3Category[1].toLowerCase()}_icon.svg', width: 30, height: 30,)
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  '3위 : ${userInfo.youtubeTop3Category.length < 3 ? '???' : '${YoutubeCategory.youtubeCategoryTransfer(userInfo.youtubeTop3Category[2])} 카테고리'}',
+                                  style: const TextStyle(
+                                    fontSize: 28,
+                                  ),
+                                ),
+                                if(userInfo.youtubeTop3Category.length >=3)
+                                  SvgPicture.asset('assets/icons/${userInfo.youtubeTop3Category[2].toLowerCase()}_icon.svg', width: 30, height: 30,)
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

@@ -12,7 +12,7 @@ import 'package:untitled1/page/photo_analyze_intro_page.dart';
 import 'package:untitled1/page/youtube_analyze_intro_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/util/app_color.dart';
-import 'package:untitled1/util/nickname.dart';
+import 'package:untitled1/util/youtube_category.dart';
 import 'package:untitled1/util/progress_painter.dart';
 
 class AnalyzeMenuPage extends StatefulWidget {
@@ -463,7 +463,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  '카테고리 : ${userInfo.youtubeTop3Category.isEmpty ? '???' : Nickname.nicknameTransfer(userInfo.youtubeTop3Category[0])}',
+                  '카테고리 : ${userInfo.youtubeTop3Category.isEmpty ? '???' : YoutubeCategory.youtubeCategoryTransfer(userInfo.youtubeTop3Category[0])}',
                   style: const TextStyle(fontSize: 14),
                 ),
               ),

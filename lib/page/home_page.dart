@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled1/models/user_info.dart';
 
 import 'package:untitled1/providers/user_info_provider.dart';
+import 'package:untitled1/util/youtube_category.dart';
 
 import '../util/app_color.dart';
 
@@ -167,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                                           width: 5,
                                         ),
                                         Text(
-                                          '좋아하는 영상 카테고리 : ${userInfo.youtubeTop3Category.isEmpty ? '???' : userInfo.youtubeTop3Category[0]}',
+                                          '좋아하는 영상 카테고리 : ${userInfo.youtubeTop3Category.isEmpty ? '???' : YoutubeCategory.youtubeCategoryTransfer(userInfo.youtubeTop3Category[0])}',
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -216,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                                         userInfo.nickname.isEmpty
                                             ? const Text('???')
                                             : SizedBox(
-                                                width: 250,
+                                                width: 280,
                                                 child: SingleChildScrollView(
                                                   scrollDirection:
                                                       Axis.horizontal,

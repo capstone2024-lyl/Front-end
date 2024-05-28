@@ -1,12 +1,12 @@
-class Nickname {
-  static String nicknameTransfer(String originalNickname) {
-    switch (originalNickname) {
+class YoutubeCategory {
+  static String youtubeCategoryTransfer(String originalCategory) {
+    switch (originalCategory) {
       case 'GAME':
         return '게임';
       case 'MUSIC':
         return '음악';
       case 'ENTERTAINMENT':
-        return '엔터테인';
+        return '예능';
       case 'EDUCATION':
         return '교육';
       case 'SCIENCE':
