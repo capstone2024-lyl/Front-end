@@ -166,6 +166,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                     const SizedBox(
                                                       height: 10,
                                                     ),
+                                                    const Divider(
+                                                      indent: 10,
+                                                      endIndent: 10,
+                                                      color: Colors.white,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    _buildYoutubeResult(
+                                                        userInfo),
                                                   ],
                                                 ),
                                               ),
@@ -405,7 +415,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                           userInfo.youtubeTop3Category
                                                                   .isEmpty
                                                               ? '???'
-                                                              : YoutubeCategory.youtubeCategoryTransfer(userInfo.youtubeTop3Category[0]),
+                                                              : YoutubeCategory
+                                                                  .youtubeCategoryTransfer(
+                                                                      userInfo
+                                                                          .youtubeTop3Category[0]),
                                                           style:
                                                               const TextStyle(
                                                             fontSize: 18,
@@ -501,10 +514,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                             ],
                                                           )
                                                         : SizedBox(
-                                                        height: 100,
-                                                          child: SingleChildScrollView(
-                                                            child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                            height: 100,
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
                                                                 children: userInfo
                                                                     .nickname
                                                                     .asMap()
@@ -520,19 +536,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                                               const TextStyle(
                                                                             fontSize:
                                                                                 18,
-
-                                                                            color: Colors
-                                                                                .white,
+                                                                            color:
+                                                                                Colors.white,
                                                                           ),
-                                                                          textAlign: TextAlign.start,
+                                                                          textAlign:
+                                                                              TextAlign.start,
                                                                         ),
                                                                       );
                                                                     })
                                                                     .values
                                                                     .toList(),
                                                               ),
+                                                            ),
                                                           ),
-                                                        ),
                                                   ],
                                                 ),
                                               ),
@@ -1056,6 +1072,252 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildYoutubeResult(UserInfo userInfo) {
+    return Column(
+      children: [
+        Center(
+          child: Text(
+            '${userInfo!.name.substring(1)}님이 좋아하는 영상 카테고리 분석 결과',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Column(
+          children: [
+            SizedBox(
+              width: 280,
+              height: 250,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 70,
+                    right: 5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'TOP 3',
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        Stack(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppColor.buttonColor.colors,
+                                  ),
+                                  borderRadius: BorderRadius.circular(50),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.7),
+                                      blurRadius: 3.0,
+                                      spreadRadius: 0.0,
+                                      offset: const Offset(0.0, 5.0),
+                                    ),
+                                  ],
+                                  color: Colors.white),
+                            ),
+                            userInfo.youtubeTop3Category.length < 3
+                                ? Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: Image.asset(
+                                      'assets/icons/question_mark.png',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  )
+                                : Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: SvgPicture.asset(
+                                      'assets/icons/${userInfo.youtubeTop3Category[2].toLowerCase()}_icon.svg',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          userInfo.youtubeTop3Category.length < 3
+                              ? '???'
+                              : YoutubeCategory.youtubeCategoryTransfer(
+                                  userInfo.youtubeTop3Category[2]),
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        )
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 70,
+                    left: 5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'TOP 2',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Stack(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColor.buttonColor.colors,
+                                ),
+                                borderRadius: BorderRadius.circular(50),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.7),
+                                    blurRadius: 3.0,
+                                    spreadRadius: 0.0,
+                                    offset: const Offset(0.0, 5.0),
+                                  ),
+                                ],
+                                color: Colors.white,
+                              ),
+                            ),
+                            userInfo.youtubeTop3Category.length < 2
+                                ? Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: Image.asset(
+                                      'assets/icons/question_mark.png',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  )
+                                : Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: SvgPicture.asset(
+                                      'assets/icons/${userInfo.youtubeTop3Category[1].toLowerCase()}_icon.svg',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          userInfo.youtubeTop3Category.length < 2
+                              ? '???'
+                              : YoutubeCategory.youtubeCategoryTransfer(
+                                  userInfo.youtubeTop3Category[0]),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    left: 90,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'TOP 1',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Image.asset(
+                          'assets/icons/crown_icon.png',
+                          width: 40,
+                          height: 40,
+                        ),
+                        Stack(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppColor.buttonColor.colors,
+                                  ),
+                                  borderRadius: BorderRadius.circular(50),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.7),
+                                      blurRadius: 3.0,
+                                      spreadRadius: 0.0,
+                                      offset: const Offset(0.0, 5.0),
+                                    ),
+                                  ],
+                                  color: Colors.white),
+                            ),
+                            userInfo.youtubeTop3Category.isEmpty
+                                ? Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: Image.asset(
+                                      'assets/icons/question_mark.png',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  )
+                                : Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: SvgPicture.asset(
+                                      'assets/icons/${userInfo.youtubeTop3Category[0].toLowerCase()}_icon.svg',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          userInfo.youtubeTop3Category.isEmpty
+                              ? '???'
+                              : YoutubeCategory.youtubeCategoryTransfer(
+                                  userInfo.youtubeTop3Category[0]),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
