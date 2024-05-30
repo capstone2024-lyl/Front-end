@@ -167,13 +167,6 @@ class _SettingPageState extends State<SettingPage> {
                             });
                           },
                         ),
-                        const Divider(),
-                        ListTile(
-                          leading: const Icon(Icons.settings),
-                          title: const Text('프로필 카드 설정'),
-                          onTap: () {},
-                        ),
-                        const Divider(),
                       ],
                     ),
                   ],
