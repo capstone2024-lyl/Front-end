@@ -8,6 +8,7 @@ import 'package:untitled1/util/app_color.dart';
 
 class ChatAnalyzeResultPage extends StatefulWidget {
   final VoidCallback onNavigateToProfile;
+
   const ChatAnalyzeResultPage({super.key, required this.onNavigateToProfile});
 
   @override
@@ -15,18 +16,18 @@ class ChatAnalyzeResultPage extends StatefulWidget {
 }
 
 class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
-
+  late Future<void> _loadDataFuture;
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadDataFuture = _loadData();
   }
 
   Future<void> _loadData() async {
     final userInfoProvider =
-    Provider.of<UserInfoProvider>(context, listen: false);
+        Provider.of<UserInfoProvider>(context, listen: false);
     await userInfoProvider.loadUserInfo();
     final mbtiData = await _apiService.findMBTI();
     await userInfoProvider.updateUserMBTI(mbtiData);
@@ -35,132 +36,163 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<UserInfoProvider>(
-        builder: (context, userProviderInfo, child) {
-          if(userProviderInfo.userInfo == null) {
-            userProviderInfo.loadUserInfo();
-            return Center(child: SpinKitWaveSpinner(color: AppColor.buttonColor.colors, size: 100));
+      body: FutureBuilder<void>(
+        future: _loadDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: SpinKitWaveSpinner(
+                  color: AppColor.buttonColor.colors, size: 200),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: SpinKitWaveSpinner(
+                color: AppColor.buttonColor.colors,
+                size: 200,
+              ),
+            );
           } else {
-            final userinfo = userProviderInfo.userInfo;
-            return Column(
-              children: <Widget>[
-                const SizedBox(
-                  height: 40,
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 0),
-                    child: Text(
-                      '${userinfo!.name.substring(1)}님이 업로드한 채팅을 통해 \nMBTI를 분석했어요',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+            return Consumer<UserInfoProvider>(
+              builder: (context, userProviderInfo, child) {
+                if (userProviderInfo.userInfo == null) {
+                  userProviderInfo.loadUserInfo();
+                  return Center(
+                      child: SpinKitWaveSpinner(
+                          color: AppColor.buttonColor.colors, size: 100));
+                } else {
+                  final userinfo = userProviderInfo.userInfo;
+                  return Column(
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 40,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: 380,
-                  height: 580,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.7),
-                        blurRadius: 3.0,
-                        spreadRadius: 0.0,
-                        offset: const Offset(0.0, 5.0),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30.0, vertical: 0),
+                          child: Text(
+                            '${userinfo!.name.substring(1)}님이 업로드한 채팅을 통해 \nMBTI를 분석했어요',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text('MBTI 분석 결과',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          )),
+                      Container(
+                        width: 380,
+                        height: 580,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.7),
+                              blurRadius: 3.0,
+                              spreadRadius: 0.0,
+                              offset: const Offset(0.0, 5.0),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('MBTI 분석 결과',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _buildIndicator(
+                                "외향형 (E)",
+                                "내향형 (I)",
+                                userinfo!.mbtiPercent['energy']!,
+                                AppColor.eiIndicatorColor.colors),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _buildIndicator(
+                                "감각형 (S)",
+                                "직관형 (N)",
+                                userinfo!.mbtiPercent['recognition']!,
+                                AppColor.snIndicatorColor.colors),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _buildIndicator(
+                                "사고형 (T)",
+                                "감정형 (F)",
+                                userinfo!.mbtiPercent['decision']!,
+                                AppColor.tfIndicatorColor.colors),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _buildIndicator(
+                                "판단형 (J)",
+                                "인식형 (P)",
+                                userinfo!.mbtiPercent['lifeStyle']!,
+                                AppColor.jpIndicatorColor.colors),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              '${userinfo!.name.substring(1)}님의 MBTI는 ${userinfo.mbti}입니다.',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            Image.asset(
+                              'assets/images/${userinfo.mbti.toLowerCase()}.jpg',
+                              width: 290,
+                              height: 290,
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(
                         height: 20,
                       ),
-                      _buildIndicator(
-                          "외향형 (E)", "내향형 (I)", userinfo!.mbtiPercent['energy']!, AppColor.eiIndicatorColor.colors),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _buildIndicator(
-                          "감각형 (S)", "직관형 (N)", userinfo!.mbtiPercent['recognition']!, AppColor.snIndicatorColor.colors),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _buildIndicator(
-                          "사고형 (T)", "감정형 (F)", userinfo!.mbtiPercent['decision']!, AppColor.tfIndicatorColor.colors),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _buildIndicator(
-                          "판단형 (J)", "인식형 (P)", userinfo!.mbtiPercent['lifeStyle']!, AppColor.jpIndicatorColor.colors),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        '${userinfo!.name.substring(1)}님의 MBTI는 ${userinfo.mbti}입니다.',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      Image.asset(
-                        'assets/images/${userinfo.mbti.toLowerCase()}.jpg',
-                        width: 290,
-                        height: 290,
+                      SizedBox(
+                        width: 380,
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            widget.onNavigateToProfile();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColor.buttonColor.colors,
+                          ),
+                          child: const Text(
+                            '내 카드 확인하기',
+                            style: TextStyle(
+                              fontSize: 28,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: 380,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      widget.onNavigateToProfile();
-                    },
-
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: AppColor.buttonColor.colors,
-                    ),
-                    child: const Text(
-                      '내 카드 확인하기',
-                      style: TextStyle(
-                        fontSize: 28,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                  );
+                }
+              },
             );
           }
         },
-
       ),
     );
   }
 
-  Widget _buildIndicator(String leftLabel, String rightLabel, int percent,
-      Color color) {
+  Widget _buildIndicator(
+      String leftLabel, String rightLabel, int percent, Color color) {
     double? width = 230;
     double? height = 30;
     return SingleChildScrollView(
@@ -195,62 +227,62 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                 ),
                 percent >= 50
                     ? Positioned(
-                  left: 0,
+                        left: 0,
                         child: Container(
-                    width: width * percent / 100,
-                    height: height,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: color,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${percent.toStringAsFixed(0)}%',
-                      ),
-                    ),
-                  ),
-                )
+                          width: width * percent / 100,
+                          height: height,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: color,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${percent.toStringAsFixed(0)}%',
+                            ),
+                          ),
+                        ),
+                      )
                     : Positioned(
-                  right: 0,
-                  child: Container(
-                    width: width * (100-percent) / 100,
-                    height: height,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: color,
-                    ),
-                    child: Center(
-                      child: Text(
-                          '${(100 - percent).toStringAsFixed(0)}%',
+                        right: 0,
+                        child: Container(
+                          width: width * (100 - percent) / 100,
+                          height: height,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: color,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${(100 - percent).toStringAsFixed(0)}%',
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
                 percent < 50
                     ? Positioned(
-                  left: 0,
-                  child: SizedBox(
-                    width: width * percent / 100,
-                    height: height,
-                    child: Center(
-                      child: Text(
-                        '${percent.toStringAsFixed(0)}%',
-                      ),
-                    ),
-                  ),
-                )
+                        left: 0,
+                        child: SizedBox(
+                          width: width * percent / 100,
+                          height: height,
+                          child: Center(
+                            child: Text(
+                              '${percent.toStringAsFixed(0)}%',
+                            ),
+                          ),
+                        ),
+                      )
                     : Positioned(
-                  right: 0,
-                  child: SizedBox(
-                    width: width - width * percent / 100,
-                    height: height,
-                    child: Center(
-                      child: Text(
-                        '${(100 - percent).toStringAsFixed(0)}%',
+                        right: 0,
+                        child: SizedBox(
+                          width: width - width * percent / 100,
+                          height: height,
+                          child: Center(
+                            child: Text(
+                              '${(100 - percent).toStringAsFixed(0)}%',
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
