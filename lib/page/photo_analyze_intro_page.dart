@@ -48,7 +48,7 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     'person',
     'animal',
     'vehicle',
-    'home_appliance',
+    'homeAppliance',
     'food',
     'furniture',
     'daily'
@@ -201,7 +201,7 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
       // 비동기 작업 수행
       final List<File> images = await _getImages(selectedFilePath);
       print(images.length);
-      final selectedImages = images.take(150).toList(); // 제한된 수의 이미지를 선택
+      final selectedImages = images.take(10).toList(); // 제한된 수의 이미지를 선택
 
       setState(() {
         _images = selectedImages;
@@ -217,9 +217,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
         }
         stopwatch.stop();
         print('이미지 분석 시간: ${stopwatch.elapsed}');
-        setState(() {
-          _isLoading = false;
-        });
 
         print(categoryCounts);
         bool response = await _apiService.savePhotoResult(categoryCounts);
