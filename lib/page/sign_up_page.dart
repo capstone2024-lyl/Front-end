@@ -30,12 +30,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   CroppedFile? _croppedFile;
 
-  bool _isSubmitting = false;
   final _formKey = GlobalKey<FormState>();
   bool _idIsAvailable = false;
   bool _passwordIsObscured = true;
 
   String _idError = '';
+  String _pwError = '';
+  String _nameError = '';
+  String _dateError = '';
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -46,10 +48,41 @@ class _SignUpPageState extends State<SignUpPage> {
   String _birthdayText = '';
 
   @override
+  void initState() {
+    super.initState();
+    _idController.addListener(_handleIdChange);
+    _passwordController.addListener(_handlePwChange);
+    _nameController.addListener(_handleNameChange);
+  }
+
+  void _handleIdChange() {
+    setState(() {
+      _idIsAvailable = false;
+      _idError = '';
+    });
+  }
+
+  void _handlePwChange() {
+    setState(() {
+      _pwError = '';
+    });
+  }
+
+  void _handleNameChange() {
+    setState(() {
+      _nameError = '';
+    });
+  }
+
+  @override
   void dispose() {
+    _idController.removeListener(_handleIdChange);
     _idController.dispose();
+    _passwordController.removeListener(_handlePwChange);
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _nameController.removeListener(_handleNameChange);
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -65,6 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
         return;
       }
       setState(() {
+        _dateError = '';
         _birthday = pickedDate;
         _birthdayText = DateFormat('MM월 dd일').format(pickedDate);
       });
@@ -76,28 +110,135 @@ class _SignUpPageState extends State<SignUpPage> {
     if (_idController.text.isEmpty) {
       setState(() {
         _idError = '아이디를 입력해주세요';
+        _idIsAvailable = false;
       });
       return;
     } else if (!FormatRule.ID_FORMAT.regex.hasMatch(_idController.text)) {
       setState(() {
         _idError = '아이디는 6~12자의 영문, 숫자만 사용 가능합니다';
+        _idIsAvailable = false;
       });
       return;
-    }
-    bool result = await _apiService.checkIdDuplicated(_idController.text);
-    if (!result) {
-      setState(() {
-        _idError = '';
-        _idIsAvailable = true;
-      });
     } else {
       setState(() {
-        _idError = '아이디가 중복됩니다.';
+        _idError = '';
+      });
+    }
+    if (_idError.isEmpty) {
+      bool result = await _apiService.checkIdDuplicated(_idController.text);
+      setState(() {
+        _idIsAvailable = !result;
+        if (_idIsAvailable) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('알림'),
+              content: const Text('사용 가능한 아이디입니다.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          _idError = '아이디가 중복됩니다.';
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('알림'),
+              content: const Text('사용할 수 없는 아이디입니다.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            ),
+          );
+        }
       });
     }
   }
 
   void _submitForm() async {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      // 아이디 입력 확인
+      if (_idController.text.isEmpty) {
+        _idError = '아이디를 입력해주세요';
+      } else if (!FormatRule.ID_FORMAT.regex.hasMatch(_idController.text)) {
+        _idError = '아이디는 6~12자의 영문, 숫자만 사용 가능합니다';
+      } else if (!_idIsAvailable) {
+        _idError = '아이디 중복 확인을 해주세요';
+      } else {
+        _idError = ''; // 에러가 없을 때는 에러 메시지를 초기화합니다.
+      }
+    });
+
+    bool formValid = true;
+
+    if (_idError.isNotEmpty) {
+      formValid = false;
+    }
+
+    // if (value == null || value.isEmpty) {
+    //   return '비밀번호를 입력해주세요';
+    // }
+    // if (!FormatRule.PASSWORD_FORMAT.regex
+    //     .hasMatch(value)) {
+    //   return '비밀번호는 8~16자의 문자, 숫자, 기호를 모두 사용해야 합니다';
+    // }
+
+    // 비밀번호 검증
+    if (_passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      setState(() {
+        _pwError = '비밀번호를 입력해주세요';
+      });
+      formValid = false;
+    }
+
+    if (!FormatRule.PASSWORD_FORMAT.regex.hasMatch(_passwordController.text)) {
+      setState(() {
+        _pwError = '비밀번호는 8~16자의 문자, 숫자, 기호를 모두 사용해야 합니다';
+      });
+      formValid = false;
+    }
+
+    // 비밀번호 확인 검증
+    if (_confirmPasswordController.text != _passwordController.text) {
+      setState(() {
+        _pwError = '비밀번호가 일치하지 않습니다.';
+      });
+      formValid = false;
+    }
+
+    // 이름 검증
+    if (_nameController.text.isEmpty) {
+      setState(() {
+        _nameError = '이름을 입력해주세요';
+      });
+      formValid = false;
+    }
+
+    // 생일 검증
+    if (_birthday == null) {
+      setState(() {
+        _dateError = '날짜를 선택해주세요';
+      });
+      formValid = false;
+    }
+
+    if (!formValid) {
+      return;
+    }
+
     bool result = await _apiService.requestSignUp(
       id: _idController.text,
       password: _passwordController.text,
@@ -106,12 +247,15 @@ class _SignUpPageState extends State<SignUpPage> {
       birthday: DateFormat('yyyy-MM-dd').format(_birthday!),
       profileImage: _croppedFile,
     );
-    if (_formKey.currentState!.validate() && _idIsAvailable && result) {
-      setState(() {
-        _isSubmitting = true;
-      });
 
+    if (result) {
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('회원가입 성공'),
+            duration: Duration(seconds: 2),
+          ),
+        );
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const SignInPage()));
       }
@@ -267,23 +411,26 @@ class _SignUpPageState extends State<SignUpPage> {
                           height: 60,
                           child: ElevatedButton(
                             onPressed: () async {
-                              await _checkUsernameAvailability();
-                              if (_idIsAvailable) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('알림'),
-                                    content: const Text('사용 가능한 아이디입니다.'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('확인'),
-                                      ),
-                                    ],
-                                  ),
-                                );
+                              // 아이디 형식이 맞는지 먼저 확인
+                              if (_idController.text.isEmpty) {
+                                setState(() {
+                                  _idIsAvailable = false;
+                                  _idError = '아이디를 입력해주세요';
+                                });
+                                print(_idError);
+                              } else if (!FormatRule.ID_FORMAT.regex
+                                  .hasMatch(_idController.text)) {
+                                setState(() {
+                                  _idIsAvailable = false;
+                                  _idError = '아이디는 6~12자의 영문, 숫자만 사용 가능합니다';
+                                });
+                                print(_idError);
+                              } else {
+                                _idError = '';
+                              }
+
+                              if (_idError.isEmpty) {
+                                    await _checkUsernameAvailability();
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -321,6 +468,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         obscureText: _passwordIsObscured,
                         decoration: InputDecoration(
                           hintText: '8~16자 이내 영문, 숫자, 특수 문자를 모두 사용',
+                          errorText: _pwError.isEmpty ? null : _pwError,
                           border: const OutlineInputBorder(),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -335,16 +483,6 @@ class _SignUpPageState extends State<SignUpPage> {
                             },
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '비밀번호를 입력해주세요';
-                          }
-                          if (!FormatRule.PASSWORD_FORMAT.regex
-                              .hasMatch(value)) {
-                            return '비밀번호는 8~16자의 문자, 숫자, 기호를 모두 사용해야 합니다';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                     const Align(
@@ -403,15 +541,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       width: 400,
                       child: TextFormField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          hintText: '이름을 입력해주세요',
+                          errorText: _nameError.isEmpty ? null : _nameError,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '이름을 입력해주세요';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                     const Align(
@@ -434,14 +568,9 @@ class _SignUpPageState extends State<SignUpPage> {
                               hintText: _birthdayText.isEmpty
                                   ? '월 일 선택'
                                   : _birthdayText,
+                              errorText: _dateError.isEmpty ? null : _dateError,
                               border: const OutlineInputBorder(),
                             ),
-                            validator: (value) {
-                              if (_birthday == null) {
-                                return '생일을 선택해주세요';
-                              }
-                              return null;
-                            },
                           ),
                         ),
                       ),
