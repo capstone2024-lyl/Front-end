@@ -1,9 +1,10 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+import 'package:fl_chart/fl_chart.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -24,10 +25,9 @@ class MyProfilePage extends StatefulWidget {
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
-  //TODO user 정보 API 연동해서 사용자 정보 받아오기
   //TODO 검사 안했을 때 상세정보 관리하기
 
-  final String _favoritePhotoStyle = '자연 풍경';
+  int _touchedIndex = -1;
 
   Color _cardColor = AppColor.profileCardYellow.colors;
   bool _isColorSelectPage = false;
@@ -36,15 +36,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
   final ScreenshotController _screenshotController = ScreenshotController();
   final _instaId = '1535325187166738';
   bool _isSharing = false;
-
-  //TODO userInfo에서 mbti 수치 받아오기
-  double ei = 10;
-  double sn = 27;
-  double tf = 82;
-  double jp = 60;
-
-  //TODO 칭호 리스트로 받기
-  final String _achievement = '나는 자연인이다.';
 
   bool _isBack = false;
   double _angle = 0;
@@ -187,9 +178,27 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                           ),
                                                         ],
                                                       ),
-                                                    if(userInfo!.analyzeStatus['youtubeAnalyzeStatus']!)
-                                                    _buildYoutubeResult(
-                                                        userInfo),
+                                                    if (userInfo!.analyzeStatus[
+                                                        'youtubeAnalyzeStatus']!)
+                                                      _buildYoutubeResult(
+                                                          userInfo),
+                                                    if(userInfo.analyzeStatus['photoAnalyzeStatus']!)
+                                                      Column(
+                                                        children: [
+                                                          const Divider(
+                                                            indent: 10,
+                                                            endIndent: 10,
+                                                            color: Colors.white,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 40,
+                                                          ),
+                                                          _buildPhotoResult(userInfo),
+                                                          const SizedBox(
+                                                            height: 60,
+                                                          ),
+                                                        ],
+                                                      ),
                                                   ],
                                                 ),
                                               ),
@@ -478,7 +487,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                       children: <Widget>[
                                                         _buildListMark(),
                                                         Text(
-                                                          _favoritePhotoStyle,
+                                                          userInfo.photoCategory
+                                                                  .isEmpty
+                                                              ? '???'
+                                                              : userInfo
+                                                                  .photoCategory[0],
                                                           style:
                                                               const TextStyle(
                                                             fontSize: 18,
@@ -1333,5 +1346,189 @@ class _MyProfilePageState extends State<MyProfilePage> {
         ),
       ],
     );
+  }
+
+  Widget _buildPhotoResult(UserInfo userInfo) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          width: 200,
+          height: 200,
+          child: PieChart(
+            PieChartData(
+              pieTouchData: PieTouchData(
+                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                setState(() {
+                  if (!event.isInterestedForInteractions ||
+                      pieTouchResponse == null ||
+                      pieTouchResponse.touchedSection == null) {
+                    _touchedIndex = -1;
+                    return;
+                  }
+                  _touchedIndex =
+                      pieTouchResponse.touchedSection!.touchedSectionIndex;
+                });
+              }),
+              sections: _showingSections(
+                  userInfo.photoCategory, userInfo.photoCategoryCounts),
+              borderData: FlBorderData(show: false),
+              sectionsSpace: 0,
+              centerSpaceRadius: 0,
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 50,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const SizedBox(
+              height: 60,
+            ),
+            for (int i = 0; i < userInfo.photoCategory.length; i++)
+              _charIndicator(
+                  color: _getChartColor(i), title: userInfo.photoCategory[i])
+          ],
+        ),
+      ],
+    );
+  }
+
+  List<PieChartSectionData> _showingSections(
+      List<String> category, List<int> categoryCount) {
+    return List.generate(category.length, (i) {
+      final isTouched = (i == _touchedIndex);
+      final double fontSize = isTouched ? 25 : 16;
+      final double radius = isTouched ? 110 : 100;
+      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+      final color = _getChartColor(i);
+      final widgetSize = isTouched ? 55.0 : 40.0;
+      return PieChartSectionData(
+        color: color,
+        value: categoryCount[i].toDouble(),
+        title: '${categoryCount[i]}%',
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: shadows,
+        ),
+        badgeWidget: _buildBadge(
+          imgAsset: 'assets/icons/${_translateCategory(category[i])}.png',
+          size: widgetSize,
+          borderColor: Colors.black,
+        ),
+        badgePositionPercentageOffset: .98,
+      );
+    });
+  }
+
+  Color _getChartColor(int index) {
+    switch (index) {
+      case 0:
+        return const Color(0xFF2196F3);
+      case 1:
+        return const Color(0xFFFF683B);
+      case 2:
+        return const Color(0xFF3BFF49);
+      case 3:
+        return const Color(0xFFE80054);
+      case 4:
+        return const Color(0xFF6E1BFF);
+      case 5:
+        return const Color(0xffFF90E7);
+      case 6:
+        return const Color(0xFFFF3AF2);
+      case 7:
+        return const Color(0xFFFFC300);
+      default:
+        return Colors.black;
+    }
+  }
+
+  Widget _charIndicator({
+    required Color color,
+    required String title,
+  }) {
+    double size = 16;
+    return Row(
+      children: <Widget>[
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: color,
+          ),
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _buildBadge({
+    required String imgAsset,
+    required double size,
+    required Color borderColor,
+  }) {
+    return AnimatedContainer(
+      duration: PieChart.defaultDuration,
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: borderColor,
+          width: 1,
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withOpacity(.5),
+            offset: const Offset(3, 3),
+            blurRadius: 3,
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(size * .15),
+      child: Image.asset(
+        imgAsset,
+      ),
+    );
+  }
+
+  String _translateCategory(String original) {
+    switch (original) {
+      case '인물':
+        return 'person';
+      case '음식':
+        return 'food';
+      case '동물':
+        return 'animal';
+      case '가구':
+        return 'furniture';
+      case '교통수단':
+        return 'transport';
+      case '가전제품':
+        return 'homeappliance';
+      case '자연':
+        return 'nature';
+      default:
+        return 'daily';
+    }
   }
 }
