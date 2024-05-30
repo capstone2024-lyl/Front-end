@@ -15,7 +15,6 @@ class UserInfo {
   List<String> photoCategory;
   List<int> photoCategoryCounts;
 
-  //TODO 사진 데이터
   UserInfo({
     required this.name,
     required this.birthday,
