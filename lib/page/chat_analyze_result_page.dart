@@ -42,7 +42,9 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: SpinKitWaveSpinner(
-                  color: AppColor.buttonColor.colors, size: 200),
+                color: AppColor.buttonColor.colors,
+                size: 200,
+              ),
             );
           } else if (snapshot.hasError) {
             return Center(
@@ -57,8 +59,11 @@ class _ChatAnalyzeResultPageState extends State<ChatAnalyzeResultPage> {
                 if (userProviderInfo.userInfo == null) {
                   userProviderInfo.loadUserInfo();
                   return Center(
-                      child: SpinKitWaveSpinner(
-                          color: AppColor.buttonColor.colors, size: 100));
+                    child: SpinKitWaveSpinner(
+                      color: AppColor.buttonColor.colors,
+                      size: 200,
+                    ),
+                  );
                 } else {
                   final userinfo = userProviderInfo.userInfo;
                   return Column(

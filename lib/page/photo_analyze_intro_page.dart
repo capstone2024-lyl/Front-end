@@ -389,7 +389,12 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
         future: _modelLoadFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: SpinKitWaveSpinner(
+                color: AppColor.buttonColor.colors,
+                size: 200,
+              ),
+            );
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error loading model'));
           } else {
@@ -400,7 +405,7 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
                   return Center(
                     child: SpinKitWaveSpinner(
                       color: AppColor.buttonColor.colors,
-                      size: 100,
+                      size: 200,
                     ),
                   );
                 } else {

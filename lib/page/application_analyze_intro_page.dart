@@ -5,6 +5,7 @@ import 'package:app_usage/app_usage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -69,11 +70,10 @@ class _ApplicationAnalyzeIntroPageState
         await AppUsage().getAppUsage(startDate, endDate);
     bool isUsageAccessPermission = await _checkUsageAccessPermission();
 
-    if (isUsageAccessPermission ) {
+    if (isUsageAccessPermission) {
       print(infoList);
       List<Map<String, Object>> appList = [];
       for (var info in infoList) {
-        //print(info);
         if (info.usage.inMinutes == 0) {
           continue;
         }
@@ -110,7 +110,12 @@ class _ApplicationAnalyzeIntroPageState
         builder: (context, userInfoProvider, child) {
           if (userInfoProvider.userInfo == null) {
             userInfoProvider.loadUserInfo();
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: SpinKitWaveSpinner(
+                color: AppColor.buttonColor.colors,
+                size: 200,
+              ),
+            );
           } else {
             final userInfo = userInfoProvider.userInfo;
             return SingleChildScrollView(
