@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'package:provider/provider.dart';
-import 'package:untitled1/page/image_lable_page_example.dart';
 
 import 'package:untitled1/page/sign_in_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
@@ -17,7 +16,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  //TODO 앱 시작 시 권한 요청 받기
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -45,10 +43,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Pretendard',
           useMaterial3: true,
         ),
-        //home: NavigatePage(),
         home: const SignInPage(),
-        //home: ImageLabelPage(),
-        //home: ApplicationAnalyzeIntroPage(),
       ),
     );
   }
