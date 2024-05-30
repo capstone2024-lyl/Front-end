@@ -101,11 +101,12 @@ class _SignInPageState extends State<SignInPage> {
                 child: TextField(
                   controller: _idController,
                   decoration: InputDecoration(
-                      labelText: '아이디',
-                      hintText: '아이디를 입력하세요',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      )),
+                    labelText: '아이디',
+                    hintText: '아이디를 입력하세요',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(
@@ -160,48 +161,23 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  TextButton(
-                    //TODO 아이디 찾기 page로 이동
-                    onPressed: () {},
-                    child: const Text(
-                      '아이디 찾기',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                    ),
+              const SizedBox(
+                height: 30,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpPage()));
+                },
+                child: const Text(
+                  '회원가입 하기',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
                   ),
-                  TextButton(
-                    //TODO 비밀번호 찾기 page로 이동
-                    onPressed: () {},
-                    child: const Text(
-                      '비밀번호 찾기',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    //TODO 회원가입 page로 이동
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignUpPage()));
-                    },
-                    child: const Text(
-                      '회원가입',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
               Transform.translate(
                 offset: const Offset(0, -10),
