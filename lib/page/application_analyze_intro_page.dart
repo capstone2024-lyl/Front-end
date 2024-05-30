@@ -241,6 +241,7 @@ class _ApplicationAnalyzeIntroPageState
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('알림'),
+                              backgroundColor: AppColor.cardColor.colors,
                               content: const Text(
                                   '어플 사용시간을 분석하려면 사용정보 접근을 허용해야 합니다.'),
                               actions: <Widget>[
