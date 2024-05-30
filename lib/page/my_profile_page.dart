@@ -152,28 +152,42 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                     const SizedBox(
                                                       height: 20,
                                                     ),
-                                                    _buildMbtiResult(userInfo!),
-                                                    const Divider(
-                                                      indent: 10,
-                                                      endIndent: 10,
-                                                      color: Colors.white,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    _buildAppUsageResult(
-                                                        userInfo!),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    const Divider(
-                                                      indent: 10,
-                                                      endIndent: 10,
-                                                      color: Colors.white,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
+                                                    if (userInfo!.analyzeStatus[
+                                                        'chatAnalyzeStatus']!)
+                                                      Column(
+                                                        children: [
+                                                          _buildMbtiResult(
+                                                              userInfo!),
+                                                          const Divider(
+                                                            indent: 10,
+                                                            endIndent: 10,
+                                                            color: Colors.white,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    if (userInfo!.analyzeStatus[
+                                                        'appUsageAnalyzeStatus']!)
+                                                      Column(
+                                                        children: [
+                                                          _buildAppUsageResult(
+                                                              userInfo!),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          const Divider(
+                                                            indent: 10,
+                                                            endIndent: 10,
+                                                            color: Colors.white,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    if(userInfo!.analyzeStatus['youtubeAnalyzeStatus']!)
                                                     _buildYoutubeResult(
                                                         userInfo),
                                                   ],
