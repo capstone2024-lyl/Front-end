@@ -7,11 +7,17 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:intl/intl.dart';
+
 import 'package:path_provider/path_provider.dart';
+
 import 'package:provider/provider.dart';
+
 import 'package:screenshot/screenshot.dart';
+
 import 'package:social_share/social_share.dart';
+
 import 'package:untitled1/models/user_info.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
 import 'package:untitled1/util/app_color.dart';
@@ -188,7 +194,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                         children: [
                                                           Text(
                                                             '${userInfo.name.substring(1)}님의 사진 분석 결과',
-                                                            style: const TextStyle(
+                                                            style:
+                                                                const TextStyle(
                                                               fontSize: 24,
                                                               fontWeight:
                                                                   FontWeight
@@ -235,7 +242,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                 color: Colors.white,
                                               ),
                                             ),
-                                          )
+                                          ),
+                                          if (userInfo.numOfCompleteAnalyze *
+                                                  4 ==
+                                              0)
+                                            Positioned.fill(
+                                              child: Transform(
+                                                alignment: Alignment.center,
+                                                transform: Matrix4.identity()
+                                                  ..scale(-1.0, 1.0, 1.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    '아직 완료된 검사가 없어요 !\n\n\n'
+                                                    '검사를 진행해서 ${userInfo.name.substring(1)}님만의 카드를 \n완성해보세요 !',
+                                                    style: const TextStyle(
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                         ],
                                       )
                                     : Container(
