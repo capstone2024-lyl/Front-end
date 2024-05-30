@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         Text(
-                                          'MBTI : ${userInfo.mbti ?? '???'}',
+                                          'MBTI : ${userInfo.mbti == '' ? '???' : userInfo.mbti}',
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -179,17 +179,17 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(
                                       height: 7,
                                     ),
-                                    const Row(
+                                    Row(
                                       children: <Widget>[
-                                        Text(
+                                        const Text(
                                           '🖼️ ',
                                           style: TextStyle(
                                             fontSize: 20,
                                           ),
                                         ),
                                         Text(
-                                          '사진 취향 : ',
-                                          style: TextStyle(
+                                          '사진 취향 : ${userInfo!.photoCategory.isEmpty ? '???' : userInfo!.photoCategory[0]}',
+                                          style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                           ),
