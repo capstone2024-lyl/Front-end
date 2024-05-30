@@ -12,6 +12,8 @@ class UserInfo {
   List<String> youtubeTop3Category;
   Map<String, bool> analyzeStatus;
   String profileImageUrl;
+  List<String> photoCategory;
+  List<int> photoCategoryCounts;
 
   //TODO 사진 데이터
   UserInfo({
@@ -24,13 +26,15 @@ class UserInfo {
     required this.mbtiPercent,
     required this.youtubeTop3Category,
     required this.profileImageUrl,
+    required this.photoCategory,
+    required this.photoCategoryCounts,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     return UserInfo(
       name: json['name'],
       birthday: _parseDate(json['birthday']),
-      mbti: json['mbti']['mbti']==null ? '' : json['mbti']['mbti'],
+      mbti: json['mbti']['mbti'] == null ? '' : json['mbti']['mbti'],
       appList: (json['apps']['apps'] as List<dynamic>)
           .map((app) => {
                 'appPackageName': app['appPackageName'].toString(),
@@ -55,6 +59,12 @@ class UserInfo {
       youtubeTop3Category:
           List<String>.from(json['category']['youtubeCategoryList']),
       profileImageUrl: json['profileImageUrl'],
+      photoCategory: json['photoResult']['sortedCategories'] == null
+          ? []
+          : List<String>.from(json['photoResult']['sortedCategories']),
+      photoCategoryCounts: json['photoResult']['categoryCounts'] == null
+          ? []
+          : List<int>.from(json['photoResult']['categoryCounts']),
     );
   }
 
