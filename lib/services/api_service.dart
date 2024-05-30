@@ -102,6 +102,31 @@ class ApiService {
     }
   }
 
+  Future<String> getProfileImage() async {
+    final token = await _storageService.getToken();
+    final url = Uri.parse('$_baseUrl/user/me');
+    if (token == null) {
+      throw Exception('No token found');
+    }
+    try {
+      final response = await http.get(url, headers: <String,String> {
+        'Authorization' : 'Bearer $token',
+      });
+
+      if(response.statusCode ==200) {
+        String profileImageUrl = jsonDecode(response.body)['profileImageUrl'];
+        return profileImageUrl;
+      } else {
+        print('failed to get Image : ${response.statusCode}');
+        return '';
+      }
+    } catch(e) {
+      print('failed to get Image : $e');
+      return '';
+    }
+
+  }
+
   Future<bool> checkIdDuplicated(String id) async {
     final url = Uri.parse('$_baseUrl/user/sign-up/is-duplicated?loginId=$id');
     final response = await http.get(url);
@@ -313,11 +338,10 @@ class ApiService {
     final url = Uri.parse('$_baseUrl/photo/saveResult');
     try {
       final jsonString = jsonEncode(photoResult);
-      print(jsonString);
-      print(utf8.encode(jsonString));
       final response = await http.post(
         url,
         headers: <String, String>{
+          'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
         body: jsonString,
@@ -335,5 +359,76 @@ class ApiService {
       print('failed to savePhotoResult');
       return false;
     }
+  }
+
+  Future<bool> updateProfileImage({required CroppedFile? profileImage}) async {
+    final token = await _storageService.getToken();
+    if (token == null) {
+      throw Exception('No token Found');
+    }
+
+    final url = Uri.parse('$_baseUrl/user/profileImage/update');
+    try {
+      final mimeTypeData = lookupMimeType(profileImage!.path)!.split('/');
+      final imageUploadRequest = http.MultipartRequest('PUT', url)
+        ..headers['Authorization'] = 'Bearer $token'
+        ..headers['accept'] = '*/*'
+        ..headers['Content-Type'] = 'multipart/form-data';
+
+      File profileImg = File(profileImage.path);
+      var profileImageStream = http.ByteStream(profileImg.openRead());
+      var profileImageLength = await profileImg.length();
+
+      var profileImageMultipart = http.MultipartFile(
+        'profileImage',
+        profileImageStream,
+        profileImageLength,
+        filename: basename(profileImg.path),
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
+      );
+
+      imageUploadRequest.files.add(profileImageMultipart);
+
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        print('Profile image updated successfully');
+        return true;
+      } else {
+        print(response.statusCode);
+        print(response.request);
+        print('Failed to update profile image: ${response.reasonPhrase}');
+        return false;
+      }
+    } catch (e) {
+      print('failed to update profile image $e');
+      return false;
+    }
+  }
+
+  Future<bool> deleteProfileImage() async {
+    final token = await _storageService.getToken();
+    final url = Uri.parse('$_baseUrl/user/profileImage/delete');
+    if(token == null) {
+      throw Exception('no token found');
+    }
+
+    try {
+      final response = await http.put(url, headers: <String,String>{
+        'Authorization' : 'Bearer $token',
+      });
+      if(response.statusCode == 200) {
+        print('success');
+        return true;
+      } else {
+        print('failed to delete profile Image: ${response.statusCode}');
+        return false;
+      }
+    } catch(e) {
+      print('failed to delete: $e');
+      return false;
+    }
+
   }
 }
