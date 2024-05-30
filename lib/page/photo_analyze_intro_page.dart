@@ -201,7 +201,7 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
       // 비동기 작업 수행
       final List<File> images = await _getImages(selectedFilePath);
       print(images.length);
-      final selectedImages = images.take(10).toList(); // 제한된 수의 이미지를 선택
+      final selectedImages = images.take(100).toList(); // 제한된 수의 이미지를 선택
 
       setState(() {
         _images = selectedImages;
