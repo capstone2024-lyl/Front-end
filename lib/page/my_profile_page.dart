@@ -182,18 +182,26 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                         'youtubeAnalyzeStatus']!)
                                                       _buildYoutubeResult(
                                                           userInfo),
-                                                    if(userInfo.analyzeStatus['photoAnalyzeStatus']!)
+                                                    if (userInfo.analyzeStatus[
+                                                        'photoAnalyzeStatus']!)
                                                       Column(
                                                         children: [
-                                                          const Divider(
-                                                            indent: 10,
-                                                            endIndent: 10,
-                                                            color: Colors.white,
+                                                          Text(
+                                                            '${userInfo.name.substring(1)}님의 사진 분석 결과',
+                                                            style: const TextStyle(
+                                                              fontSize: 24,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
                                                           ),
                                                           const SizedBox(
                                                             height: 40,
                                                           ),
-                                                          _buildPhotoResult(userInfo),
+                                                          _buildPhotoResult(
+                                                              userInfo),
                                                           const SizedBox(
                                                             height: 60,
                                                           ),
@@ -1471,10 +1479,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         Text(
           title,
           style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white
-          ),
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
         )
       ],
     );
