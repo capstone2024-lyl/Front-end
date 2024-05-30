@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:untitled1/models/user_info.dart';
 import 'package:untitled1/services/api_service.dart';
 
-
-class UserInfoProvider  with ChangeNotifier {
+class UserInfoProvider with ChangeNotifier {
   UserInfo? _userInfo;
+
   UserInfo? get userInfo => _userInfo;
   final ApiService _apiService = ApiService();
 
@@ -18,7 +18,8 @@ class UserInfoProvider  with ChangeNotifier {
     }
   }
 
-  Future<void> updateUserAppUsageData(List<Map<String,dynamic>> appUsageData) async {
+  Future<void> updateUserAppUsageData(
+      List<Map<String, dynamic>> appUsageData) async {
     _userInfo!.appList = appUsageData;
     await _userInfo!.initMostUsedApp();
     notifyListeners();
@@ -31,7 +32,8 @@ class UserInfoProvider  with ChangeNotifier {
 
   Future<void> updateYoutubeData(Map<String, dynamic> youtubeData) async {
     _userInfo!.youtubeTop3Category.clear();
-    _userInfo!.youtubeTop3Category = List<String>.from(youtubeData['youtubeCategoryList']);
+    _userInfo!.youtubeTop3Category =
+        List<String>.from(youtubeData['youtubeCategoryList']);
     _userInfo!.analyzeStatus['youtubeAnalyzeStatus'] = youtubeData['isChecked'];
     notifyListeners();
   }
@@ -50,5 +52,14 @@ class UserInfoProvider  with ChangeNotifier {
     String newProfileImageUrl = await _apiService.getProfileImage();
     _userInfo!.profileImageUrl = newProfileImageUrl;
     notifyListeners();
+  }
+
+  Future<void> updatePhotoData(Map<String, dynamic> json) async {
+      _userInfo!.photoCategory.clear();
+      _userInfo!.photoCategoryCounts.clear();
+      _userInfo!.photoCategory = List<String>.from(json['sortedCategories']);
+      _userInfo!.photoCategoryCounts = List<int>.from(json['categoryCounts']);
+      _userInfo!.analyzeStatus['photoAnalyzeStatus'] = json['isChecked'];
+      notifyListeners();
   }
 }

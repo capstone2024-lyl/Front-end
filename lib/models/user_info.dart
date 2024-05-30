@@ -47,8 +47,7 @@ class UserInfo {
         'chatAnalyzeStatus': json['mbti']['isChecked'],
         'appUsageAnalyzeStatus': json['apps']['isChecked'],
         'youtubeAnalyzeStatus': json['category']['isChecked'],
-        //TODO 사진 분석 결과 여부 추가
-        'photoAnalyzeStatus': false,
+        'photoAnalyzeStatus': json['photoResult']['isChecked'],
       },
       mbtiPercent: {
         'energy': json['mbti']['energy'] ?? 0,

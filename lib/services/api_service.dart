@@ -109,22 +109,21 @@ class ApiService {
       throw Exception('No token found');
     }
     try {
-      final response = await http.get(url, headers: <String,String> {
-        'Authorization' : 'Bearer $token',
+      final response = await http.get(url, headers: <String, String>{
+        'Authorization': 'Bearer $token',
       });
 
-      if(response.statusCode ==200) {
+      if (response.statusCode == 200) {
         String profileImageUrl = jsonDecode(response.body)['profileImageUrl'];
         return profileImageUrl;
       } else {
         print('failed to get Image : ${response.statusCode}');
         return '';
       }
-    } catch(e) {
+    } catch (e) {
       print('failed to get Image : $e');
       return '';
     }
-
   }
 
   Future<bool> checkIdDuplicated(String id) async {
@@ -410,25 +409,52 @@ class ApiService {
   Future<bool> deleteProfileImage() async {
     final token = await _storageService.getToken();
     final url = Uri.parse('$_baseUrl/user/profileImage/delete');
-    if(token == null) {
+    if (token == null) {
       throw Exception('no token found');
     }
 
     try {
-      final response = await http.put(url, headers: <String,String>{
-        'Authorization' : 'Bearer $token',
+      final response = await http.put(url, headers: <String, String>{
+        'Authorization': 'Bearer $token',
       });
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         print('success');
         return true;
       } else {
         print('failed to delete profile Image: ${response.statusCode}');
         return false;
       }
-    } catch(e) {
+    } catch (e) {
       print('failed to delete: $e');
       return false;
     }
+  }
 
+  Future<Map<String,dynamic>> getPhotoResult() async {
+    final token = await _storageService.getToken();
+    if(token == null) {
+      throw Exception('No token found');
+    }
+
+    final url = Uri.parse('$_baseUrl/photo/getResult');
+    try {
+      final response = await http.get(url,headers: <String,String>{
+        'Authorization' : 'Bearer $token',
+      });
+
+      if(response.statusCode == 200) {
+        print('success');
+        final decodeBody = utf8.decode(response.bodyBytes);
+        final json = jsonDecode(decodeBody);
+        return json;
+      } else {
+        print('failed to get photo result: ${response.statusCode}');
+        return {};
+      }
+
+    } catch(e) {
+      print('failed to get photo result');
+      return {};
+    }
   }
 }
