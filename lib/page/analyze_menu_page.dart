@@ -45,7 +45,16 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                   ),
                   _showTestProgress(userInfo),
                   const SizedBox(
-                    height: 150,
+                    height: 20,
+                  ),
+                  const Text(
+                    '각 검사는 여러 번 할 수 있어요 !',
+                    style: TextStyle(
+                      fontSize: 24,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 100,
                   ),
                   const Text(
                     '나를 알아보는 4가지 분석',
@@ -156,7 +165,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
           ),
         ),
         Positioned(
-          right: 70,
+          right: userInfo.numOfCompleteAnalyze * 4 == 4 ? 40 : 70,
           top: 30,
           child: Text(
             _stepIndicator(userInfo.numOfCompleteAnalyze, userInfo),
@@ -253,11 +262,13 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
       child: InkWell(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatAnalyzeIntroPage(
-                        onNavigateToProfile: widget.onNavigateToProfile,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatAnalyzeIntroPage(
+                onNavigateToProfile: widget.onNavigateToProfile,
+              ),
+            ),
+          );
         },
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -564,8 +575,8 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
         return '${userInfo!.name.substring(1)}님의 카드 완성까지\n'
             '한 단계 남았습니다 !';
       default:
-        return '${userInfo!.name.substring(1)}님의 카드가\n'
-            '완성되었습니다!';
+        return '${userInfo!.name.substring(1)}님의 카드가'
+            ' 완성되었습니다!';
     }
   }
 }

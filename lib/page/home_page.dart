@@ -30,14 +30,20 @@ class _HomePageState extends State<HomePage> {
           if (userInfoProvider.userInfo == null) {
             userInfoProvider.loadUserInfo();
             return Center(
-                child: SpinKitWaveSpinner(
-                    color: AppColor.buttonColor.colors, size: 100));
+              child: SpinKitWaveSpinner(
+                color: AppColor.buttonColor.colors,
+                size: 200,
+              ),
+            );
           } else {
             final userInfo = userInfoProvider.userInfo!;
             if (userInfo.mostUsedApp.isEmpty && userInfo.appList.isNotEmpty) {
               return Center(
-                  child: SpinKitWaveSpinner(
-                      color: AppColor.buttonColor.colors, size: 100));
+                child: SpinKitWaveSpinner(
+                  color: AppColor.buttonColor.colors,
+                  size: 200,
+                ),
+              );
             }
             return SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
