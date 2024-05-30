@@ -45,4 +45,10 @@ class UserInfoProvider  with ChangeNotifier {
     _userInfo!.analyzeStatus['chatAnalyzeStatus'] = mbtiData['isChecked'];
     notifyListeners();
   }
+
+  Future<void> updateProfileImageUrl() async {
+    String newProfileImageUrl = await _apiService.getProfileImage();
+    _userInfo!.profileImageUrl = newProfileImageUrl;
+    notifyListeners();
+  }
 }
