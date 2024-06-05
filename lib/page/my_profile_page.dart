@@ -870,6 +870,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('색상 선택'),
+            backgroundColor: AppColor.cardColor.colors,
             content: SingleChildScrollView(
               child: ColorPicker(
                 pickerColor: _cardColor,
@@ -888,7 +889,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('확인'),
+                child: const Text('확인', style: TextStyle(color: Colors.black),),
               ),
             ],
           );
