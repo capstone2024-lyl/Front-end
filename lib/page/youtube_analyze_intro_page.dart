@@ -56,133 +56,135 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
             );
           } else {
             final userInfo = userInfoProvider.userInfo;
-            return Column(
-              children: <Widget>[
-                const SizedBox(
-                  height: 50,
-                ),
-                const Center(
-                  child: Text(
-                    '분석에 사용된 개인정보는 바로 폐기돼요 !',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  const Center(
+                    child: Text(
+                      '분석에 사용된 개인정보는 바로 폐기돼요 !',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  width: 380,
-                  height: 550,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.white,
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.7),
-                        blurRadius: 3.0,
-                        spreadRadius: 0.0,
-                        offset: const Offset(0.0, 5.0),
-                      ),
-                    ],
+                  const SizedBox(
+                    height: 20,
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Text(
-                        '좋아하는 영상 카테고리 분석',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
+                  Container(
+                    width: 380,
+                    height: 550,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.7),
+                          blurRadius: 3.0,
+                          spreadRadius: 0.0,
+                          offset: const Offset(0.0, 5.0),
                         ),
-                      ),
-                      const Divider(
-                        indent: 30,
-                        endIndent: 30,
-                      ),
-                      Text(
-                        '${userInfo!.name.substring(1)}님의 Youtube 구독 목록을 기반으로'
-                        '\n좋아하는 영상 카테고리를 분석해요!',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 20,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(
-                        width: 300,
-                        height: 300,
-                        child: PageView(
-                          controller: _pageController,
+                        const Text(
+                          '좋아하는 영상 카테고리 분석',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Divider(
+                          indent: 30,
+                          endIndent: 30,
+                        ),
+                        Text(
+                          '${userInfo!.name.substring(1)}님의 Youtube 구독 목록을 기반으로'
+                          '\n좋아하는 영상 카테고리를 분석해요!',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          width: 300,
+                          height: 300,
+                          child: PageView(
+                            controller: _pageController,
+                            children: [
+                              Image.asset('assets/images/youtube_analyze1.png'),
+                              Image.asset('assets/images/youtube_analyze2.png'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/youtube_analyze1.png'),
-                            Image.asset('assets/images/youtube_analyze2.png'),
+                            _buildIndicator(0),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            _buildIndicator(1),
+                            const SizedBox(),
                           ],
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildIndicator(0),
-                          const SizedBox(
-                            width: 5,
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Step ${_currentPage + 1}',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
                           ),
-                          _buildIndicator(1),
-                          const SizedBox(),
-                        ],
+                        ),
+                        _buildStepText(_currentPage),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  SizedBox(
+                    width: 380,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        bool isSignIn = await _signInWithGoogle();
+                        if (isSignIn) {
+                          if(mounted) {
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              builder: (context) => YoutubeAnalyzeResultPage(
+                                  onNavigateToProfile:
+                                      widget.onNavigateToProfile)));
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: AppColor.buttonColor.colors,
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Step ${_currentPage + 1}',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                      child: const Text(
+                        '좋아하는 영상 분석하기',
+                        style: TextStyle(
+                          fontSize: 28,
                         ),
                       ),
-                      _buildStepText(_currentPage),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                SizedBox(
-                  width: 380,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      bool isSignIn = await _signInWithGoogle();
-                      if (isSignIn) {
-                        if(mounted) {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => YoutubeAnalyzeResultPage(
-                                onNavigateToProfile:
-                                    widget.onNavigateToProfile)));
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: AppColor.buttonColor.colors,
-                    ),
-                    child: const Text(
-                      '좋아하는 영상 분석하기',
-                      style: TextStyle(
-                        fontSize: 28,
-                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           }
         },

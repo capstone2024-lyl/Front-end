@@ -99,7 +99,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
             return Screenshot(
               controller: _screenshotController,
               child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
                 child: Column(
                   children: <Widget>[
                     const Center(

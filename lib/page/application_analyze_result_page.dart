@@ -83,7 +83,6 @@ class _ApplicationAnalyzeResultPageState
                   } else {
                     final userInfo = userInfoProvider.userInfo;
                     return SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
                       child: Column(
                         children: [
                           const SizedBox(

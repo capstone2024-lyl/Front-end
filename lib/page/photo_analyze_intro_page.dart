@@ -412,24 +412,26 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
                   final userInfo = userInfoProvider.userInfo;
                   return _isLoading
                       ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SpinKitWaveSpinner(
-                                color: AppColor.buttonColor.colors,
-                                size: 200,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                '분석 중...',
-                                style: TextStyle(
-                                  fontSize: 24,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SpinKitWaveSpinner(
+                                  color: AppColor.buttonColor.colors,
+                                  size: 200,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  '분석 중...',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       : Column(

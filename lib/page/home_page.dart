@@ -46,7 +46,6 @@ class _HomePageState extends State<HomePage> {
               );
             }
             return SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
               child: Column(
                 children: [
                   const SizedBox(

@@ -69,150 +69,152 @@ class _PhotoAnalyzeResultPageState extends State<PhotoAnalyzeResultPage> {
                   );
                 } else {
                   final userInfo = userInfoProvider.userInfo;
-                  return Column(
-                    children: [
-                      const SizedBox(
-                        height: 60,
-                      ),
-                      const Center(
-                        child: Text(
-                          '사진 취향 분석 결과',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 60,
+                        ),
+                        const Center(
+                          child: Text(
+                            '사진 취향 분석 결과',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        width: 380,
-                        height: 550,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.7),
-                              blurRadius: 3.0,
-                              spreadRadius: 0.0,
-                              offset: const Offset(0.0, 5.0),
-                            ),
-                          ],
-                          color: Colors.white,
+                        const SizedBox(
+                          height: 20,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              '${userInfo!.name.substring(1)}님이 최근에 찍은 사진들을 통해\n사진 취향을 분석했어요 !',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                        Container(
+                          width: 380,
+                          height: 550,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.7),
+                                blurRadius: 3.0,
+                                spreadRadius: 0.0,
+                                offset: const Offset(0.0, 5.0),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const Divider(
-                              indent: 20,
-                              endIndent: 20,
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                SizedBox(
-                                  width: 200,
-                                  height: 200,
-                                  child: PieChart(
-                                    PieChartData(
-                                      pieTouchData: PieTouchData(touchCallback:
-                                          (FlTouchEvent event,
-                                              pieTouchResponse) {
-                                        setState(() {
-                                          if (!event
-                                                  .isInterestedForInteractions ||
-                                              pieTouchResponse == null ||
-                                              pieTouchResponse.touchedSection ==
-                                                  null) {
-                                            _touchedIndex = -1;
-                                            return;
-                                          }
-                                          _touchedIndex = pieTouchResponse
-                                              .touchedSection!
-                                              .touchedSectionIndex;
-                                        });
-                                      }),
-                                      sections: _showingSections(
-                                          userInfo.photoCategory,
-                                          userInfo.photoCategoryCounts),
-                                      borderData: FlBorderData(show: false),
-                                      sectionsSpace: 0,
-                                      centerSpaceRadius: 0,
+                            ],
+                            color: Colors.white,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                '${userInfo!.name.substring(1)}님이 최근에 찍은 사진들을 통해\n사진 취향을 분석했어요 !',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const Divider(
+                                indent: 20,
+                                endIndent: 20,
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: PieChart(
+                                      PieChartData(
+                                        pieTouchData: PieTouchData(touchCallback:
+                                            (FlTouchEvent event,
+                                                pieTouchResponse) {
+                                          setState(() {
+                                            if (!event
+                                                    .isInterestedForInteractions ||
+                                                pieTouchResponse == null ||
+                                                pieTouchResponse.touchedSection ==
+                                                    null) {
+                                              _touchedIndex = -1;
+                                              return;
+                                            }
+                                            _touchedIndex = pieTouchResponse
+                                                .touchedSection!
+                                                .touchedSectionIndex;
+                                          });
+                                        }),
+                                        sections: _showingSections(
+                                            userInfo.photoCategory,
+                                            userInfo.photoCategoryCounts),
+                                        borderData: FlBorderData(show: false),
+                                        sectionsSpace: 0,
+                                        centerSpaceRadius: 0,
+                                      ),
                                     ),
                                   ),
+                                  const SizedBox(
+                                    width: 50,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 60,
+                                      ),
+                                      for (int i = 0;
+                                          i < userInfo.photoCategory.length;
+                                          i++)
+                                        _charIndicator(
+                                            color: _getChartColor(i),
+                                            title: userInfo.photoCategory[i])
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 80,
+                              ),
+                              Text(
+                                '${userInfo.name.substring(1)}님의 사진 취향은 ${userInfo.photoCategory[0]} 사진입니다 !',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold
                                 ),
-                                const SizedBox(
-                                  width: 50,
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    const SizedBox(
-                                      height: 60,
-                                    ),
-                                    for (int i = 0;
-                                        i < userInfo.photoCategory.length;
-                                        i++)
-                                      _charIndicator(
-                                          color: _getChartColor(i),
-                                          title: userInfo.photoCategory[i])
-                                  ],
-                                ),
-                              ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        SizedBox(
+                          width: 380,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              widget.onNavigateToProfile();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: AppColor.buttonColor.colors,
                             ),
-                            const SizedBox(
-                              height: 80,
-                            ),
-                            Text(
-                              '${userInfo.name.substring(1)}님의 사진 취향은 ${userInfo.photoCategory[0]} 사진입니다 !',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold
+                            child: const Text(
+                              '내 카드 확인하기',
+                              style: TextStyle(
+                                fontSize: 28,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      SizedBox(
-                        width: 380,
-                        height: 60,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            widget.onNavigateToProfile();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: AppColor.buttonColor.colors,
-                          ),
-                          child: const Text(
-                            '내 카드 확인하기',
-                            style: TextStyle(
-                              fontSize: 28,
-                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 }
               },

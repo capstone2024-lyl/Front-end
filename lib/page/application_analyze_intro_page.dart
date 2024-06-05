@@ -119,7 +119,6 @@ class _ApplicationAnalyzeIntroPageState
           } else {
             final userInfo = userInfoProvider.userInfo;
             return SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
               child: Column(
                 children: <Widget>[
                   const SizedBox(
