@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:untitled1/page/sign_in_page.dart';
 import 'package:untitled1/providers/user_info_provider.dart';
+import 'package:untitled1/util/app_color.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Pretendard',
           useMaterial3: true,
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: AppColor.buttonColor.colors,
+            selectionColor: AppColor.buttonColor.colors,
+            selectionHandleColor: AppColor.buttonColor.colors,
+          )
         ),
         home: const SignInPage(),
       ),

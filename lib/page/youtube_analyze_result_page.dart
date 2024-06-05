@@ -50,14 +50,14 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
             return Center(
               child: SpinKitWaveSpinner(
                 color: AppColor.buttonColor.colors,
-                size: 100,
+                size: 200,
               ),
             );
           } else if (snapshot.hasError) {
             return Center(
                 child: SpinKitWaveSpinner(
               color: AppColor.buttonColor.colors,
-              size: 100,
+              size: 200,
             ));
           } else {
             return Consumer<UserInfoProvider>(
@@ -66,7 +66,9 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                   userInfoProvider.loadUserInfo();
                   return Center(
                     child: SpinKitWaveSpinner(
-                        color: AppColor.buttonColor.colors, size: 100),
+                      color: AppColor.buttonColor.colors,
+                      size: 200,
+                    ),
                   );
                 } else {
                   final userInfo = userInfoProvider.userInfo;
@@ -153,7 +155,8 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                                           .buttonColor.colors,
                                                     ),
                                                     borderRadius:
-                                                        BorderRadius.circular(50),
+                                                        BorderRadius.circular(
+                                                            50),
                                                     boxShadow: <BoxShadow>[
                                                       BoxShadow(
                                                         color: Colors.grey
@@ -193,12 +196,14 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                             height: 10,
                                           ),
                                           Text(
-                                            userInfo.youtubeTop3Category.length <
+                                            userInfo.youtubeTop3Category
+                                                        .length <
                                                     3
                                                 ? '???'
                                                 : YoutubeCategory
-                                                    .youtubeCategoryTransfer(userInfo
-                                                        .youtubeTop3Category[2]),
+                                                    .youtubeCategoryTransfer(
+                                                        userInfo
+                                                            .youtubeTop3Category[2]),
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
@@ -231,7 +236,8 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                                           .buttonColor.colors,
                                                     ),
                                                     borderRadius:
-                                                        BorderRadius.circular(50),
+                                                        BorderRadius.circular(
+                                                            50),
                                                     boxShadow: <BoxShadow>[
                                                       BoxShadow(
                                                         color: Colors.grey
@@ -271,12 +277,14 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                             height: 10,
                                           ),
                                           Text(
-                                            userInfo.youtubeTop3Category.length <
+                                            userInfo.youtubeTop3Category
+                                                        .length <
                                                     2
                                                 ? '???'
                                                 : YoutubeCategory
-                                                    .youtubeCategoryTransfer(userInfo
-                                                        .youtubeTop3Category[0]),
+                                                    .youtubeCategoryTransfer(
+                                                        userInfo
+                                                            .youtubeTop3Category[0]),
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
@@ -313,7 +321,8 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                                           .buttonColor.colors,
                                                     ),
                                                     borderRadius:
-                                                        BorderRadius.circular(50),
+                                                        BorderRadius.circular(
+                                                            50),
                                                     boxShadow: <BoxShadow>[
                                                       BoxShadow(
                                                         color: Colors.grey
@@ -326,7 +335,8 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                                     ],
                                                     color: Colors.white),
                                               ),
-                                              userInfo.youtubeTop3Category.isEmpty
+                                              userInfo.youtubeTop3Category
+                                                      .isEmpty
                                                   ? Positioned(
                                                       top: 10,
                                                       left: 10,
@@ -354,8 +364,9 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                             userInfo.youtubeTop3Category.isEmpty
                                                 ? '???'
                                                 : YoutubeCategory
-                                                    .youtubeCategoryTransfer(userInfo
-                                                        .youtubeTop3Category[0]),
+                                                    .youtubeCategoryTransfer(
+                                                        userInfo
+                                                            .youtubeTop3Category[0]),
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,

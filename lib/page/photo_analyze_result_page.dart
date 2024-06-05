@@ -48,6 +48,7 @@ class _PhotoAnalyzeResultPageState extends State<PhotoAnalyzeResultPage> {
                 color: AppColor.buttonColor.colors,
                 size: 200,
               ),
+
             );
           } else if (snapshot.hasError) {
             return Center(

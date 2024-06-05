@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -144,18 +145,14 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
   }
 
   Future<void> _requestPermissionAndPickFile() async {
-    var statusImage = await Permission.photos.status;
     var status = await Permission.manageExternalStorage.status;
 
-    if (!statusImage.isGranted) {
-      statusImage = await Permission.photos.request();
-    }
 
     if (!status.isGranted) {
       status = await Permission.manageExternalStorage.request();
     }
 
-    if (statusImage.isGranted && status.isGranted) {
+    if (status.isGranted) {
       _showFilePickerDialog();
     } else {
       if (mounted) {
@@ -184,134 +181,132 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
     return Scaffold(
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(
-                  height: 50,
-                ),
-                const Center(
-                  child: Text(
-                    '채팅을 통한 MBTI 분석하기',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  width: 380,
-                  height: 500,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.7),
-                        blurRadius: 3.0,
-                        spreadRadius: 0.0,
-                        offset: const Offset(0.0, 5.0),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Text(
-                        '채팅 업로드 방법',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Divider(
-                        indent: 20,
-                        endIndent: 20,
-                      ),
-                      SizedBox(
-                        width: 350,
-                        height: 300,
-                        child: PageView(
-                          controller: _pageController,
-                          children: [
-                            SvgPicture.asset('assets/images/chat1.svg'),
-                            SvgPicture.asset('assets/images/chat2.svg'),
-                            SvgPicture.asset('assets/images/chat3.svg'),
-                            SvgPicture.asset('assets/images/chat4.svg'),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildIndicator(0),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          _buildIndicator(1),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          _buildIndicator(2),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          _buildIndicator(3),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Step ${_currentPage + 1}',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      _buildStepText(_currentPage),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                const Text(
-                  '채팅 내역은 분석에만 사용되고 바로 삭제돼요!',
+          Column(
+            children: <Widget>[
+              const SizedBox(
+                height: 50,
+              ),
+              const Center(
+                child: Text(
+                  '채팅을 통한 MBTI 분석하기',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(
-                  height: 30,
-                ),
-                SizedBox(
-                  width: 380,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _requestPermissionAndPickFile,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.buttonColor.colors,
-                      foregroundColor: Colors.white,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: 380,
+                height: 500,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.7),
+                      blurRadius: 3.0,
+                      spreadRadius: 0.0,
+                      offset: const Offset(0.0, 5.0),
                     ),
-                    child: const Text(
-                      '채팅 내역 업로드 하기',
+                  ],
+                ),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      '채팅 업로드 방법',
                       style: TextStyle(
                         fontSize: 26,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    const Divider(
+                      indent: 20,
+                      endIndent: 20,
+                    ),
+                    SizedBox(
+                      width: 350,
+                      height: 300,
+                      child: PageView(
+                        controller: _pageController,
+                        children: [
+                          SvgPicture.asset('assets/images/chat1.svg'),
+                          SvgPicture.asset('assets/images/chat2.svg'),
+                          SvgPicture.asset('assets/images/chat3.svg'),
+                          SvgPicture.asset('assets/images/chat4.svg'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildIndicator(0),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        _buildIndicator(1),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        _buildIndicator(2),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        _buildIndicator(3),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Step ${_currentPage + 1}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    _buildStepText(_currentPage),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const Text(
+                '채팅 내역은 분석에만 사용되고 바로 삭제돼요!',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                width: 380,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: _requestPermissionAndPickFile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.buttonColor.colors,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text(
+                    '채팅 내역 업로드 하기',
+                    style: TextStyle(
+                      fontSize: 26,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           if (_isLoading)
             Positioned.fill(

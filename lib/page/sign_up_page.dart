@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -89,11 +90,26 @@ class _SignUpPageState extends State<SignUpPage> {
   //생일 선택 메서드
   void _presentDatePicker() {
     showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    ).then((pickedDate) {
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now(),
+        initialEntryMode: DatePickerEntryMode.calendarOnly,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: AppColor.buttonColor.colors,
+                onPrimary: Colors.white,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: Colors.yellow,
+
+            ),
+            child: child ?? SizedBox.shrink(),
+          );
+        }).then((pickedDate) {
       if (pickedDate == null) {
         return;
       }
@@ -395,6 +411,13 @@ class _SignUpPageState extends State<SignUpPage> {
                               hintText: '6~12자 이내 영문, 숫자 사용 가능',
                               errorText: _idError.isEmpty ? null : _idError,
                               border: const OutlineInputBorder(),
+                              floatingLabelStyle:
+                                  TextStyle(color: AppColor.buttonColor.colors),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColor.buttonColor.colors,
+                                    width: 1),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -430,7 +453,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               }
 
                               if (_idError.isEmpty) {
-                                    await _checkUsernameAvailability();
+                                await _checkUsernameAvailability();
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -482,6 +505,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               });
                             },
                           ),
+                          floatingLabelStyle:
+                              TextStyle(color: AppColor.buttonColor.colors),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColor.buttonColor.colors, width: 1),
+                          ),
                         ),
                       ),
                     ),
@@ -516,6 +545,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               });
                             },
                           ),
+                          floatingLabelStyle:
+                              TextStyle(color: AppColor.buttonColor.colors),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColor.buttonColor.colors, width: 1),
+                          ),
                         ),
                         validator: (value) {
                           if (value != _passwordController.text) {
@@ -545,6 +580,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           border: const OutlineInputBorder(),
                           hintText: '이름을 입력해주세요',
                           errorText: _nameError.isEmpty ? null : _nameError,
+                          floatingLabelStyle:
+                              TextStyle(color: AppColor.buttonColor.colors),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColor.buttonColor.colors, width: 1),
+                          ),
                         ),
                       ),
                     ),

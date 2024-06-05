@@ -220,7 +220,13 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         userInfo.nickname.isEmpty
-                                            ? const Text('???')
+                                            ? const Text(
+                                                '???',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
                                             : SizedBox(
                                                 width: 280,
                                                 child: SingleChildScrollView(

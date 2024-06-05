@@ -12,6 +12,7 @@ import 'package:untitled1/util/app_color.dart';
 
 class YoutubeAnalyzeIntroPage extends StatefulWidget {
   final VoidCallback onNavigateToProfile;
+
   const YoutubeAnalyzeIntroPage({super.key, required this.onNavigateToProfile});
 
   @override
@@ -52,7 +53,9 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
           if (userInfoProvider.userInfo == null) {
             return Center(
               child: SpinKitWaveSpinner(
-                  color: AppColor.buttonColor.colors, size: 100),
+                color: AppColor.buttonColor.colors,
+                size: 200,
+              ),
             );
           } else {
             final userInfo = userInfoProvider.userInfo;
@@ -163,11 +166,13 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
                       onPressed: () async {
                         bool isSignIn = await _signInWithGoogle();
                         if (isSignIn) {
-                          if(mounted) {
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                              builder: (context) => YoutubeAnalyzeResultPage(
-                                  onNavigateToProfile:
-                                      widget.onNavigateToProfile)));
+                          if (mounted) {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        YoutubeAnalyzeResultPage(
+                                            onNavigateToProfile:
+                                                widget.onNavigateToProfile)));
                           }
                         }
                       },
@@ -236,11 +241,11 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
         await googleUser?.authentication;
     if (googleUser != null) {
       print(googleAuth!.accessToken);
-      bool isPosted = await _apiService.postYoutubeData(googleAuth!.accessToken!);
+      bool isPosted =
+          await _apiService.postYoutubeData(googleAuth!.accessToken!);
       await GoogleSignIn().signOut();
       return isPosted;
     }
     return false;
   }
-
 }

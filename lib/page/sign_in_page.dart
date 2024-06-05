@@ -106,6 +106,13 @@ class _SignInPageState extends State<SignInPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
+                    floatingLabelStyle:
+                        TextStyle(color: AppColor.buttonColor.colors),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColor.buttonColor.colors, width: 1),
+                    ),
+                    focusColor: AppColor.buttonColor.colors,
                   ),
                 ),
               ),
@@ -119,26 +126,33 @@ class _SignInPageState extends State<SignInPage> {
                   controller: _passwordController,
                   obscureText: _isPasswordObscured,
                   decoration: InputDecoration(
-                      labelText: '비밀번호',
-                      hintText: '비밀번호를 입력하세요',
-                      suffixIcon: IconButton(
-                        icon: _isPasswordObscured
-                            ? const Icon(
-                                Icons.visibility_off_outlined,
-                                size: 15,
-                              )
-                            : const Icon(
-                                Icons.visibility_outlined,
-                                size: 15,
-                              ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordObscured = !_isPasswordObscured;
-                          });
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0))),
+                    labelText: '비밀번호',
+                    hintText: '비밀번호를 입력하세요',
+                    suffixIcon: IconButton(
+                      icon: _isPasswordObscured
+                          ? const Icon(
+                              Icons.visibility_off_outlined,
+                              size: 15,
+                            )
+                          : const Icon(
+                              Icons.visibility_outlined,
+                              size: 15,
+                            ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordObscured = !_isPasswordObscured;
+                        });
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0)),
+                    floatingLabelStyle:
+                        TextStyle(color: AppColor.buttonColor.colors),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColor.buttonColor.colors, width: 1),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(
