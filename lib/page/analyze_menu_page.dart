@@ -542,14 +542,13 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               indent: 10,
               endIndent: 10,
             ),
-            //TODO 서버에서 사진 분석 검사 결과 가져오기
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 20.0),
+                padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  '사진 취향 : ???',
-                  style: TextStyle(fontSize: 14),
+                  '사진 취향 : ${userInfo!.analyzeStatus['photoAnalyzeStatus']! ? userInfo!.photoCategory[0] : '???'}',
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             )
