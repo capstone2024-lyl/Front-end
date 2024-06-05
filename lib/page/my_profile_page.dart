@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -823,6 +824,25 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 AppColor.profileCardGreen.colors),
                       ],
                     ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    IconButton(
+                      onPressed:() {
+                        _showColorPicker(context);
+                      },
+                      icon: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(30)),
+                        child: const Icon(Icons.format_paint_outlined),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -842,6 +862,37 @@ class _MyProfilePageState extends State<MyProfilePage> {
         ],
       ),
     );
+  }
+
+  void _showColorPicker(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('색상 선택'),
+            content: SingleChildScrollView(
+              child: ColorPicker(
+                pickerColor: _cardColor,
+                onColorChanged: (Color color) {
+                  setState(() {
+                    _cardColor = color;
+                  });
+                },
+                enableAlpha: false,
+                showLabel: true,
+                pickerAreaHeightPercent: 0.8,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('확인'),
+              ),
+            ],
+          );
+        });
   }
 
   Widget _buildCurrentColorIndicator(Color widgetColor) {
