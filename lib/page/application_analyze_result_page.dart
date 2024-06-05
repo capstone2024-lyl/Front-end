@@ -50,14 +50,14 @@ class _ApplicationAnalyzeResultPageState
             return Center(
               child: SpinKitWaveSpinner(
                 color: AppColor.buttonColor.colors,
-                size: 100,
+                size: 200,
               ),
             );
           } else if (snapshot.hasError) {
             return Center(
               child: SpinKitWaveSpinner(
                 color: AppColor.buttonColor.colors,
-                size: 100,
+                size: 200,
               ),
             );
           } else {
