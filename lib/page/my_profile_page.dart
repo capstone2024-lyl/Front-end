@@ -37,6 +37,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
   int _touchedIndex = -1;
 
   Color _cardColor = AppColor.profileCardYellow.colors;
+  Color _customColor = Colors.black12;
+
   bool _isColorSelectPage = false;
   bool _hideButton = false;
 
@@ -828,7 +830,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       height: 20,
                     ),
                     IconButton(
-                      onPressed:() {
+                      onPressed: () {
                         _showColorPicker(context);
                       },
                       icon: Container(
@@ -836,11 +838,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         height: 50,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.black12,
+                              color: _customColor,
                               width: 2,
                             ),
                             borderRadius: BorderRadius.circular(30)),
-                        child: const Icon(Icons.format_paint_outlined),
+                        child: Icon(
+                          Icons.format_paint_outlined,
+                          color: _customColor,
+                        ),
                       ),
                     ),
                   ],
@@ -877,6 +882,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 onColorChanged: (Color color) {
                   setState(() {
                     _cardColor = color;
+                    _customColor = color;
                   });
                 },
                 enableAlpha: false,
@@ -889,7 +895,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('확인', style: TextStyle(color: Colors.black),),
+                child: const Text(
+                  '확인',
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
             ],
           );
@@ -924,6 +933,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return InkWell(
       onTap: () {
         _cardColor = widgetColor;
+        _customColor = Colors.black12;
         setState(() {
           _isColorSelectPage = !_isColorSelectPage;
         });
