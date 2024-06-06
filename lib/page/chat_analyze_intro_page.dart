@@ -62,8 +62,6 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
       setState(() {
         _txtFiles = files;
       });
-    } else {
-      print('KakaoTalk directory does not exist.');
     }
   }
 
@@ -117,8 +115,6 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
         );
       },
     ).then((selectedFilePath) {
-      print('파일 선택');
-      print(selectedFilePath);
       if (selectedFilePath != null) {
         _handleFileSelection(selectedFilePath);
       }

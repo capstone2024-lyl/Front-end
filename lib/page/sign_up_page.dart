@@ -105,7 +105,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 onSurface: Colors.black,
               ),
               dialogBackgroundColor: Colors.yellow,
-
             ),
             child: child ?? SizedBox.shrink(),
           );
@@ -149,13 +148,19 @@ class _SignUpPageState extends State<SignUpPage> {
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('알림'),
+              backgroundColor: AppColor.cardColor.colors,
               content: const Text('사용 가능한 아이디입니다.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('확인'),
+                  child: const Text(
+                    '확인',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -166,13 +171,19 @@ class _SignUpPageState extends State<SignUpPage> {
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('알림'),
+              backgroundColor: AppColor.cardColor.colors,
               content: const Text('사용할 수 없는 아이디입니다.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('확인'),
+                  child: const Text(
+                    '확인',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -440,14 +451,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                   _idIsAvailable = false;
                                   _idError = '아이디를 입력해주세요';
                                 });
-                                print(_idError);
                               } else if (!FormatRule.ID_FORMAT.regex
                                   .hasMatch(_idController.text)) {
                                 setState(() {
                                   _idIsAvailable = false;
                                   _idError = '아이디는 6~12자의 영문, 숫자만 사용 가능합니다';
                                 });
-                                print(_idError);
                               } else {
                                 _idError = '';
                               }

@@ -71,13 +71,10 @@ class ApiService {
       request.files.add(profileImageMultipart);
     }
     final response = await request.send();
-    print(response.statusCode);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('회원 가입 성공');
       return true;
     } else {
-      print('사용자 등록 실패');
       return false;
     }
   }
@@ -117,11 +114,9 @@ class ApiService {
         String profileImageUrl = jsonDecode(response.body)['profileImageUrl'];
         return profileImageUrl;
       } else {
-        print('failed to get Image : ${response.statusCode}');
         return '';
       }
     } catch (e) {
-      print('failed to get Image : $e');
       return '';
     }
   }
@@ -160,12 +155,9 @@ class ApiService {
       ..files.add(httpFile);
 
     final response = await request.send();
-    print(response.statusCode);
     if (response.statusCode == 200) {
-      print('Upload success');
       return true;
     } else {
-      print('failed to upload');
       return false;
     }
   }
@@ -189,12 +181,9 @@ class ApiService {
         body: utf8.encode(jsonString),
       );
       if (response.statusCode == 200) {
-        print('success');
       } else {
-        print('failed');
       }
     } catch (e) {
-      print('[Error] : 앱 사용시간 api 오류');
     }
   }
 
@@ -217,15 +206,11 @@ class ApiService {
         List<dynamic> jsonData = jsonDecode(response.body)['apps'];
         List<Map<String, dynamic>> appUsageData =
             List<Map<String, dynamic>>.from(jsonData);
-        print(appUsageData);
         return appUsageData;
       } else {
-        print('failed ${response.statusCode}');
         return [];
       }
     } catch (e) {
-      print(e);
-      print('[error] 앱 사용 정보를 가져오는데 에러가 발생함');
       return [];
     }
   }
@@ -249,12 +234,9 @@ class ApiService {
 
         return isChecked;
       } else {
-        print('failed ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print(e);
-      print('[error] 앱 사용 정보를 가져오는데 에러가 발생함');
       return false;
     }
   }
@@ -270,14 +252,12 @@ class ApiService {
         'X-Google-Token': accessToken,
         'Authorization': 'Bearer $token',
       });
-      print(response.statusCode);
       if (response.statusCode == 200) {
         return true;
       } else {
         return false;
       }
     } catch (e) {
-      print('error: cannot post youtube data: $e');
       return false;
     }
   }
@@ -296,11 +276,9 @@ class ApiService {
         final result = jsonDecode(response.body);
         return result;
       } else {
-        print('wrong status code : ${response.statusCode}');
         return {};
       }
     } catch (e) {
-      print('cannot Get Youtube top3 category');
       return {};
     }
   }
@@ -319,11 +297,9 @@ class ApiService {
         final result = jsonDecode(response.body);
         return result;
       } else {
-        print(response.statusCode);
         return {};
       }
     } catch (e) {
-      print('cannot find MBTI');
       return {};
     }
   }
@@ -346,16 +322,11 @@ class ApiService {
         body: jsonString,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('success');
         return true;
       } else {
-        print(response.statusCode);
-        print(response.body);
-        print('fail to send photoResult');
         return false;
       }
     } catch (e) {
-      print('failed to savePhotoResult');
       return false;
     }
   }
@@ -392,16 +363,11 @@ class ApiService {
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
-        print('Profile image updated successfully');
         return true;
       } else {
-        print(response.statusCode);
-        print(response.request);
-        print('Failed to update profile image: ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('failed to update profile image $e');
       return false;
     }
   }
@@ -418,14 +384,11 @@ class ApiService {
         'Authorization': 'Bearer $token',
       });
       if (response.statusCode == 200) {
-        print('success');
         return true;
       } else {
-        print('failed to delete profile Image: ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print('failed to delete: $e');
       return false;
     }
   }
@@ -443,17 +406,14 @@ class ApiService {
       });
 
       if(response.statusCode == 200) {
-        print('success');
         final decodeBody = utf8.decode(response.bodyBytes);
         final json = jsonDecode(decodeBody);
         return json;
       } else {
-        print('failed to get photo result: ${response.statusCode}');
         return {};
       }
 
     } catch(e) {
-      print('failed to get photo result');
       return {};
     }
   }

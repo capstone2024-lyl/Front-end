@@ -63,7 +63,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
         .then((path) {
       _shareToInstagramStory(path!);
     }).catchError((onError) {
-      print(onError);
     }).whenComplete(() {
       setState(() {
         _isSharing = false;
@@ -80,7 +79,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         backgroundBottomColor: "#000000",
       );
     } catch (e) {
-      print('error sharing to Instagram Story : $e');
+
     }
   }
 
