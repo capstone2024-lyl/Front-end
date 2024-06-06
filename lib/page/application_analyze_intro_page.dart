@@ -252,7 +252,12 @@ class _ApplicationAnalyzeIntroPageState
                                     Navigator.of(context).pop();
                                     await _openUsageAccessSettings();
                                   },
-                                  child: const Text('확인'),
+                                  child: const Text(
+                                    '확인',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
