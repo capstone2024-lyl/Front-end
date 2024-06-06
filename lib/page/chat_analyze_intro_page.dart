@@ -147,32 +147,33 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
   Future<void> _requestPermissionAndPickFile() async {
     var status = await Permission.manageExternalStorage.status;
 
-
     if (!status.isGranted) {
-      status = await Permission.manageExternalStorage.request();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('알림'),
+          backgroundColor: AppColor.cardColor.colors,
+          content: const Text('채팅 내역을 분석하려면 파일 접근을 허용해주세요'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                status = await Permission.manageExternalStorage.request();
+              },
+              child: const Text(
+                '확인',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
     }
 
     if (status.isGranted) {
       _showFilePickerDialog();
-    } else {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text('권한 필요'),
-            content: const Text('채팅 내역을 업로드하려면 저장소 접근 권한이 필요합니다.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  openAppSettings();
-                },
-                child: const Text('확인'),
-              ),
-            ],
-          ),
-        );
-      }
     }
   }
 
