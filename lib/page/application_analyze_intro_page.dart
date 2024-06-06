@@ -217,6 +217,14 @@ class _ApplicationAnalyzeIntroPageState
                         const SizedBox(
                           height: 10,
                         ),
+                        if (_currentPage <= 1)
+                          Text(
+                            'Step ${_currentPage + 1}',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         _buildStepText(_currentPage),
                       ],
                     ),
@@ -450,18 +458,18 @@ class _ApplicationAnalyzeIntroPageState
     String text;
     switch (index) {
       case 0:
-        text = 'Step 1\n 어플 사용시간 분석하기 버튼 최초 클릭 시 \n사용정보 접근 허용 페이지가 열립니다.';
+        text = '어플 사용시간 분석하기 버튼 최초 클릭 시 사용정보 접근 허용 페이지가 열립니다.';
       case 1:
-        text = 'Step 2\n어플들 중에서 아이카드를 찾고 접근 권한을 허용해주세요!';
+        text = '어플들 중에서 아이카드를 찾고 접근 권한을 허용해주세요!';
       default:
         text = '';
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 8),
       child: Text(
         text,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 18,
         ),
         textAlign: TextAlign.center,
       ),

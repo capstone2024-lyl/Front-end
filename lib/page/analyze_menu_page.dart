@@ -41,26 +41,24 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               child: Column(
                 children: <Widget>[
                   const SizedBox(
-                    height: 50,
+                    height: 60,
                   ),
                   _showTestProgress(userInfo),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    '각 검사는 여러 번 할 수 있어요 !',
-                    style: TextStyle(
-                      fontSize: 24,
-                    ),
-                  ),
                   const SizedBox(
                     height: 100,
                   ),
                   const Text(
                     '나를 알아보는 4가지 분석',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 28,
                     ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    '각 분석은 여러 번 할 수 있어요 !',
+                    style: TextStyle(fontSize: 20),
                   ),
                   const Divider(
                     indent: 30,

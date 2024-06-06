@@ -579,11 +579,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
           }
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _isModelLoaded ? _requestPermissionAndPickFile : null,
-      //   tooltip: 'Pick Folder',
-      //   child: const Icon(Icons.folder),
-      // ),
     );
   }
 
@@ -608,10 +603,15 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
       default:
         text = '분석하고 싶은 파일을 선택하세요';
     }
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 16),
-      textAlign: TextAlign.center,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 8.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 18,
+        ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }

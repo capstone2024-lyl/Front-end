@@ -218,10 +218,14 @@ class _YoutubeAnalyzeIntroPageState extends State<YoutubeAnalyzeIntroPage> {
       default:
         text = "구글 계정에 대한 접근을 허용해주세요";
     }
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 16,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 8.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 18,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }

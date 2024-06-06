@@ -147,7 +147,6 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
   Future<void> _requestPermissionAndPickFile() async {
     var status = await Permission.manageExternalStorage.status;
 
-
     if (!status.isGranted) {
       status = await Permission.manageExternalStorage.request();
     }
@@ -351,10 +350,13 @@ class _ChatAnalyzeIntroPageState extends State<ChatAnalyzeIntroPage> {
         text = '대화 내용 내보내기 메뉴 중 모든 메세지 내부저장소에 저장을 선택하세요.';
     }
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 33.0, vertical: 8.0),
       child: Text(
         text,
         textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 18,
+        ),
       ),
     );
   }
