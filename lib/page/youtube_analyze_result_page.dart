@@ -72,7 +72,6 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                   );
                 } else {
                   final userInfo = userInfoProvider.userInfo;
-                  print(userInfo?.youtubeTop3Category);
                   return SingleChildScrollView(
                     child: Column(
                       children: [

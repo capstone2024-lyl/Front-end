@@ -46,6 +46,7 @@ class _SettingPageState extends State<SettingPage> {
           builder: (BuildContext context) =>
               AlertDialog(
                 title: const Text('권한 필요'),
+                backgroundColor: AppColor.cardColor.colors,
                 content: const Text('사진을 업로드하려면 갤러리 접근 권한이 필요합니다.'),
                 actions: [
                   TextButton(
@@ -54,6 +55,9 @@ class _SettingPageState extends State<SettingPage> {
                     },
                     child: const Text(
                       '확인',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
                     ),
                   )
                 ],
@@ -127,7 +131,7 @@ class _SettingPageState extends State<SettingPage> {
             return Center(
               child: SpinKitWaveSpinner(
                 color: AppColor.buttonColor.colors,
-                size: 100,
+                size: 200,
               ),
             );
           } else {
@@ -167,6 +171,7 @@ class _SettingPageState extends State<SettingPage> {
                             });
                           },
                         ),
+                        const Divider(),
                       ],
                     ),
                   ],

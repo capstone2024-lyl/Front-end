@@ -312,7 +312,7 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  '현재 MBTI : ${userInfo.mbti ?? '???'}',
+                  '현재 MBTI : ${userInfo.mbti == '' ? '???' : userInfo.mbti}',
                   style: const TextStyle(
                     fontSize: 14,
                   ),

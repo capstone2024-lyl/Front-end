@@ -89,9 +89,7 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
       setState(() {
         _isModelLoaded = true;
       });
-      print('Model loaded successfully');
     } catch (e) {
-      print('Error loading model: $e');
       setState(() {
         _isModelLoaded = false;
       });
@@ -200,7 +198,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
 
       // 비동기 작업 수행
       final List<File> images = await _getImages(selectedFilePath);
-      print(images.length);
       final selectedImages = images.take(100).toList(); // 제한된 수의 이미지를 선택
 
       setState(() {
@@ -209,16 +206,13 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
 
       if (_isModelLoaded) {
         final stopwatch = Stopwatch()..start();
-        print(selectedImages.length);
         final ByteData modelData =
             await services.rootBundle.load('assets/model/model.tflite');
         for (final image in selectedImages) {
           await _analyzeImageInBackground(image, modelData);
         }
         stopwatch.stop();
-        print('이미지 분석 시간: ${stopwatch.elapsed}');
 
-        print(categoryCounts);
         bool response = await _apiService.savePhotoResult(categoryCounts);
         if (response && mounted) {
           Navigator.of(context).pushReplacement(
@@ -229,7 +223,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
         }
       }
     } else {
-      print('No folder selected.');
     }
   }
 
@@ -259,7 +252,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     final File imageFile = File(imagePath);
 
     if (!imageFile.existsSync()) {
-      print('Error: Could not decode image');
       return '';
     }
 
@@ -270,7 +262,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     final ImageProperties properties =
         await FlutterNativeImage.getImageProperties(imageFile.path);
     propertiesStopwatch.stop();
-    print('Time to get image properties: ${propertiesStopwatch.elapsed}');
 
     final Stopwatch resizeStopwatch = Stopwatch()..start();
     final File resizedImage = await FlutterNativeImage.compressImage(
@@ -281,12 +272,10 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     );
 
     resizeStopwatch.stop();
-    print('Time to resize image: ${resizeStopwatch.elapsed}');
 
     final Stopwatch readBytesStopwatch = Stopwatch()..start();
     final Uint8List imageBytes = resizedImage.readAsBytesSync();
     readBytesStopwatch.stop();
-    print('Time to read image bytes: ${readBytesStopwatch.elapsed}');
 
     final Stopwatch decodeStopwatch = Stopwatch()..start();
     final img.Image imageInput = img.decodeImage(imageBytes)!;
@@ -294,7 +283,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
         img.copyResize(imageInput, width: 224, height: 224);
 
     decodeStopwatch.stop();
-    print('Time to decode and resize image: ${decodeStopwatch.elapsed}');
 
     final Stopwatch prepareInputStopwatch = Stopwatch()..start();
     final outputShape = interpreter.getOutputTensor(0).shape;
@@ -313,7 +301,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     }
 
     prepareInputStopwatch.stop();
-    print('Time to prepare input: ${prepareInputStopwatch.elapsed}');
 
     final Stopwatch inferenceStopwatch = Stopwatch()..start();
     final output = List.filled(outputShape.reduce((a, b) => a * b), 0.0)
@@ -322,10 +309,8 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
     interpreter.run(input, output);
 
     inferenceStopwatch.stop();
-    print('Time for inference: ${inferenceStopwatch.elapsed}');
 
     overallStopwatch.stop();
-    print('Overall time: ${overallStopwatch.elapsed}');
 
     double maxProb = output[0].reduce((double a, double b) => a > b ? a : b);
     int maxIndex = output[0].indexOf(maxProb);
@@ -368,7 +353,6 @@ class _PhotoAnalyzeIntroPageState extends State<PhotoAnalyzeIntroPage> {
       },
     ).then((selectedFilePath) async {
       if (selectedFilePath != null) {
-        print('Selected file: $selectedFilePath');
         await _pickFolder(selectedFilePath);
       }
     });

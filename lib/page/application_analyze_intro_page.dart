@@ -58,7 +58,6 @@ class _ApplicationAnalyzeIntroPageState
       final bool result = await platform.invokeMethod('checkUsageAccess');
       return result;
     } on PlatformException catch (e) {
-      print("Failed to get usage access permission: '${e.message}'.");
       return false;
     }
   }
@@ -71,7 +70,6 @@ class _ApplicationAnalyzeIntroPageState
     bool isUsageAccessPermission = await _checkUsageAccessPermission();
 
     if (isUsageAccessPermission) {
-      print(infoList);
       List<Map<String, Object>> appList = [];
       for (var info in infoList) {
         if (info.usage.inMinutes == 0) {
@@ -262,7 +260,12 @@ class _ApplicationAnalyzeIntroPageState
                                     Navigator.of(context).pop();
                                     await _openUsageAccessSettings();
                                   },
-                                  child: const Text('확인'),
+                                  child: const Text(
+                                    '확인',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
