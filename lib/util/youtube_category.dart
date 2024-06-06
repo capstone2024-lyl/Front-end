@@ -23,6 +23,8 @@ class YoutubeCategory {
         return '뉴스';
       case 'MOVIE':
         return '영화';
+      case 'IT':
+        return 'IT 및 전자기기';
       default:
         return '기타';
     }

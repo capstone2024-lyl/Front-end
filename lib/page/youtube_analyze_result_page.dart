@@ -284,7 +284,7 @@ class _YoutubeAnalyzeResultPageState extends State<YoutubeAnalyzeResultPage> {
                                                 : YoutubeCategory
                                                     .youtubeCategoryTransfer(
                                                         userInfo
-                                                            .youtubeTop3Category[0]),
+                                                            .youtubeTop3Category[1]),
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
