@@ -61,13 +61,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
     _screenshotController
         .captureAndSave(directory, fileName: fileName)
         .then((path) {
-      _shareToInstagramStory(path!);
-    }).catchError((onError) {
-    }).whenComplete(() {
-      setState(() {
-        _isSharing = false;
-      });
-    });
+          _shareToInstagramStory(path!);
+        })
+        .catchError((onError) {})
+        .whenComplete(() {
+          setState(() {
+            _isSharing = false;
+          });
+        });
   }
 
   Future<void> _shareToInstagramStory(String imagePath) async {
@@ -78,9 +79,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         backgroundTopColor: "#ffffff",
         backgroundBottomColor: "#000000",
       );
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   @override
@@ -394,7 +393,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                 ),
                                               ),
                                               Positioned(
-                                                bottom: 40,
+                                                bottom: 20,
                                                 right: 20,
                                                 child: Column(
                                                   mainAxisAlignment:
@@ -857,8 +856,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
             right: 20,
             child: IconButton(
               onPressed: () {
-                _isColorSelectPage = !_isColorSelectPage;
-                setState(() {});
+                setState(() {
+                  _isColorSelectPage = !_isColorSelectPage;});
               },
               icon: const Icon(Icons.arrow_back),
             ),
@@ -893,6 +892,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  setState(() {
+                    _isColorSelectPage = !_isColorSelectPage;
+                  });
                 },
                 child: const Text(
                   '확인',
