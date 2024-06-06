@@ -43,9 +43,18 @@ class _AnalyzeMenuPageState extends State<AnalyzeMenuPage> {
                   const SizedBox(
                     height: 60,
                   ),
+                  const Text(
+                    '분석 진행 상태',
+                    style: TextStyle(
+                      fontSize: 28,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   _showTestProgress(userInfo),
                   const SizedBox(
-                    height: 100,
+                    height: 80,
                   ),
                   const Text(
                     '나를 알아보는 4가지 분석',
