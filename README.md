@@ -1,17 +1,19 @@
 # 아이카드(I-CARD: 나를 알아보고, 소개하다
 
-*STACK*
-A new Flutter project.
+<h1>개발 환경</h1>
 
-## Getting Started
+1. flutter : 3.19.6 version
+2. dart : 3.3.4 version
+3. ide : Android Studio
+4. AVD (Android Virtual Device)
+  - Pixel 7 pro (or 3120x1440 device)
+5. Android : Android 14 version
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<h1>코드 실행 방법</h1>
+- 안드로이드 스튜디오 실행 후 에뮬레이터를 연결합니다.
+- 터미널에 다음의 명령어들을 입력합니다.
+```text
+flutter clean
+flutter pub get
+flutter run --release
+```
