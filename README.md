@@ -12,8 +12,10 @@
 <h1>코드 실행 방법</h1>
 - 안드로이드 스튜디오 실행 후 에뮬레이터를 연결합니다.
 - 터미널에 다음의 명령어들을 입력합니다.
-```text
-flutter clean
-flutter pub get
-flutter run --release
-```
+<pre>
+<code>
+  flutter clean
+  flutter pub get
+  flutter run --release
+</code>
+</pre>
