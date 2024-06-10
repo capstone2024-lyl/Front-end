@@ -19,3 +19,6 @@
   flutter run --release
 </code>
 </pre>
+
+<h1>UI 디자인</h1>
+https://www.figma.com/design/kWS15elrd3rhS5lJn7a1Zn/Untitled?node-id=0-1&t=CVzTu0nggfexIO8F-1
