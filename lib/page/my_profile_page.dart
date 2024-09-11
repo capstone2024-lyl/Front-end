@@ -43,7 +43,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   bool _hideButton = false;
 
   final ScreenshotController _screenshotController = ScreenshotController();
-  final _instaId = '1535325187166738';
+  final _instaId = '';
   bool _isSharing = false;
 
   bool _isBack = false;
